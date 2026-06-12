@@ -2,6 +2,8 @@
 Live match data collector — Sofascore via SportAPI7 (RapidAPI).
 Provides: live score, incidents (goals/cards/subs), statistics, commentary.
 Short-lived cache (30s) so predictions stay current during live matches.
+
+Uses the same api/v1/event/{id} path pattern as SofascoreCollector.
 """
 import time
 import requests
@@ -39,6 +41,7 @@ _STAT_ORDER = [
 
 class LiveMatchCollector:
     BASE = "https://sportapi7.p.rapidapi.com"
+    LIVE_TTL = 30  # seconds
 
     def __init__(self):
         self._headers = {
@@ -56,7 +59,7 @@ class LiveMatchCollector:
             return self._cache[path]
         try:
             r = requests.get(
-                f"{self.BASE}{path}",
+                f"{self.BASE}/{path}",
                 headers=self._headers,
                 timeout=10,
             )
@@ -110,7 +113,7 @@ class LiveMatchCollector:
             return result
 
         # ── Match details + score ─────────────────────────────────────
-        raw = self._get(f"/api/match/{event_id}")
+        raw = self._get(f"api/v1/event/{event_id}")
         if raw and raw.get("event"):
             ev = raw["event"]
             result["home_team"] = ev.get("homeTeam", {}).get("name", "")
@@ -132,9 +135,11 @@ class LiveMatchCollector:
             result["is_halftime"] = st_type in ("halftime", "pause")
             result["is_finished"] = st_type in ("finished", "ended", "postponed",
                                                   "canceled", "abandoned")
+        elif raw and raw.get("error"):
+            result["error"] = str(raw["error"])
 
         # ── Incidents ─────────────────────────────────────────────────
-        inc_raw = self._get(f"/api/match/{event_id}/incidents")
+        inc_raw = self._get(f"api/v1/event/{event_id}/incidents", ttl=self.LIVE_TTL)
         if inc_raw and inc_raw.get("incidents"):
             result["incidents"] = self._parse_incidents(
                 inc_raw["incidents"],
@@ -143,7 +148,7 @@ class LiveMatchCollector:
             )
 
         # ── Statistics ────────────────────────────────────────────────
-        stat_raw = self._get(f"/api/match/{event_id}/statistics/0")
+        stat_raw = self._get(f"api/v1/event/{event_id}/statistics", ttl=self.LIVE_TTL)
         if stat_raw and stat_raw.get("statistics"):
             result["statistics"] = self._parse_statistics(stat_raw["statistics"])
 
@@ -154,7 +159,7 @@ class LiveMatchCollector:
         Fetch text commentary if available.
         Falls back to empty list if endpoint doesn't exist.
         """
-        raw = self._get(f"/api/match/{event_id}/commentary", ttl=60)
+        raw = self._get(f"api/v1/event/{event_id}/comments", ttl=60)
         if not raw:
             return []
         lines = raw.get("commentary") or raw.get("comments") or []
