@@ -1,17 +1,13 @@
 """
 FIFA 2026 Match Prediction - Web Dashboard
-Stake-style dark UI with full market coverage.
-Run: streamlit run app.py  |  Or double-click FIFA_Web.bat
+Run: streamlit run app.py  |  FIFA_Web.bat
 """
-import sys
-import math
-import pandas as pd
 from datetime import date, datetime
 from typing import Dict, List, Optional
 
+import pandas as pd
 import streamlit as st
 
-# ── Page config (must be first Streamlit call) ────────────────────────────
 st.set_page_config(
     page_title="FIFA 2026 Predictor",
     page_icon="",
@@ -19,57 +15,12 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Global CSS — Stake-style dark theme ───────────────────────────────────
+# Minimal global styles — no custom class names, only element overrides
 st.markdown("""
 <style>
-/* Base */
-.block-container { padding-top: 1rem; padding-bottom: 1rem; }
-[data-testid="stMetricValue"] { font-size: 1.25rem; }
-[data-testid="stMetricLabel"] { font-size: 0.75rem; color: #7fa8d1; }
-
-/* Odds button */
-.ob { background:#1a2637; border:1px solid #2d4a6e; border-radius:8px;
-      padding:12px 8px; text-align:center; }
-.ob.vb { border:2px solid #00e676; box-shadow:0 0 10px rgba(0,230,118,.22); }
-.ob .lbl { color:#7fa8d1; font-size:.76rem; margin-bottom:5px; white-space:nowrap;
-           overflow:hidden; text-overflow:ellipsis; }
-.ob .val { color:#00e5ff; font-size:1.2rem; font-weight:700; }
-.ob .pct { color:#8899aa; font-size:.7rem; margin-top:3px; }
-.ob .edg { color:#00e676; font-size:.65rem; font-weight:700; margin-top:2px; }
-
-/* Market section header */
-.mhdr { background:#131d30; border-left:3px solid #00e5ff; padding:8px 14px;
-        border-radius:4px; margin-bottom:10px; font-size:.87rem;
-        font-weight:600; color:#cdd9e5; letter-spacing:.4px; }
-
-/* Match header */
-.mhead { background:linear-gradient(135deg,#0d1b2a,#142138);
-         padding:20px 28px; border-radius:12px; margin-bottom:16px;
-         border:1px solid #1e3351; }
-
-/* Scorer card */
-.sc { background:#1a2637; border:1px solid #2d4a6e; border-radius:8px;
-      padding:10px 8px; text-align:center; }
-.sc.key { border:2px solid #f9a825; box-shadow:0 0 8px rgba(249,168,37,.25); }
-.sc .sn { color:#cdd9e5; font-size:.8rem; font-weight:600; margin-bottom:3px; }
-.sc .sp { color:#6b8099; font-size:.68rem; margin-bottom:6px; }
-.sc .so { color:#00e5ff; font-size:1.1rem; font-weight:700; }
-.sc .spct { color:#8899aa; font-size:.68rem; margin-top:2px; }
-
-/* HT/FT grid cell */
-.htft { background:#1a2637; border:1px solid #2d4a6e; border-radius:6px;
-        padding:8px 6px; text-align:center; }
-.htft .hl { color:#7fa8d1; font-size:.68rem; margin-bottom:4px; }
-.htft .hv { color:#00e5ff; font-size:1.05rem; font-weight:700; }
-.htft .hp { color:#8899aa; font-size:.66rem; margin-top:2px; }
-
-/* Confidence banner */
-.conf-hi { background:#1b5e20; }
-.conf-md { background:#e65100; }
-.conf-lo { background:#7f1010; }
-
-/* Divider spacing */
-.mkt-divider { margin: 16px 0; border-top: 1px solid #1e3351; }
+.block-container { padding-top: 0.8rem; }
+[data-testid="stMetricValue"] { font-size: 1.2rem; }
+[data-testid="stMetricLabel"] { font-size: 0.74rem; color: #7fa8d1; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -86,8 +37,7 @@ def load_engine():
 
 @st.cache_data(ttl=300, show_spinner=False)
 def fetch_fixtures(_engine, date_str: str) -> List[Dict]:
-    d = date.fromisoformat(date_str)
-    return _engine.aggregator.get_today_matches(d)
+    return _engine.aggregator.get_today_matches(date.fromisoformat(date_str))
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -104,251 +54,160 @@ def fetch_prediction(
 
 
 # ════════════════════════════════════════════════════════════════════════
-# HTML helpers — Stake-style components
+# Low-level HTML builders — INLINE STYLES ONLY (no class names)
 # ════════════════════════════════════════════════════════════════════════
 
-def _mhdr(title: str) -> str:
-    return f'<div class="mhdr">{title}</div>'
+def _mhdr(title: str):
+    """Dark section header with cyan left border."""
+    st.markdown(
+        f'<div style="background:#131d30;border-left:3px solid #00e5ff;'
+        f'padding:8px 14px;border-radius:4px;margin:14px 0 8px;'
+        f'font-size:.87rem;font-weight:600;color:#cdd9e5">{title}</div>',
+        unsafe_allow_html=True,
+    )
 
 
-def _odds_grid(options: List[Dict], value_keys: set = None) -> str:
+def _bet_card(col, label: str, odds: float, prob: float,
+               is_value: bool = False, edge: float = None):
+    """Single odds button rendered inside a Streamlit column."""
+    border  = "2px solid #00e676" if is_value else "1px solid #2d4a6e"
+    glow    = "box-shadow:0 0 10px rgba(0,230,118,.25);" if is_value else ""
+    bg      = "#0d2318" if is_value else "#1a2637"
+    edge_h  = (f'<div style="color:#00e676;font-size:.62rem;font-weight:700;'
+               f'margin-top:3px">+{edge:.1f}% edge</div>') if (is_value and edge) else ""
+    col.markdown(
+        f'<div style="background:{bg};border:{border};border-radius:8px;'
+        f'padding:12px 6px;text-align:center;{glow}">'
+        f'<div style="color:#7fa8d1;font-size:.74rem;margin-bottom:5px;'
+        f'white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{label}</div>'
+        f'<div style="color:#00e5ff;font-size:1.2rem;font-weight:700">{odds:.2f}</div>'
+        f'<div style="color:#8899aa;font-size:.69rem;margin-top:3px">{prob*100:.1f}%</div>'
+        f'{edge_h}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def _odds_row(options: List[Dict], vkeys: set = None, vedges: Dict = None):
     """
-    Build a flex grid of Stake-style odds buttons.
-    Each option: {label, odds, prob, edge (optional)}
-    value_keys: set of label strings that are value bets
+    Render a row of odds buttons.
+    options: [{label, odds, prob}]  vkeys: set of value-bet labels
     """
-    cells = ""
-    for opt in options:
-        label   = opt.get("label", "—")
-        odds    = opt.get("odds", 1.0)
-        prob    = opt.get("prob", 0.0)
-        edge    = opt.get("edge")
-        is_val  = value_keys and label in value_keys
-        cls     = "ob vb" if is_val else "ob"
-        edge_h  = f'<div class="edg">+{edge:.1f}% edge</div>' if is_val and edge else ""
-        cells += f"""
-        <div class="{cls}" style="min-width:90px;flex:1">
-            <div class="lbl">{label}</div>
-            <div class="val">{odds:.2f}</div>
-            <div class="pct">{prob*100:.1f}%</div>
-            {edge_h}
-        </div>"""
-
-    return f'<div style="display:flex;gap:8px;margin:8px 0 18px;flex-wrap:wrap">{cells}</div>'
-
-
-def _htft_grid(htft: Dict, home: str, away: str) -> str:
-    """3x3 HT/FT grid."""
-    order = ["1", "X", "2"]
-    names = {"1": home[:10], "X": "Draw", "2": away[:10]}
-    rows_html = ""
-    for ht_r in order:
-        for ft_r in order:
-            key = f"{ht_r}/{ft_r}"
-            d = htft.get(key, {"prob": 0, "odds": 999})
-            prob, odds = d["prob"], d["odds"]
-            bg_alpha = min(0.15 + prob * 2.5, 0.85)
-            rows_html += f"""
-            <div class="htft" style="background:rgba(26,38,55,{bg_alpha:.2f})">
-                <div class="hl">{names[ht_r]} / {names[ft_r]}</div>
-                <div class="hv">{odds:.2f}</div>
-                <div class="hp">{prob*100:.1f}%</div>
-            </div>"""
-
-    return f'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 18px">{rows_html}</div>'
-
-
-def _scorer_grid(scorers: List[Dict], title: str, use_first: bool = False) -> str:
-    """Grid of player scorer cards."""
-    if not scorers:
-        return f'<div style="color:#6b8099;font-size:.8rem;margin-bottom:12px">No lineup data available for {title}.</div>'
-
-    prob_key  = "first_prob"  if use_first else "prob"
-    odds_key  = "first_odds" if use_first else "odds"
-
-    cards = ""
-    for s in scorers[:12]:
-        name  = s.get("name", "—")
-        pos   = s.get("position", "—")
-        odds  = s.get(odds_key, 99)
-        prob  = s.get(prob_key, 0)
-        goals = s.get("goals_in_comp", 0)
-        is_key = s.get("is_key_scorer", False)
-
-        cls        = "sc key" if is_key else "sc"
-        goals_bdg  = f'<span style="background:#f9a825;color:#000;padding:1px 5px;border-radius:3px;font-size:.62rem;font-weight:700;margin-right:4px">{goals}g</span>' if goals else ""
-        star       = " &#9733;" if is_key else ""
-
-        cards += f"""
-        <div class="{cls}">
-            <div class="sn">{goals_bdg}{name}{star}</div>
-            <div class="sp">{pos}</div>
-            <div class="so">{odds:.2f}</div>
-            <div class="spct">{prob*100:.1f}%</div>
-        </div>"""
-
-    return f"""
-    <div style="margin-bottom:6px;font-size:.8rem;color:#7fa8d1;font-weight:600">{title}</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:6px;margin-bottom:20px">
-        {cards}
-    </div>"""
-
-
-def _correct_score_grid(cs_list: List[Dict]) -> str:
-    """Compact grid for correct scores."""
-    top = cs_list[:16]
-    cells = ""
-    for s in top:
-        score = f"{s['home']}-{s['away']}"
-        p     = s["probability"]
-        o     = round(1.0 / p, 2) if p > 0 else 999
-        cells += f"""
-        <div style="background:#1a2637;border:1px solid #2d4a6e;border-radius:6px;
-                    padding:7px 5px;text-align:center">
-            <div style="color:#cdd9e5;font-size:.9rem;font-weight:700">{score}</div>
-            <div style="color:#00e5ff;font-size:1rem;font-weight:700">{o:.2f}</div>
-            <div style="color:#8899aa;font-size:.66rem">{p*100:.1f}%</div>
-        </div>"""
-
-    return f'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px;margin:8px 0 18px">{cells}</div>'
+    cols = st.columns(len(options))
+    for col, opt in zip(cols, options):
+        lbl     = opt["label"]
+        is_val  = bool(vkeys and lbl in vkeys)
+        edge    = vedges.get(lbl) if vedges else None
+        _bet_card(col, lbl, opt["odds"], opt["prob"], is_val, edge)
 
 
 # ════════════════════════════════════════════════════════════════════════
-# Value bet index helpers
-# ════════════════════════════════════════════════════════════════════════
-
-def _vbet_labels(vbets: List[Dict], market: str) -> set:
-    """Return set of selection labels that are value bets for a given market."""
-    return {v["selection"] for v in vbets if v["market"] == market}
-
-
-def _vbet_edges(vbets: List[Dict], market: str) -> Dict[str, float]:
-    return {v["selection"]: v["edge_pct"] for v in vbets if v["market"] == market}
-
-
-# ════════════════════════════════════════════════════════════════════════
-# Market tab renderers
+# Market section renderers
 # ════════════════════════════════════════════════════════════════════════
 
 def _tab_main(markets: Dict, home: str, away: str, vbets: List[Dict]):
-    h = home[:14]
-    a = away[:14]
+    h, a = home[:14], away[:14]
 
-    # Value-bet sets per market (for highlighting)
-    vk_1x2 = _vbet_labels(vbets, "1X2")
-    vk_dnb  = _vbet_labels(vbets, "DNB")
-    vk_dc   = _vbet_labels(vbets, "DC")
-    vk_btts = _vbet_labels(vbets, "BTTS")
-    ve_1x2  = _vbet_edges(vbets, "1X2")
-    ve_dnb  = _vbet_edges(vbets, "DNB")
-    ve_dc   = _vbet_edges(vbets, "DC")
-    ve_btts = _vbet_edges(vbets, "BTTS")
+    def _vk(mkt):  return {v["selection"] for v in vbets if v["market"] == mkt}
+    def _ve(mkt):  return {v["selection"]: v["edge_pct"] for v in vbets if v["market"] == mkt}
 
-    # 1X2 match winner
+    # Match Winner 1X2
     x = markets["1x2"]
-    st.markdown(_mhdr("Match Winner — Full Time"), unsafe_allow_html=True)
-    st.markdown(_odds_grid([
-        {"label": h,      "odds": x["home"]["odds"], "prob": x["home"]["prob"],
-         "edge": ve_1x2.get("Home")},
-        {"label": "Draw", "odds": x["draw"]["odds"], "prob": x["draw"]["prob"],
-         "edge": ve_1x2.get("Draw")},
-        {"label": a,      "odds": x["away"]["odds"], "prob": x["away"]["prob"],
-         "edge": ve_1x2.get("Away")},
-    ], value_keys=vk_1x2), unsafe_allow_html=True)
+    _mhdr("Match Winner — Full Time")
+    _odds_row([
+        {"label": h,      "odds": x["home"]["odds"], "prob": x["home"]["prob"]},
+        {"label": "Draw", "odds": x["draw"]["odds"], "prob": x["draw"]["prob"]},
+        {"label": a,      "odds": x["away"]["odds"], "prob": x["away"]["prob"]},
+    ], _vk("1X2"), _ve("1X2"))
 
-    col1, col2 = st.columns(2)
-
-    with col1:
-        # BTTS Full Time
+    c1, c2 = st.columns(2)
+    with c1:
+        _mhdr("Both Teams to Score — Full Time")
         b = markets["btts"]
-        st.markdown(_mhdr("Both Teams to Score — Full Time"), unsafe_allow_html=True)
-        st.markdown(_odds_grid([
-            {"label": "Yes", "odds": b["yes"]["odds"], "prob": b["yes"]["prob"],
-             "edge": ve_btts.get("Yes")},
-            {"label": "No",  "odds": b["no"]["odds"],  "prob": b["no"]["prob"],
-             "edge": ve_btts.get("No")},
-        ], value_keys=vk_btts), unsafe_allow_html=True)
+        _odds_row([
+            {"label": "Yes", "odds": b["yes"]["odds"], "prob": b["yes"]["prob"]},
+            {"label": "No",  "odds": b["no"]["odds"],  "prob": b["no"]["prob"]},
+        ], _vk("BTTS"), _ve("BTTS"))
 
-        # Draw No Bet
+        _mhdr("Draw No Bet")
         d = markets["draw_no_bet"]
-        st.markdown(_mhdr("Draw No Bet"), unsafe_allow_html=True)
-        st.markdown(_odds_grid([
-            {"label": h, "odds": d["home"]["odds"], "prob": d["home"]["prob"],
-             "edge": ve_dnb.get("Home")},
-            {"label": a, "odds": d["away"]["odds"], "prob": d["away"]["prob"],
-             "edge": ve_dnb.get("Away")},
-        ], value_keys=vk_dnb), unsafe_allow_html=True)
+        _odds_row([
+            {"label": h, "odds": d["home"]["odds"], "prob": d["home"]["prob"]},
+            {"label": a, "odds": d["away"]["odds"], "prob": d["away"]["prob"]},
+        ], _vk("DNB"), _ve("DNB"))
 
-    with col2:
-        # Double Chance
+    with c2:
+        _mhdr("Double Chance")
         dc = markets["double_chance"]
-        st.markdown(_mhdr("Double Chance"), unsafe_allow_html=True)
-        st.markdown(_odds_grid([
-            {"label": f"{h} or Draw", "odds": dc["home_draw"]["odds"], "prob": dc["home_draw"]["prob"],
-             "edge": ve_dc.get("1X")},
-            {"label": f"{a} or Draw", "odds": dc["away_draw"]["odds"], "prob": dc["away_draw"]["prob"],
-             "edge": ve_dc.get("X2")},
-            {"label": f"{h} or {a}", "odds": dc["home_away"]["odds"], "prob": dc["home_away"]["prob"],
-             "edge": ve_dc.get("12")},
-        ], value_keys=vk_dc), unsafe_allow_html=True)
+        _odds_row([
+            {"label": f"{h} or Draw", "odds": dc["home_draw"]["odds"], "prob": dc["home_draw"]["prob"]},
+            {"label": f"{a} or Draw", "odds": dc["away_draw"]["odds"], "prob": dc["away_draw"]["prob"]},
+            {"label": f"{h} or {a}",  "odds": dc["home_away"]["odds"], "prob": dc["home_away"]["prob"]},
+        ], _vk("DC"), _ve("DC"))
 
-        # Clean Sheet
-        cs_mkt = markets["clean_sheet"]
-        st.markdown(_mhdr("Clean Sheet"), unsafe_allow_html=True)
-        st.markdown(_odds_grid([
-            {"label": f"{h} yes", "odds": cs_mkt["away"]["odds"], "prob": cs_mkt["away"]["prob"]},
-            {"label": f"{h} no",  "odds": round(1.0/(1-cs_mkt["away"]["prob"]),2) if cs_mkt["away"]["prob"] < 0.99 else 99,
-             "prob": 1-cs_mkt["away"]["prob"]},
-            {"label": f"{a} yes", "odds": cs_mkt["home"]["odds"], "prob": cs_mkt["home"]["prob"]},
-            {"label": f"{a} no",  "odds": round(1.0/(1-cs_mkt["home"]["prob"]),2) if cs_mkt["home"]["prob"] < 0.99 else 99,
-             "prob": 1-cs_mkt["home"]["prob"]},
-        ]), unsafe_allow_html=True)
+        _mhdr("Clean Sheet")
+        cs = markets["clean_sheet"]
+        cs_cols = st.columns(4)
+        _bet_card(cs_cols[0], f"{h} yes", cs["away"]["odds"], cs["away"]["prob"])
+        p_hno = 1 - cs["away"]["prob"]
+        _bet_card(cs_cols[1], f"{h} no",
+                  round(1/p_hno, 2) if p_hno > 0.01 else 99, p_hno)
+        _bet_card(cs_cols[2], f"{a} yes", cs["home"]["odds"], cs["home"]["prob"])
+        p_ano = 1 - cs["home"]["prob"]
+        _bet_card(cs_cols[3], f"{a} no",
+                  round(1/p_ano, 2) if p_ano > 0.01 else 99, p_ano)
 
     # 1st Goal
+    _mhdr("1st Goal of Match")
     fg = markets["first_goal"]
-    st.markdown(_mhdr("1st Goal of Match"), unsafe_allow_html=True)
-    st.markdown(_odds_grid([
-        {"label": h,           "odds": fg["home"]["odds"], "prob": fg["home"]["prob"]},
-        {"label": "No Goal",   "odds": fg["none"]["odds"], "prob": fg["none"]["prob"]},
-        {"label": a,           "odds": fg["away"]["odds"], "prob": fg["away"]["prob"]},
-    ]), unsafe_allow_html=True)
+    _odds_row([
+        {"label": h,         "odds": fg["home"]["odds"], "prob": fg["home"]["prob"]},
+        {"label": "No Goal", "odds": fg["none"]["odds"], "prob": fg["none"]["prob"]},
+        {"label": a,         "odds": fg["away"]["odds"], "prob": fg["away"]["prob"]},
+    ])
 
     # Correct Score
-    st.markdown(_mhdr("Correct Score (Top 16)"), unsafe_allow_html=True)
-    st.markdown(_correct_score_grid(markets["correct_score"]), unsafe_allow_html=True)
+    _mhdr("Correct Score (Top 16)")
+    cs_list = markets["correct_score"][:16]
+    cs_cols = st.columns(4)
+    for i, s in enumerate(cs_list):
+        p = s["probability"]
+        o = round(1/p, 2) if p > 0 else 999
+        score_lbl = f"{s['home']}-{s['away']}"
+        cs_cols[i % 4].markdown(
+            f'<div style="background:#1a2637;border:1px solid #2d4a6e;'
+            f'border-radius:6px;padding:8px 4px;text-align:center;margin-bottom:6px">'
+            f'<div style="color:#cdd9e5;font-size:.92rem;font-weight:700">{score_lbl}</div>'
+            f'<div style="color:#00e5ff;font-size:1rem;font-weight:700">{o:.2f}</div>'
+            f'<div style="color:#8899aa;font-size:.66rem">{p*100:.1f}%</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
 
 
 def _tab_goals(markets: Dict, home: str, away: str):
     # Total Goals Exact
+    _mhdr("Total Goals — Exact Count")
     tge = markets["total_goals_exact"]
-    st.markdown(_mhdr("Total Goals — Exact Count"), unsafe_allow_html=True)
-    st.markdown(_odds_grid([
-        {"label": f"{r['goals']} Goals", "odds": r["odds"], "prob": r["prob"]}
-        for r in tge
-    ]), unsafe_allow_html=True)
+    _odds_row([{"label": f"{r['goals']} Goals", "odds": r["odds"], "prob": r["prob"]} for r in tge])
 
-    col1, col2 = st.columns(2)
-
-    with col1:
-        # BTTS 1st Half
+    c1, c2 = st.columns(2)
+    with c1:
+        _mhdr("Both Teams to Score — 1st Half")
         b1 = markets["btts_ht"]
-        st.markdown(_mhdr("Both Teams to Score — 1st Half"), unsafe_allow_html=True)
-        st.markdown(_odds_grid([
+        _odds_row([
             {"label": "Yes", "odds": b1["yes"]["odds"], "prob": b1["yes"]["prob"]},
             {"label": "No",  "odds": b1["no"]["odds"],  "prob": b1["no"]["prob"]},
-        ]), unsafe_allow_html=True)
-
-    with col2:
-        # BTTS 2nd Half
+        ])
+    with c2:
+        _mhdr("Both Teams to Score — 2nd Half")
         b2 = markets["btts_2h"]
-        st.markdown(_mhdr("Both Teams to Score — 2nd Half"), unsafe_allow_html=True)
-        st.markdown(_odds_grid([
+        _odds_row([
             {"label": "Yes", "odds": b2["yes"]["odds"], "prob": b2["yes"]["prob"]},
             {"label": "No",  "odds": b2["no"]["odds"],  "prob": b2["no"]["prob"]},
-        ]), unsafe_allow_html=True)
+        ])
 
     # Asian Total table
-    st.markdown(_mhdr("Asian Total (Over / Under)"), unsafe_allow_html=True)
+    _mhdr("Asian Total (Over / Under)")
     rows = []
     for line, d in markets["asian_total"].items():
         rows.append({
@@ -358,89 +217,207 @@ def _tab_goals(markets: Dict, home: str, away: str):
             "Under %":    f"{d['under']['prob']*100:.1f}%",
             "Under Odds": f"{d['under']['odds']:.2f}",
         })
-    st.dataframe(
-        pd.DataFrame(rows).set_index("Line"),
-        use_container_width=True,
-    )
+    st.dataframe(pd.DataFrame(rows).set_index("Line"), use_container_width=True)
 
 
 def _tab_asian(markets: Dict, home: str, away: str):
-    h = home[:14]
-    a = away[:14]
-
-    st.markdown(_mhdr(f"Asian Handicap ({h} perspective)"), unsafe_allow_html=True)
+    h, a = home[:14], away[:14]
+    _mhdr(f"Asian Handicap ({h} perspective)")
     rows = []
     for h_val, d in markets["asian_handicap"].items():
         rows.append({
-            "Handicap":    f"{h_val:+.2f}",
-            f"{h} %":      f"{d['home']['prob']*100:.1f}%",
-            f"{h} Odds":   f"{d['home']['odds']:.2f}",
-            "Push":        f"{d['push']*100:.1f}%",
-            f"{a} %":      f"{d['away']['prob']*100:.1f}%",
-            f"{a} Odds":   f"{d['away']['odds']:.2f}",
+            "Handicap":  f"{h_val:+.2f}",
+            f"{h} %":    f"{d['home']['prob']*100:.1f}%",
+            f"{h} Odds": f"{d['home']['odds']:.2f}",
+            "Push %":    f"{d['push']*100:.1f}%",
+            f"{a} %":    f"{d['away']['prob']*100:.1f}%",
+            f"{a} Odds": f"{d['away']['odds']:.2f}",
         })
     st.dataframe(pd.DataFrame(rows).set_index("Handicap"), use_container_width=True)
 
 
 def _tab_half(markets: Dict, home: str, away: str):
-    h = home[:14]
-    a = away[:14]
+    h, a = home[:14], away[:14]
 
     # HT 1X2
+    _mhdr("Half-Time Result (1X2)")
     ht = markets["halftime"]
-    vk_ht = set()  # (extend to check value bets if needed)
-    st.markdown(_mhdr("Half-Time Result (1X2)"), unsafe_allow_html=True)
-    st.markdown(_odds_grid([
+    _odds_row([
         {"label": h,      "odds": ht["home"]["odds"], "prob": ht["home"]["prob"]},
         {"label": "Draw", "odds": ht["draw"]["odds"], "prob": ht["draw"]["prob"]},
         {"label": a,      "odds": ht["away"]["odds"], "prob": ht["away"]["prob"]},
-    ]), unsafe_allow_html=True)
+    ])
 
-    # HT/FT combo
+    # HT/FT 3×3 grid
     htft_mkt = markets.get("htft_combo", {})
     if htft_mkt:
-        st.markdown(_mhdr("Half-Time / Full-Time"), unsafe_allow_html=True)
-        st.markdown(
-            '<div style="color:#6b8099;font-size:.75rem;margin-bottom:6px">'
-            'Format: HT result / FT result &nbsp;|&nbsp; 1=Home, X=Draw, 2=Away</div>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(_htft_grid(htft_mkt, h, a), unsafe_allow_html=True)
+        _mhdr("Half-Time / Full-Time  (HT result / FT result)")
+        st.caption("1 = Home win · X = Draw · 2 = Away win")
+        order = ["1", "X", "2"]
+        names = {"1": h, "X": "Draw", "2": a}
+        for ht_r in order:
+            ft_cols = st.columns(3)
+            for i, ft_r in enumerate(order):
+                key  = f"{ht_r}/{ft_r}"
+                d    = htft_mkt.get(key, {"prob": 0, "odds": 999})
+                prob = d["prob"]
+                odds = d["odds"]
+                alpha = min(0.15 + prob * 3.0, 0.9)
+                ft_cols[i].markdown(
+                    f'<div style="background:rgba(26,38,55,{alpha:.2f});'
+                    f'border:1px solid #2d4a6e;border-radius:6px;'
+                    f'padding:8px 5px;text-align:center;margin-bottom:4px">'
+                    f'<div style="color:#7fa8d1;font-size:.69rem;margin-bottom:4px">'
+                    f'{names[ht_r]} / {names[ft_r]}</div>'
+                    f'<div style="color:#00e5ff;font-size:1.05rem;font-weight:700">{odds:.2f}</div>'
+                    f'<div style="color:#8899aa;font-size:.67rem;margin-top:2px">{prob*100:.1f}%</div>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
 
 
 def _tab_goalscorers(data: Dict, home: str, away: str):
-    home_sc = data.get("home_scorers", [])
-    away_sc = data.get("away_scorers", [])
+    home_sc  = data.get("home_scorers", [])
+    away_sc  = data.get("away_scorers", [])
     home_1st = data.get("home_1st_scorers", [])
     away_1st = data.get("away_1st_scorers", [])
 
     if not (home_sc or away_sc):
-        st.info("Goalscorer predictions require lineup data. Lineups are usually confirmed ~1 hour before kickoff.")
+        st.info(
+            "Goalscorer predictions need lineup data. "
+            "Lineups confirmed ~1 hour before kickoff."
+        )
         return
 
-    lineup_note = data.get("lineup_confirmed", False)
-    tsc = data.get("top_scorers_count", 0)
-    note_parts = []
-    if lineup_note:
-        note_parts.append("Confirmed lineup")
-    if tsc > 0:
-        note_parts.append(f"{tsc} WC scorers loaded")
-    if note_parts:
-        st.caption("Data: " + " · ".join(note_parts) + " · Poisson model per player")
+    confirmed  = data.get("lineup_confirmed", False)
+    tsc        = data.get("top_scorers_count", 0)
+    notes = []
+    if confirmed: notes.append("Confirmed lineup")
+    if tsc > 0:   notes.append(f"{tsc} WC scorers in model")
+    if notes:
+        st.caption("Model: " + " · ".join(notes) + " · Poisson per player")
 
-    st.markdown(_mhdr("Anytime Goalscorer"), unsafe_allow_html=True)
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown(_scorer_grid(home_sc, home, use_first=False), unsafe_allow_html=True)
-    with col2:
-        st.markdown(_scorer_grid(away_sc, away, use_first=False), unsafe_allow_html=True)
+    def _scorer_section(scorers, title, prob_key, odds_key):
+        _mhdr(title)
+        top = [s for s in scorers if s.get(prob_key, 0) > 0.005][:12]
+        if not top:
+            st.caption("No data.")
+            return
+        n = min(4, len(top))
+        cols = st.columns(n)
+        for i, s in enumerate(top):
+            name  = s.get("name", "—")
+            pos   = s.get("position", "—")
+            prob  = s.get(prob_key, 0)
+            odds  = s.get(odds_key, 99)
+            goals = s.get("goals_in_comp", 0)
+            is_key = s.get("is_key_scorer", False)
 
-    st.markdown(_mhdr("1st Goalscorer"), unsafe_allow_html=True)
-    col1b, col2b = st.columns(2)
-    with col1b:
-        st.markdown(_scorer_grid(home_1st[:8], home, use_first=True), unsafe_allow_html=True)
-    with col2b:
-        st.markdown(_scorer_grid(away_1st[:8], away, use_first=True), unsafe_allow_html=True)
+            border = "2px solid #f9a825" if is_key else "1px solid #2d4a6e"
+            glow   = "box-shadow:0 0 8px rgba(249,168,37,.25);" if is_key else ""
+            gbadge = (f'<span style="background:#f9a825;color:#000;padding:1px 4px;'
+                      f'border-radius:3px;font-size:.6rem;font-weight:700;margin-right:3px">{goals}g</span>') if goals else ""
+            star   = " &#9733;" if is_key else ""
+
+            cols[i % n].markdown(
+                f'<div style="background:#1a2637;border:{border};border-radius:8px;'
+                f'padding:10px 6px;text-align:center;margin-bottom:6px;{glow}">'
+                f'<div style="color:#cdd9e5;font-size:.78rem;font-weight:600;margin-bottom:2px">'
+                f'{gbadge}{name}{star}</div>'
+                f'<div style="color:#6b8099;font-size:.67rem;margin-bottom:5px">{pos}</div>'
+                f'<div style="color:#00e5ff;font-size:1.1rem;font-weight:700">{odds:.2f}</div>'
+                f'<div style="color:#8899aa;font-size:.67rem;margin-top:2px">{prob*100:.1f}%</div>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+
+    c1, c2 = st.columns(2)
+    with c1:
+        _scorer_section(home_sc,  f"Anytime Goalscorer — {home}", "prob",       "odds")
+        _scorer_section(home_1st, f"1st Goalscorer — {home}",      "first_prob", "first_odds")
+    with c2:
+        _scorer_section(away_sc,  f"Anytime Goalscorer — {away}", "prob",       "odds")
+        _scorer_section(away_1st, f"1st Goalscorer — {away}",      "first_prob", "first_odds")
+
+
+# ════════════════════════════════════════════════════════════════════════
+# Bet Recommendation — the "where should I bet" answer
+# ════════════════════════════════════════════════════════════════════════
+
+def _render_bet_recommendation(markets: Dict, vbets: List[Dict],
+                                home: str, away: str, odds_src: Optional[str]):
+    """
+    Clear, actionable betting recommendation:
+    - If value bets exist → highlight the best edge
+    - If no edge → advise against betting or show fair prices
+    """
+    if vbets:
+        best = vbets[0]  # already sorted by edge descending
+        p = best["model_prob"]
+        risk_label = "Lower risk" if p > 0.55 else ("Medium risk" if p > 0.40 else "Higher risk")
+        risk_col   = "#00e676" if p > 0.55 else ("#f9a825" if p > 0.40 else "#ef5350")
+
+        st.markdown(
+            f'<div style="background:#0a2718;border:2px solid #00e676;'
+            f'border-radius:10px;padding:16px 20px;margin:12px 0 4px">'
+            f'<div style="color:#00e676;font-weight:800;font-size:.95rem;margin-bottom:8px">'
+            f'RECOMMENDED BET — VALUE FOUND</div>'
+            f'<div style="font-size:1.05rem;color:#ffffff;font-weight:700;margin-bottom:8px">'
+            f'{best["market"]} &nbsp;&#8594;&nbsp; {best["selection"]}</div>'
+            f'<div style="display:flex;gap:20px;flex-wrap:wrap;font-size:.82rem;margin-bottom:6px">'
+            f'<span style="color:#cdd9e5">Our fair odds: '
+            f'<b style="color:#00e5ff">{best["model_odds"]:.2f}</b></span>'
+            f'<span style="color:#cdd9e5">Bookmaker: '
+            f'<b style="color:#f9a825">{best["bookie_odds"]:.2f}</b></span>'
+            f'<span style="color:#00e676;font-weight:700">+{best["edge_pct"]:.1f}% edge</span>'
+            f'<span style="color:#8899aa">Prob: {best["model_prob"]*100:.1f}%</span>'
+            f'<span style="color:{risk_col}">{risk_label}</span>'
+            f'</div>'
+            f'<div style="color:#5c8a6a;font-size:.74rem">'
+            f'Expected value: {best["expected_value"]:+.3f} per unit &nbsp;·&nbsp; '
+            f'Confidence in prediction: {best["model_prob"]*100:.1f}%'
+            f'</div></div>',
+            unsafe_allow_html=True,
+        )
+
+        if len(vbets) > 1:
+            other = vbets[1:]
+            lines = "  ·  ".join(
+                f'{v["market"]} {v["selection"]} ({v["bookie_odds"]:.2f}, +{v["edge_pct"]:.1f}%)'
+                for v in other
+            )
+            st.caption(f"Also value: {lines}")
+
+    else:
+        # No value bets — show most likely outcome and fair price guidance
+        x = markets["1x2"]
+        probs = [
+            (x["home"]["prob"], x["home"]["odds"], f"{home} Win"),
+            (x["draw"]["prob"], x["draw"]["odds"], "Draw"),
+            (x["away"]["prob"], x["away"]["odds"], f"{away} Win"),
+        ]
+        best_prob, best_odds, best_outcome = max(probs, key=lambda t: t[0])
+
+        if odds_src:
+            advice = ("No edge found at current bookmaker prices. "
+                      "Skip or wait for better odds.")
+        else:
+            advice = (f"No bookmaker odds loaded yet. Our fair odds are {best_odds:.2f} for "
+                      f"{best_outcome}. If you find higher odds at your bookmaker, that is value.")
+
+        st.markdown(
+            f'<div style="background:#1a2637;border:1px solid #2d4a6e;'
+            f'border-radius:10px;padding:14px 18px;margin:12px 0 4px">'
+            f'<div style="color:#f9a825;font-weight:700;font-size:.88rem;margin-bottom:6px">'
+            f'NO EDGE DETECTED</div>'
+            f'<div style="color:#cdd9e5;font-size:.85rem;margin-bottom:6px">'
+            f'Most likely: <b>{best_outcome}</b> &nbsp;|&nbsp; '
+            f'Model probability: <b style="color:#00e5ff">{best_prob*100:.1f}%</b> '
+            f'&nbsp;|&nbsp; Fair odds: <b>{best_odds:.2f}</b></div>'
+            f'<div style="color:#6b8099;font-size:.78rem">{advice}</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -448,86 +425,80 @@ def _tab_goalscorers(data: Dict, home: str, away: str):
 # ════════════════════════════════════════════════════════════════════════
 
 def _render_match_header(pred: Dict):
-    home     = pred["home_team"]
-    away     = pred["away_team"]
-    conf     = pred["confidence"]
-    markets  = pred["markets"]
-    diag     = pred.get("diagnostics", {})
-    data     = pred.get("data", {})
-    odds_src = pred.get("bookmaker_odds_source")
+    home    = pred["home_team"]
+    away    = pred["away_team"]
+    conf    = pred["confidence"]
+    markets = pred["markets"]
+    diag    = pred.get("diagnostics", {})
+    data    = pred.get("data", {})
+    oddsrc  = pred.get("bookmaker_odds_source")
 
     conf_pct  = conf["total"]
     predicted = conf.get("predicted_outcome", "?")
     pred_prob = conf.get("predicted_outcome_prob", 0)
 
     if conf_pct >= 93:
-        conf_bg, conf_tag = "#1b5e20", "ABOVE 93% THRESHOLD"
+        bar_col = "#00e676"
+        tag     = "ABOVE 93% THRESHOLD"
     elif conf_pct >= 65:
-        conf_bg, conf_tag = "#7c3a00", "Medium confidence"
+        bar_col = "#ff9800"
+        tag     = "Medium confidence"
     else:
-        conf_bg, conf_tag = "#6b0f0f", "Below threshold"
+        bar_col = "#ef5350"
+        tag     = "Below threshold"
 
-    lam_h = markets["lam_home"]
-    lam_a = markets["lam_away"]
+    odds_badge = ""
+    if oddsrc == "sofascore":
+        odds_badge = ('<span style="background:#004d40;color:#00e676;padding:2px 7px;'
+                     'border-radius:4px;font-size:.7rem;margin-left:10px">LIVE ODDS</span>')
 
-    oddsrc_badge = ""
-    if odds_src == "sofascore":
-        oddsrc_badge = '<span style="background:#004d40;color:#00e676;padding:2px 8px;border-radius:4px;font-size:.72rem;margin-left:10px">LIVE ODDS</span>'
-    elif odds_src == "manual":
-        oddsrc_badge = '<span style="background:#1a2e4a;color:#7fa8d1;padding:2px 8px;border-radius:4px;font-size:.72rem;margin-left:10px">MANUAL ODDS</span>'
+    st.markdown(
+        f'<div style="background:linear-gradient(135deg,#0d1b2a,#142138);'
+        f'padding:18px 24px;border-radius:12px;margin-bottom:14px;'
+        f'border:1px solid #1e3351">'
+        f'<div style="display:flex;justify-content:space-between;'
+        f'align-items:flex-start;flex-wrap:wrap;gap:12px">'
+        f'<div>'
+        f'<div style="font-size:1.45rem;font-weight:800;color:#fff;letter-spacing:.5px">'
+        f'{home} <span style="color:#2d4a6e">vs</span> {away}</div>'
+        f'<div style="color:#6b8099;font-size:.76rem;margin-top:3px">'
+        f'FIFA World Cup 2026{odds_badge}</div>'
+        f'</div>'
+        f'<div style="text-align:right">'
+        f'<div style="font-size:1.65rem;font-weight:800;color:#00e5ff">{conf_pct:.1f}%</div>'
+        f'<div style="font-size:.71rem;color:#cdd9e5">{tag}</div>'
+        f'<div style="font-size:.73rem;color:#8899aa;margin-top:2px">'
+        f'Predicted: <b style="color:#cdd9e5">{predicted}</b> ({pred_prob:.1f}%)</div>'
+        f'</div></div>'
+        f'<div style="margin-top:10px;background:#0e1826;border-radius:4px;'
+        f'height:5px;overflow:hidden">'
+        f'<div style="width:{min(conf_pct,100):.1f}%;height:100%;'
+        f'background:{bar_col};border-radius:4px"></div>'
+        f'</div></div>',
+        unsafe_allow_html=True,
+    )
 
-    # Confidence bar
-    bar_w = min(conf_pct, 100)
-    bar_col = "#00e676" if conf_pct >= 93 else ("#ff9800" if conf_pct >= 65 else "#ef5350")
+    # Metrics row
+    lh = markets["lam_home"]
+    la = markets["lam_away"]
+    mc = st.columns(6)
+    mc[0].metric(f"{home[:9]} xG",   f"{lh:.2f}")
+    mc[1].metric(f"{away[:9]} xG",   f"{la:.2f}")
+    mc[2].metric(f"{home[:8]} ELO",  f"{diag.get('elo_home', 0):.0f}")
+    mc[3].metric(f"{away[:8]} ELO",  f"{diag.get('elo_away', 0):.0f}")
+    mc[4].metric(f"{home[:8]} Form", f"{diag.get('home_form_score', 0.5):.2f}")
+    mc[5].metric(f"{away[:8]} Form", f"{diag.get('away_form_score', 0.5):.2f}")
 
-    st.markdown(f"""
-    <div class="mhead">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-            <div>
-                <div style="font-size:1.5rem;font-weight:800;color:#ffffff;letter-spacing:1px">
-                    {home}  <span style="color:#2d4a6e">vs</span>  {away}
-                </div>
-                <div style="color:#6b8099;font-size:.78rem;margin-top:4px">
-                    FIFA World Cup 2026
-                    {oddsrc_badge}
-                </div>
-            </div>
-            <div style="text-align:right">
-                <div style="font-size:1.7rem;font-weight:800;color:#00e5ff">{conf_pct:.1f}%</div>
-                <div style="font-size:.72rem;color:#cdd9e5">{conf_tag}</div>
-                <div style="font-size:.75rem;color:#9ab;margin-top:2px">
-                    Predicted: <b style="color:#cdd9e5">{predicted}</b> ({pred_prob:.1f}%)
-                </div>
-            </div>
-        </div>
-        <div style="margin-top:10px;background:#0e1826;border-radius:4px;height:6px;overflow:hidden">
-            <div style="width:{bar_w}%;height:100%;background:{bar_col};border-radius:4px"></div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Key metrics row
-    co = st.columns(6)
-    co[0].metric(f"{home[:10]} xG",  f"{lam_h:.2f}")
-    co[1].metric(f"{away[:10]} xG",  f"{lam_a:.2f}")
-    co[2].metric(f"{home[:8]} ELO",  f"{diag.get('elo_home', 0):.0f}")
-    co[3].metric(f"{away[:8]} ELO",  f"{diag.get('elo_away', 0):.0f}")
-    co[4].metric(f"{home[:8]} Form", f"{diag.get('home_form_score', 0.5):.2f}")
-    co[5].metric(f"{away[:8]} Form", f"{diag.get('away_form_score', 0.5):.2f}")
-
-    # Weather caption
-    weather = data.get("weather")
-    if weather:
-        wimp = weather.get("impact_factor", 1.0)
-        icon = "🌧" if wimp < 0.95 else "☀"
+    # Weather
+    wx = data.get("weather")
+    if wx:
+        icon = "🌧" if wx.get("impact_factor", 1) < 0.95 else "☀"
         st.caption(
-            f"{icon} {weather.get('description', '')} · "
-            f"{weather.get('temperature_c', '?')}°C · "
-            f"Wind {weather.get('wind_speed_kmh', '?')} km/h · "
-            f"Weather impact {wimp:.2f}x"
+            f"{icon} {wx.get('description','')} · {wx.get('temperature_c','?')}°C · "
+            f"Wind {wx.get('wind_speed_kmh','?')} km/h · Impact {wx.get('impact_factor',1):.2f}x"
         )
 
-    # Missing players warning
+    # Missing players
     for mp, label in [
         (data.get("missing_home_players", []), home),
         (data.get("missing_away_players", []), away),
@@ -536,59 +507,27 @@ def _render_match_header(pred: Dict):
             st.warning(f"{label} missing: {', '.join(mp)}")
 
     # Lineups expander
-    home_lu = data.get("home_lineup", [])
-    away_lu = data.get("away_lineup", [])
-    confirmed = data.get("lineup_confirmed", False)
-    h_form = data.get("home_formation", "")
-    a_form = data.get("away_formation", "")
-    if home_lu or away_lu:
-        lu_label = "Confirmed" if confirmed else "Expected (unconfirmed)"
-        form_str = f" · {h_form} vs {a_form}" if (h_form or a_form) else ""
-        with st.expander(f"Starting Lineups — {lu_label}{form_str}", expanded=False):
+    h_lu = data.get("home_lineup", [])
+    a_lu = data.get("away_lineup", [])
+    if h_lu or a_lu:
+        confirmed = data.get("lineup_confirmed", False)
+        hf = data.get("home_formation", "")
+        af = data.get("away_formation", "")
+        lu_lbl = "Confirmed" if confirmed else "Expected (unconfirmed)"
+        form_s = f" · {hf} vs {af}" if (hf or af) else ""
+        with st.expander(f"Starting Lineups — {lu_lbl}{form_s}", expanded=False):
             lc1, lc2 = st.columns(2)
-            def _pname(p):
-                return (p.get("name", "") if isinstance(p, dict) else str(p))
+            def _pn(p): return p.get("name", "") if isinstance(p, dict) else str(p)
             with lc1:
-                st.markdown(f"**{home}**" + (f"  `{h_form}`" if h_form else ""))
-                for i, p in enumerate(home_lu[:11], 1):
+                st.markdown(f"**{home}**" + (f"  `{hf}`" if hf else ""))
+                for i, p in enumerate(h_lu[:11], 1):
                     pos = p.get("position", "") if isinstance(p, dict) else ""
-                    st.write(f"{i}. {_pname(p)}" + (f" · *{pos}*" if pos else ""))
+                    st.write(f"{i}. {_pn(p)}" + (f" · *{pos}*" if pos else ""))
             with lc2:
-                st.markdown(f"**{away}**" + (f"  `{a_form}`" if a_form else ""))
-                for i, p in enumerate(away_lu[:11], 1):
+                st.markdown(f"**{away}**" + (f"  `{af}`" if af else ""))
+                for i, p in enumerate(a_lu[:11], 1):
                     pos = p.get("position", "") if isinstance(p, dict) else ""
-                    st.write(f"{i}. {_pname(p)}" + (f" · *{pos}*" if pos else ""))
-
-
-# ════════════════════════════════════════════════════════════════════════
-# Value bets summary
-# ════════════════════════════════════════════════════════════════════════
-
-def _render_value_bets(vbets: List[Dict], odds_src: Optional[str]):
-    if vbets:
-        st.markdown(
-            f'<div style="background:#0a2718;border:1px solid #00e676;border-radius:8px;'
-            f'padding:12px 16px;margin:14px 0">'
-            f'<div style="color:#00e676;font-weight:700;font-size:.9rem;margin-bottom:8px">'
-            f'Value Bets — {len(vbets)} found</div>',
-            unsafe_allow_html=True
-        )
-        for v in vbets:
-            st.markdown(
-                f'<div style="display:flex;justify-content:space-between;align-items:center;'
-                f'padding:5px 0;border-bottom:1px solid #0d3320">'
-                f'<span style="color:#cdd9e5;font-size:.82rem">'
-                f'<b>{v["market"]}</b> — {v["selection"]}</span>'
-                f'<span style="color:#8899aa;font-size:.78rem">'
-                f'Our {v["model_odds"]:.2f} vs Book {v["bookie_odds"]:.2f}</span>'
-                f'<span style="color:#00e676;font-weight:700;font-size:.82rem">'
-                f'+{v["edge_pct"]:.1f}% edge &nbsp; EV {v["expected_value"]:+.3f}</span>'
-                f'</div>',
-                unsafe_allow_html=True
-            )
-        st.markdown('</div>', unsafe_allow_html=True)
-    elif odds_src:
-        st.caption("No value bets detected vs current bookmaker odds.")
+                    st.write(f"{i}. {_pn(p)}" + (f" · *{pos}*" if pos else ""))
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -596,66 +535,95 @@ def _render_value_bets(vbets: List[Dict], odds_src: Optional[str]):
 # ════════════════════════════════════════════════════════════════════════
 
 def _render_data_analysis(pred: Dict):
-    data  = pred.get("data", {})
-    conf  = pred["confidence"]
-    diag  = pred.get("diagnostics", {})
+    data = pred.get("data", {})
+    conf = pred["confidence"]
+    diag = pred.get("diagnostics", {})
 
     with st.expander("Data Analysis & Model Breakdown", expanded=False):
-        c1, c2, c3, c4 = st.columns(4)
         comp = conf["components"]
+        c1, c2, c3, c4 = st.columns(4)
         c1.metric("Prediction Clarity", f"{comp['prediction_clarity']:.1f}%")
         c2.metric("Data Quality",       f"{comp['data_quality']:.1f}%")
         c3.metric("Model Agreement",    f"{comp['model_agreement']:.1f}%")
         c4.metric("Lineup Certainty",   f"{comp['lineup_certainty']:.1f}%")
+        st.progress(min(conf["total"]/100, 1.0),
+                    text=f"Overall: {conf['total']:.1f}%  (93% threshold)")
 
-        st.progress(
-            min(conf["total"] / 100, 1.0),
-            text=f"Overall confidence: {conf['total']:.1f}%  (93% required threshold)"
-        )
+        ca, cb = st.columns(2)
+        with ca:
+            st.markdown("**Matches analysed:**")
+            st.write(f"- {pred['home_team']}: {data.get('home_form_count',0)} form matches")
+            st.write(f"- {pred['away_team']}: {data.get('away_form_count',0)} form matches")
+            st.write(f"- Head-to-head: {data.get('h2h_count',0)} past meetings")
+            st.write(f"- WC scorers in model: {data.get('top_scorers_count',0)}")
 
-        col_a, col_b = st.columns(2)
-        with col_a:
-            st.markdown("**Past matches analysed:**")
-            st.write(f"- {pred['home_team']}: {data.get('home_form_count', 0)} form matches")
-            st.write(f"- {pred['away_team']}: {data.get('away_form_count', 0)} form matches")
-            st.write(f"- H2H history: {data.get('h2h_count', 0)} matches")
-            st.write(f"- WC scorers loaded: {data.get('top_scorers_count', 0)}")
+        with cb:
+            st.markdown("**Model inputs:**")
+            hc = diag.get("home_composite", {})
+            ac = diag.get("away_composite", {})
+            if hc:
+                st.write(f"- {pred['home_team']} base xG: {hc.get('base_lam',0):.2f}")
+                st.write(f"- {pred['home_team']} ELO adj: {hc.get('elo_adj',1):.2f}x")
+                st.write(f"- {pred['home_team']} form adj: {hc.get('form_adj',1):.2f}x")
+            if ac:
+                st.write(f"- {pred['away_team']} base xG: {ac.get('base_lam',0):.2f}")
+                st.write(f"- {pred['away_team']} ELO adj: {ac.get('elo_adj',1):.2f}x")
+                st.write(f"- {pred['away_team']} form adj: {ac.get('form_adj',1):.2f}x")
 
-        with col_b:
-            st.markdown("**Model components:**")
-            home_c = diag.get("home_composite", {})
-            away_c = diag.get("away_composite", {})
-            if home_c:
-                st.write(f"- {pred['home_team']} base xG: {home_c.get('base_lam', 0):.2f}")
-                st.write(f"- {pred['home_team']} form adj: {home_c.get('form_adj', 1):.2f}x")
-                st.write(f"- {pred['home_team']} ELO adj: {home_c.get('elo_adj', 1):.2f}x")
-            if away_c:
-                st.write(f"- {pred['away_team']} base xG: {away_c.get('base_lam', 0):.2f}")
-                st.write(f"- {pred['away_team']} form adj: {away_c.get('form_adj', 1):.2f}x")
-                st.write(f"- {pred['away_team']} ELO adj: {away_c.get('elo_adj', 1):.2f}x")
-
-        # H2H results
+        # H2H summary
         h2h = data.get("h2h", [])
         if h2h:
             st.markdown("**Head-to-Head (last 5):**")
-            home_wins = sum(1 for m in h2h[:5] if m.get("result") == "home")
-            draws     = sum(1 for m in h2h[:5] if m.get("result") == "draw")
-            away_wins = sum(1 for m in h2h[:5] if m.get("result") == "away")
+            hw = sum(1 for m in h2h[:5] if m.get("result") == "home")
+            dr = sum(1 for m in h2h[:5] if m.get("result") == "draw")
+            aw = sum(1 for m in h2h[:5] if m.get("result") == "away")
             st.write(
-                f"{pred['home_team']} wins: **{home_wins}**  |  "
-                f"Draws: **{draws}**  |  "
-                f"{pred['away_team']} wins: **{away_wins}**"
+                f"{pred['home_team']} wins: **{hw}** · "
+                f"Draws: **{dr}** · "
+                f"{pred['away_team']} wins: **{aw}**"
             )
             for m in h2h[:5]:
                 st.caption(
-                    f"{m.get('date','?')[:10]}  {m.get('home_team','?')} "
-                    f"{m.get('home_score','?')}-{m.get('away_score','?')} "
+                    f"{m.get('date','')[:10]}  "
+                    f"{m.get('home_team','?')} {m.get('home_score','?')}-{m.get('away_score','?')} "
                     f"{m.get('away_team','?')}"
                 )
 
-        sources = data.get("data_sources", [])
-        if sources:
-            st.caption("Sources: " + "  ·  ".join(sources))
+        srcs = data.get("data_sources", [])
+        if srcs:
+            st.caption("Sources: " + "  ·  ".join(srcs))
+
+
+# ════════════════════════════════════════════════════════════════════════
+# Value bets table
+# ════════════════════════════════════════════════════════════════════════
+
+def _render_value_bets_table(vbets: List[Dict], odds_src: Optional[str]):
+    if not vbets:
+        if odds_src:
+            st.caption("No value bets found at current bookmaker prices.")
+        return
+
+    rows = []
+    for v in vbets:
+        rows.append({
+            "Market":    v["market"],
+            "Selection": v["selection"],
+            "Our Prob":  f"{v['model_prob']*100:.1f}%",
+            "Our Odds":  f"{v['model_odds']:.2f}",
+            "Book Odds": f"{v['bookie_odds']:.2f}",
+            "Edge":      f"+{v['edge_pct']:.1f}%",
+            "EV":        f"{v['expected_value']:+.3f}",
+        })
+    df = pd.DataFrame(rows)
+    st.dataframe(
+        df.style.apply(
+            lambda _: ["background-color:#0a2718;color:#00e676"] * len(df.columns),
+            axis=1,
+        ),
+        hide_index=True,
+        use_container_width=True,
+    )
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -674,35 +642,37 @@ def render_prediction(pred: Dict):
     data    = pred.get("data", {})
     oddsrc  = pred.get("bookmaker_odds_source")
 
-    # Match header (confidence, xG, lineups, weather)
+    # 1. Match header (confidence bar, xG, lineups)
     _render_match_header(pred)
 
-    # Value bets summary strip
-    _render_value_bets(vbets, oddsrc)
+    # 2. Best bet recommendation — answers "what to bet on"
+    _render_bet_recommendation(markets, vbets, home, away, oddsrc)
+
+    if vbets:
+        with st.expander(f"All Value Bets ({len(vbets)} found)", expanded=False):
+            _render_value_bets_table(vbets, oddsrc)
 
     st.divider()
 
-    # Market tabs — matching Stake's navigation
-    t_main, t_goals, t_asian, t_half, t_scorers = st.tabs([
-        "Main", "Goals", "Asian Lines", "Half", "Goalscorers"
-    ])
+    # 3. Market tabs — matches Stake's navigation
+    tabs = st.tabs(["Main", "Goals", "Asian Lines", "Half", "Goalscorers"])
 
-    with t_main:
+    with tabs[0]:
         _tab_main(markets, home, away, vbets)
 
-    with t_goals:
+    with tabs[1]:
         _tab_goals(markets, home, away)
 
-    with t_asian:
+    with tabs[2]:
         _tab_asian(markets, home, away)
 
-    with t_half:
+    with tabs[3]:
         _tab_half(markets, home, away)
 
-    with t_scorers:
+    with tabs[4]:
         _tab_goalscorers(data, home, away)
 
-    # Data analysis
+    # 4. Data analysis
     _render_data_analysis(pred)
 
 
@@ -710,93 +680,78 @@ def render_prediction(pred: Dict):
 # MAIN APP
 # ════════════════════════════════════════════════════════════════════════
 
-st.markdown("""
-<div style="background:linear-gradient(135deg,#0a1524,#0d2040);
-            padding:18px 28px;border-radius:12px;margin-bottom:18px;
-            border:1px solid #1e3351">
-    <h1 style="margin:0;color:#00e5ff;font-family:monospace;letter-spacing:3px;font-size:1.7rem">
-        FIFA 2026 — MATCH PREDICTOR
-    </h1>
-    <p style="margin:5px 0 0;color:#6b8099;font-size:.83rem">
-        Poisson · Dixon-Coles · ELO · Form · Sentiment · Sofascore · Goalscorer Model
-    </p>
-</div>
-""", unsafe_allow_html=True)
+st.markdown(
+    '<div style="background:linear-gradient(135deg,#0a1524,#0d2040);'
+    'padding:16px 26px;border-radius:10px;margin-bottom:16px;'
+    'border:1px solid #1e3351">'
+    '<h1 style="margin:0;color:#00e5ff;font-family:monospace;'
+    'letter-spacing:3px;font-size:1.6rem">FIFA 2026 — MATCH PREDICTOR</h1>'
+    '<p style="margin:4px 0 0;color:#6b8099;font-size:.8rem">'
+    'Poisson &middot; Dixon-Coles &middot; ELO &middot; Form &middot; '
+    'Sofascore &middot; Goalscorer Model</p></div>',
+    unsafe_allow_html=True,
+)
 
 engine = load_engine()
 
-# ── Sidebar ────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## FIFA 2026 Predictor")
     st.caption(f"ELO database: {len(engine.elo_ratings)} teams")
     st.divider()
 
-    mode = st.radio(
-        "Prediction mode",
-        ["Today's Matches", "Specific Match"],
-        index=0,
-    )
+    mode = st.radio("Mode", ["Today's Matches", "Specific Match"], index=0)
 
     if "Today" in mode:
         target_date = st.date_input("Match date", value=date.today())
         date_str    = target_date.isoformat()
     else:
-        st.markdown("**Enter teams:**")
+        st.markdown("**Teams:**")
         home_input = st.text_input("Home Team", placeholder="e.g. Brazil")
         away_input = st.text_input("Away Team", placeholder="e.g. Morocco")
         date_str   = date.today().isoformat()
 
     st.divider()
-
     if st.button("Refresh Data", use_container_width=True):
         st.cache_data.clear()
         st.rerun()
 
-    st.caption(f"5-min cache · Updated: {datetime.now().strftime('%H:%M:%S')}")
+    st.caption(f"5-min cache · {datetime.now().strftime('%H:%M:%S')}")
     st.divider()
     st.caption(
-        "**Data sources:**\n"
-        "football-data.org · Sofascore\n"
-        "TheSportsDB · NewsAPI · GNews\n"
-        "Open-Meteo (weather)"
+        "**Sources:**\nfootball-data.org · Sofascore\n"
+        "TheSportsDB · NewsAPI · GNews\nOpen-Meteo"
     )
 
-# ── Main ───────────────────────────────────────────────────────────────
+# ── Today's matches ────────────────────────────────────────────────────
 if "Today" in mode:
-    with st.spinner("Fetching today's fixtures..."):
+    with st.spinner("Fetching fixtures..."):
         fixtures = fetch_fixtures(engine, date_str)
 
     if not fixtures:
-        st.warning(
-            "No FIFA 2026 matches found for this date. "
-            "Try a different date or use Specific Match mode."
-        )
+        st.warning("No FIFA 2026 matches found. Try a different date or Specific Match mode.")
         st.stop()
 
     d_label    = date.fromisoformat(date_str).strftime("%A %d %B %Y")
     auto_count = sum(1 for f in fixtures if f.get("sofascore_id"))
     st.markdown(
-        f"**{len(fixtures)} match{'es' if len(fixtures) != 1 else ''} · {d_label}**"
-        f"  —  {auto_count} with live odds"
+        f"**{len(fixtures)} match{'es' if len(fixtures) != 1 else ''} "
+        f"· {d_label}** — {auto_count} with live odds"
     )
 
-    tab_labels = []
-    for f in fixtures:
-        h = f.get("home_team", "?")
-        a = f.get("away_team", "?")
-        badge = "[LIVE] " if f.get("sofascore_id") else ""
-        tab_labels.append(f"{badge}{h} vs {a}")
+    tab_labels = [
+        f"{f.get('home_team','?')} vs {f.get('away_team','?')}"
+        for f in fixtures
+    ]
+    match_tabs = st.tabs(tab_labels)
 
-    tabs = st.tabs(tab_labels)
-
-    for tab, fixture in zip(tabs, fixtures):
+    for tab, fixture in zip(match_tabs, fixtures):
         with tab:
             h     = fixture.get("home_team", "")
             a     = fixture.get("away_team", "")
             fid   = str(fixture.get("id", ""))
             sfid  = fixture.get("sofascore_id")
             city  = fixture.get("city") or fixture.get("venue") or "Dallas"
-            mdate = (fixture.get("date", "")[:10] if fixture.get("date") else date_str)
+            mdate = fixture.get("date", "")[:10] or date_str
             status = (fixture.get("sofascore_status") or fixture.get("status") or "").strip()
 
             if status:
@@ -815,9 +770,10 @@ if "Today" in mode:
                 except Exception as exc:
                     st.error(f"Prediction failed: {exc}")
 
-else:  # Specific Match
+# ── Specific match ─────────────────────────────────────────────────────
+else:
     if not home_input.strip() or not away_input.strip():
-        st.info("Enter both team names in the sidebar to start.")
+        st.info("Enter both team names in the sidebar.")
     else:
         h = home_input.strip()
         a = away_input.strip()
