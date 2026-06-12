@@ -1,0 +1,220 @@
+"""
+Main prediction engine.
+Orchestrates all data collection and model computation for a match.
+"""
+import threading
+from datetime import date
+from typing import Dict, List, Optional, Tuple
+from collectors.data_aggregator import DataAggregator
+from models.composite_model import compute_lambdas
+from models.elo_model import load_elo_ratings, update_elo, save_elo_ratings
+from prediction.markets import calculate_all_markets, find_value_bets
+from prediction.confidence import calculate_confidence
+
+
+class PredictionEngine:
+    def __init__(self):
+        self.aggregator = DataAggregator()
+        self.elo_ratings = load_elo_ratings()
+        self._lock = threading.RLock()
+
+    def predict_match(
+        self,
+        home_team: str,
+        away_team: str,
+        match_id: Optional[str] = None,
+        sofascore_id: Optional[int] = None,
+        venue_city: str = "Dallas",
+        match_date: Optional[str] = None,
+        bookmaker_odds: Optional[Dict] = None,
+        force_refresh: bool = False,
+    ) -> Dict:
+        """
+        Full prediction pipeline for a single match.
+        Returns complete prediction dict with all markets + confidence.
+        """
+        if force_refresh and match_id:
+            refreshed = self.aggregator.refresh_lineups(match_id)
+            if refreshed:
+                pass  # data_aggregator updates cache
+
+        # Collect all data
+        data = self.aggregator.get_match_full_data(
+            home_team, away_team, match_id, sofascore_id=sofascore_id
+        )
+
+        # H2H data
+        h2h = self.aggregator.get_h2h_history(home_team, away_team)
+        data["h2h"] = h2h
+
+        # Weather for match venue
+        m_date = match_date or date.today().isoformat()
+        weather = self.aggregator.weather.get_match_weather(venue_city, m_date)
+        data["weather"] = weather
+        weather_impact = weather.get("impact_factor", 1.0) if weather else 1.0
+
+        # Compute lambdas
+        lam_home, lam_away, diagnostics = compute_lambdas(
+            home_team=home_team,
+            away_team=away_team,
+            home_form=data["home_form"],
+            away_form=data["away_form"],
+            home_lineup=data["lineups"]["home"],
+            away_lineup=data["lineups"]["away"],
+            home_news=data["home_news"],
+            away_news=data["away_news"],
+            weather_impact=weather_impact,
+            is_neutral=True,  # FIFA 2026 in USA/Canada/Mexico — mostly neutral
+            elo_ratings=self.elo_ratings,
+        )
+
+        # Calculate all markets
+        markets = calculate_all_markets(lam_home, lam_away)
+
+        # Use auto-fetched Sofascore odds if no manual odds were provided
+        auto_odds = data.get("bookmaker_odds")
+        effective_odds = bookmaker_odds or auto_odds
+
+        # Value bets
+        value_bets = []
+        if effective_odds:
+            value_bets = find_value_bets(markets, effective_odds)
+
+        # Confidence scoring
+        has_news = bool(
+            data["home_news"].get("article_count", 0) or
+            data["away_news"].get("article_count", 0)
+        )
+        confidence = calculate_confidence(
+            markets=markets,
+            diagnostics=diagnostics,
+            home_form=data["home_form"],
+            away_form=data["away_form"],
+            home_lineup=data["lineups"]["home"],
+            away_lineup=data["lineups"]["away"],
+            h2h=h2h,
+            has_news=has_news,
+            weather=weather,
+            lineup_confirmed=data["lineups"].get("confirmed", False),
+            has_bookmaker_odds=bool(effective_odds),
+        )
+
+        return {
+            "home_team": home_team,
+            "away_team": away_team,
+            "match_id": match_id,
+            "sofascore_id": sofascore_id,
+            "venue_city": venue_city,
+            "date": m_date,
+            "markets": markets,
+            "diagnostics": diagnostics,
+            "confidence": confidence,
+            "value_bets": value_bets,
+            "bookmaker_odds_source": "manual" if bookmaker_odds else ("sofascore" if auto_odds else None),
+            "data": {
+                "home_form_count": len(data["home_form"]),
+                "away_form_count": len(data["away_form"]),
+                "h2h_count": len(h2h),
+                "has_lineups": bool(data["lineups"]["home"]),
+                "lineup_confirmed": data["lineups"].get("confirmed", False),
+                "home_formation": data["lineups"].get("home_formation", ""),
+                "away_formation": data["lineups"].get("away_formation", ""),
+                "home_lineup": data["lineups"]["home"],
+                "away_lineup": data["lineups"]["away"],
+                "weather": weather,
+                "home_news": data["home_news"],
+                "away_news": data["away_news"],
+                "missing_home_players": diagnostics.get("home_player_impact", {}).get("missing_key_players", []),
+                "missing_away_players": diagnostics.get("away_player_impact", {}).get("missing_key_players", []),
+                "data_sources": data.get("data_sources", []),
+            },
+        }
+
+    def predict_today(
+        self,
+        bookmaker_odds_map: Optional[Dict] = None,
+        target_date: Optional[date] = None,
+    ) -> List[Dict]:
+        """Predict all FIFA 2026 matches for today."""
+        fixtures = self.aggregator.get_today_matches(target_date)
+        if not fixtures:
+            return []
+
+        predictions = []
+        for fixture in fixtures:
+            home = fixture.get("home_team", "")
+            away = fixture.get("away_team", "")
+            if not home or not away:
+                continue
+
+            match_odds = None
+            if bookmaker_odds_map:
+                key = f"{home.lower()}_{away.lower()}"
+                match_odds = bookmaker_odds_map.get(key)
+
+            try:
+                pred = self.predict_match(
+                    home_team=home,
+                    away_team=away,
+                    match_id=str(fixture.get("id", "")),
+                    sofascore_id=fixture.get("sofascore_id"),
+                    venue_city=fixture.get("city", "Dallas"),
+                    match_date=fixture.get("date", "")[:10] if fixture.get("date") else None,
+                    bookmaker_odds=match_odds,
+                )
+                pred["fixture"] = fixture
+                predictions.append(pred)
+            except Exception as e:
+                predictions.append({
+                    "home_team": home,
+                    "away_team": away,
+                    "error": str(e),
+                    "fixture": fixture,
+                })
+
+        return predictions
+
+    def update_elo_from_result(
+        self,
+        home_team: str,
+        away_team: str,
+        home_goals: int,
+        away_goals: int,
+        stage: str = "group_stage",
+    ) -> None:
+        """Update ELO ratings after a match result is known."""
+        with self._lock:
+            self.elo_ratings = update_elo(
+                self.elo_ratings, home_team, away_team,
+                home_goals, away_goals, stage
+            )
+            save_elo_ratings(self.elo_ratings)
+
+    def monitor_lineup_changes(
+        self,
+        match_id: str,
+        home_team: str,
+        away_team: str,
+        previous_prediction: Dict,
+    ) -> Optional[Dict]:
+        """
+        Check for lineup changes and re-predict if they occurred.
+        Returns updated prediction if lineups changed, else None.
+        """
+        new_data = self.aggregator.refresh_lineups(match_id)
+        if not new_data:
+            return None
+
+        old_lineup_home = {p.get("name") for p in previous_prediction.get("data", {}).get("home_lineup", [])}
+        old_lineup_away = {p.get("name") for p in previous_prediction.get("data", {}).get("away_lineup", [])}
+        new_lineup_home = {p.get("name") for p in new_data.get("lineups", {}).get("home", [])}
+        new_lineup_away = {p.get("name") for p in new_data.get("lineups", {}).get("away", [])}
+
+        if old_lineup_home != new_lineup_home or old_lineup_away != new_lineup_away:
+            return self.predict_match(
+                home_team=home_team,
+                away_team=away_team,
+                match_id=match_id,
+                force_refresh=False,
+            )
+        return None

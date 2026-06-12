@@ -1,0 +1,233 @@
+"""
+Betting market probability calculator.
+Computes all major markets from Poisson score matrix.
+"""
+import math
+import numpy as np
+from typing import Dict, List, Tuple
+from models.poisson_model import (
+    build_score_matrix, home_win_prob, draw_prob, away_win_prob,
+    btts_yes, btts_no, over_prob, under_prob,
+    asian_handicap_probs, correct_score_probs,
+    first_goal_probs, halftime_probs,
+)
+from config import MAX_GOALS
+
+
+ASIAN_TOTAL_LINES = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5]
+ASIAN_HANDICAP_LINES = [
+    -1.5, -1.25, -1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5
+]
+
+
+def prob_to_odds(prob: float) -> float:
+    """Convert raw probability to decimal odds (no margin)."""
+    if prob <= 0:
+        return 999.0
+    return round(1.0 / prob, 2)
+
+
+def asian_line_probs(matrix: np.ndarray, line: float) -> Tuple[float, float]:
+    """
+    Asian lines use quarter-ball splits for .25 and .75 lines.
+    e.g. 2.25 = half at 2.0 (push if exact) + half at 2.5
+    """
+    if line % 0.5 == 0:
+        # Full line or half line — standard
+        over = over_prob(matrix, line)
+        under = under_prob(matrix, line)
+        return round(over, 4), round(under, 4)
+    else:
+        # Quarter line — split between adjacent full/half lines
+        lower = math.floor(line * 2) / 2  # e.g. 2.75 -> 2.5
+        upper = lower + 0.5               # e.g. 2.75 -> 3.0
+
+        over_l = over_prob(matrix, lower)
+        under_l = under_prob(matrix, lower)
+        # At lower line (push = remainder)
+        push_l = 1.0 - over_l - under_l
+
+        over_u = over_prob(matrix, upper)
+        under_u = under_prob(matrix, upper)
+
+        # Quarter-line = average: half stake on lower, half on upper
+        # Over: win half if over lower, win full if over upper
+        # Under: win half if under upper, win full if under lower
+        over_combined = (over_l * 0.5 + push_l * 0.0 + under_l * 0.0) + (over_u * 0.5)
+        under_combined = (under_u * 0.5 + push_l * 0.0 + over_u * 0.0) + (under_l * 0.5)
+
+        # Normalize
+        total = over_combined + under_combined
+        if total > 0:
+            over_combined /= total
+            under_combined /= total
+
+        return round(over_combined, 4), round(under_combined, 4)
+
+
+def calculate_all_markets(lam_home: float, lam_away: float) -> Dict:
+    """
+    Calculate probabilities for all major betting markets.
+    Returns a nested dict with raw probabilities and decimal odds.
+    """
+    matrix = build_score_matrix(lam_home, lam_away, MAX_GOALS)
+
+    # 1x2
+    hw = home_win_prob(matrix)
+    dr = draw_prob(matrix)
+    aw = away_win_prob(matrix)
+
+    # Normalise (should already sum to ~1 but floating point)
+    total_1x2 = hw + dr + aw
+    hw /= total_1x2
+    dr /= total_1x2
+    aw /= total_1x2
+
+    # BTTS
+    btts_y = btts_yes(matrix)
+    btts_n = btts_no(matrix)
+
+    # Asian Total lines
+    asian_totals = {}
+    for line in ASIAN_TOTAL_LINES:
+        over_p, under_p = asian_line_probs(matrix, line)
+        asian_totals[line] = {
+            "over": {"prob": over_p, "odds": prob_to_odds(over_p)},
+            "under": {"prob": under_p, "odds": prob_to_odds(under_p)},
+        }
+
+    # Asian Handicap (home perspective)
+    asian_handicaps = {}
+    for h in ASIAN_HANDICAP_LINES:
+        hp, push, ap = asian_handicap_probs(matrix, h)
+        total_ah = hp + ap + push
+        if total_ah > 0:
+            hp /= total_ah; ap /= total_ah; push /= total_ah
+        asian_handicaps[h] = {
+            "home": {"prob": round(hp, 4), "odds": prob_to_odds(hp)},
+            "push": round(push, 4),
+            "away": {"prob": round(ap, 4), "odds": prob_to_odds(ap)},
+        }
+
+    # Double Chance
+    dc_home_draw = round(hw + dr, 4)
+    dc_away_draw = round(aw + dr, 4)
+    dc_home_away = round(hw + aw, 4)
+
+    # Draw No Bet
+    dnb_total = hw + aw
+    dnb_home = round(hw / dnb_total, 4) if dnb_total > 0 else 0.5
+    dnb_away = round(aw / dnb_total, 4) if dnb_total > 0 else 0.5
+
+    # Correct Scores
+    cs = correct_score_probs(matrix, top_n=15)
+
+    # First Goal
+    fg = first_goal_probs(lam_home, lam_away)
+
+    # Halftime Result
+    ht = halftime_probs(lam_home, lam_away)
+
+    # 1x2 BTTS combined
+    combined = {}
+    for outcome, ow in [("home", hw), ("draw", dr), ("away", aw)]:
+        combined[f"{outcome}_btts_yes"] = round(ow * btts_y, 4)
+        combined[f"{outcome}_btts_no"] = round(ow * btts_n, 4)
+
+    return {
+        "lam_home": lam_home,
+        "lam_away": lam_away,
+        "1x2": {
+            "home": {"prob": round(hw, 4), "odds": prob_to_odds(hw)},
+            "draw": {"prob": round(dr, 4), "odds": prob_to_odds(dr)},
+            "away": {"prob": round(aw, 4), "odds": prob_to_odds(aw)},
+        },
+        "btts": {
+            "yes": {"prob": round(btts_y, 4), "odds": prob_to_odds(btts_y)},
+            "no": {"prob": round(btts_n, 4), "odds": prob_to_odds(btts_n)},
+        },
+        "asian_total": asian_totals,
+        "asian_handicap": asian_handicaps,
+        "double_chance": {
+            "home_draw": {"prob": dc_home_draw, "odds": prob_to_odds(dc_home_draw)},
+            "away_draw": {"prob": dc_away_draw, "odds": prob_to_odds(dc_away_draw)},
+            "home_away": {"prob": dc_home_away, "odds": prob_to_odds(dc_home_away)},
+        },
+        "draw_no_bet": {
+            "home": {"prob": dnb_home, "odds": prob_to_odds(dnb_home)},
+            "away": {"prob": dnb_away, "odds": prob_to_odds(dnb_away)},
+        },
+        "correct_score": cs,
+        "first_goal": {
+            "home": {"prob": fg["home_first"], "odds": prob_to_odds(fg["home_first"])},
+            "none": {"prob": fg["no_goal"], "odds": prob_to_odds(fg["no_goal"])},
+            "away": {"prob": fg["away_first"], "odds": prob_to_odds(fg["away_first"])},
+        },
+        "halftime": {
+            "home": {"prob": ht["home"], "odds": prob_to_odds(ht["home"])},
+            "draw": {"prob": ht["draw"], "odds": prob_to_odds(ht["draw"])},
+            "away": {"prob": ht["away"], "odds": prob_to_odds(ht["away"])},
+        },
+        "combined_1x2_btts": combined,
+    }
+
+
+def find_value_bets(markets: Dict, bookmaker_odds: Dict) -> List[Dict]:
+    """
+    Compare model odds vs bookmaker odds to identify value bets.
+    A value bet is where our fair odds > bookmaker odds (model probability > implied probability).
+    """
+    value_bets = []
+
+    def check_value(market_name: str, selection: str, model_prob: float, bookie_odds: float):
+        implied_prob = 1.0 / bookie_odds if bookie_odds > 0 else 1.0
+        edge = model_prob - implied_prob
+        if edge > 0.03:  # at least 3% edge
+            ev = (model_prob * (bookie_odds - 1)) - (1 - model_prob)
+            value_bets.append({
+                "market": market_name,
+                "selection": selection,
+                "model_prob": round(model_prob, 4),
+                "model_odds": prob_to_odds(model_prob),
+                "bookie_odds": bookie_odds,
+                "implied_prob": round(implied_prob, 4),
+                "edge_pct": round(edge * 100, 2),
+                "expected_value": round(ev, 4),
+            })
+
+    # 1X2
+    if "1x2" in bookmaker_odds:
+        check_value("1X2", "Home", markets["1x2"]["home"]["prob"], bookmaker_odds["1x2"].get("home", 999))
+        check_value("1X2", "Draw", markets["1x2"]["draw"]["prob"], bookmaker_odds["1x2"].get("draw", 999))
+        check_value("1X2", "Away", markets["1x2"]["away"]["prob"], bookmaker_odds["1x2"].get("away", 999))
+
+    # BTTS
+    if "btts" in bookmaker_odds:
+        check_value("BTTS", "Yes", markets["btts"]["yes"]["prob"], bookmaker_odds["btts"].get("yes", 999))
+        check_value("BTTS", "No", markets["btts"]["no"]["prob"], bookmaker_odds["btts"].get("no", 999))
+
+    # Draw No Bet (Sofascore key: 'dnb')
+    dnb_odds = bookmaker_odds.get("dnb") or bookmaker_odds.get("draw_no_bet") or {}
+    if dnb_odds:
+        check_value("DNB", "Home", markets["draw_no_bet"]["home"]["prob"], dnb_odds.get("home", 999))
+        check_value("DNB", "Away", markets["draw_no_bet"]["away"]["prob"], dnb_odds.get("away", 999))
+
+    # Double Chance (Sofascore keys: home_draw / draw_away / home_away)
+    dc_odds = bookmaker_odds.get("double_chance") or {}
+    if dc_odds:
+        check_value("DC", "1X", markets["double_chance"]["home_draw"]["prob"],
+                    dc_odds.get("home_draw", 999))
+        check_value("DC", "X2", markets["double_chance"]["away_draw"]["prob"],
+                    dc_odds.get("draw_away", 999))
+        check_value("DC", "12", markets["double_chance"]["home_away"]["prob"],
+                    dc_odds.get("home_away", 999))
+
+    # Halftime 1X2 (Sofascore key: 'ht_1x2')
+    ht_odds = bookmaker_odds.get("ht_1x2") or bookmaker_odds.get("halftime") or {}
+    if ht_odds:
+        check_value("HT 1X2", "Home", markets["halftime"]["home"]["prob"], ht_odds.get("home", 999))
+        check_value("HT 1X2", "Draw", markets["halftime"]["draw"]["prob"], ht_odds.get("draw", 999))
+        check_value("HT 1X2", "Away", markets["halftime"]["away"]["prob"], ht_odds.get("away", 999))
+
+    value_bets.sort(key=lambda x: x["edge_pct"], reverse=True)
+    return value_bets
