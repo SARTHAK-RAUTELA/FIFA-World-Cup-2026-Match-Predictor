@@ -30,6 +30,7 @@ ESPN_BASE = "https://site.api.espn.com/apis/site/v2/sports/soccer"
 SOFASCORE_BASE = "https://sportapi7.p.rapidapi.com"
 FOOTBALL_STANDINGS_BASE = "https://api-football-standings.azharimm.site"
 ALLSPORTS_BASE = "https://apiv2.allsportsapi.com/football"
+WORLDCUP26_BASE = "https://worldcup26.ir/get"
 
 # ESPN league slugs to try for FIFA 2026
 ESPN_WORLD_CUP_SLUGS = [

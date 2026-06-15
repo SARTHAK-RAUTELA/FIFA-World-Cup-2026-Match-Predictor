@@ -13,6 +13,8 @@ from collectors.news_collector import NewsCollector
 from collectors.weather_collector import WeatherCollector
 from collectors.sofascore_collector import SofascoreCollector
 from collectors.football_standings_collector import FootballStandingsCollector
+from collectors.worldcup26_collector import WorldCup26Collector
+import collectors.wc_results_collector as wc_results
 
 
 # Normalise different API team name spellings to a canonical name
@@ -62,7 +64,15 @@ class DataAggregator:
         self.weather = WeatherCollector()
         self.sofa = SofascoreCollector()
         self.standings_api = FootballStandingsCollector()
+        self.wc26 = WorldCup26Collector()
         self._lock = threading.RLock()
+        # Apply any WC 2026 match results to ELO ratings that haven't been applied yet
+        try:
+            applied = wc_results.apply_pending_elo_updates()
+            if applied:
+                pass  # ELO updated silently on startup
+        except Exception:
+            pass
 
     def get_today_matches(self, target_date: Optional[date] = None) -> List[Dict]:
         """Fetch today's FIFA 2026 matches from all available sources, merged."""
@@ -153,7 +163,41 @@ class DataAggregator:
             "data_sources": [],
         }
 
+        def _collect_wc_form():
+            """Highest-priority form: actual WC 2026 results from local file + worldcup26.ir."""
+            local_home = wc_results.get_team_wc_form(home_team)
+            local_away = wc_results.get_team_wc_form(away_team)
+            if local_home:
+                data["home_form"] = local_home
+                data["data_sources"].append("wc_results:home_form")
+            if local_away:
+                data["away_form"] = local_away
+                data["data_sources"].append("wc_results:away_form")
+
+            # Supplement with live worldcup26.ir results if local file has none
+            if not local_home or not local_away:
+                try:
+                    live_results = self.wc26.get_completed_results_as_form()
+                    if live_results and not data["home_form"]:
+                        home_live = [r for r in live_results
+                                     if _names_overlap(home_team, r.get("home_team", "")) or
+                                     _names_overlap(home_team, r.get("away_team", ""))]
+                        if home_live:
+                            data["home_form"] = home_live
+                            data["data_sources"].append("worldcup26.ir:home_form")
+                    if live_results and not data["away_form"]:
+                        away_live = [r for r in live_results
+                                     if _names_overlap(away_team, r.get("home_team", "")) or
+                                     _names_overlap(away_team, r.get("away_team", ""))]
+                        if away_live:
+                            data["away_form"] = away_live
+                            data["data_sources"].append("worldcup26.ir:away_form")
+                except Exception:
+                    pass
+
         def _collect_form_fd():
+            if data["home_form"] and data["away_form"]:
+                return  # WC results already satisfy form
             if not self.fd.is_configured:
                 return
             for code in ["WC", "PL", "CL"]:
@@ -278,7 +322,10 @@ class DataAggregator:
                 data["bookmaker_odds"] = odds
                 data["data_sources"].append("sofascore:odds")
 
-        # Run all collectors in parallel threads
+        # WC form is a local file read — run first so fd/sdb guards see it immediately
+        _collect_wc_form()
+
+        # Run remaining collectors in parallel threads
         threads = [
             threading.Thread(target=_collect_form_fd),
             threading.Thread(target=_collect_news),

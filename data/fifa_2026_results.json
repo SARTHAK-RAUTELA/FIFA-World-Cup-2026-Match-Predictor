@@ -1,0 +1,909 @@
+{
+  "_meta": {
+    "description": "FIFA World Cup 2026 match results \u2014 auto-loaded as form/historical data for future predictions",
+    "last_updated": "06/12/2026",
+    "source": "ESPN, NBC Sports, Al Jazeera, CBS Sports, SBS News",
+    "tournament": "FIFA World Cup 2026",
+    "hosts": [
+      "USA",
+      "Canada",
+      "Mexico"
+    ],
+    "total_matches": 104,
+    "matches_played": 12
+  },
+  "groups": {
+    "A": {
+      "teams": [
+        "Mexico",
+        "South Korea",
+        "Czech Republic",
+        "South Africa"
+      ]
+    },
+    "B": {
+      "teams": [
+        "Canada",
+        "Bosnia-Herzegovina",
+        "Qatar",
+        "Switzerland"
+      ]
+    },
+    "C": {
+      "teams": [
+        "Brazil",
+        "Morocco",
+        "Haiti",
+        "Scotland"
+      ]
+    },
+    "D": {
+      "teams": [
+        "USA",
+        "Paraguay",
+        "Australia",
+        "Turkey"
+      ]
+    },
+    "E": {
+      "teams": [
+        "Germany",
+        "Cura\u00e7ao",
+        "Ivory Coast",
+        "Ecuador"
+      ]
+    },
+    "F": {
+      "teams": [
+        "Netherlands",
+        "Japan",
+        "Sweden",
+        "Tunisia"
+      ]
+    },
+    "G": {
+      "teams": [
+        "Belgium",
+        "Egypt",
+        "Iran",
+        "New Zealand"
+      ]
+    },
+    "H": {
+      "teams": [
+        "Spain",
+        "Cabo Verde",
+        "Saudi Arabia",
+        "Uruguay"
+      ]
+    },
+    "I": {
+      "teams": [
+        "France",
+        "Senegal",
+        "Iraq",
+        "Norway"
+      ]
+    },
+    "J": {
+      "teams": [
+        "Argentina",
+        "Algeria",
+        "Austria",
+        "Jordan"
+      ]
+    },
+    "K": {
+      "teams": [
+        "Portugal",
+        "DR Congo",
+        "Uzbekistan",
+        "Colombia"
+      ]
+    },
+    "L": {
+      "teams": [
+        "England",
+        "Croatia",
+        "Ghana",
+        "Panama"
+      ]
+    }
+  },
+  "results": [
+    {
+      "match_id": "WC2026_A1",
+      "date": "2026-06-11",
+      "matchday": 1,
+      "group": "A",
+      "stage": "group_stage",
+      "home_team": "Mexico",
+      "away_team": "South Africa",
+      "home_goals": 2,
+      "away_goals": 0,
+      "result": "H",
+      "venue": "Estadio Azteca",
+      "city": "Mexico City",
+      "country": "Mexico",
+      "scorers": {
+        "home": [
+          "Juli\u00e1n Qui\u00f1ones (9')",
+          "Ra\u00fal Jim\u00e9nez"
+        ],
+        "away": []
+      },
+      "notes": "Tournament opening match. First goal scored by Juli\u00e1n Qui\u00f1ones in 9th minute."
+    },
+    {
+      "match_id": "WC2026_A2",
+      "date": "2026-06-11",
+      "matchday": 1,
+      "group": "A",
+      "stage": "group_stage",
+      "home_team": "South Korea",
+      "away_team": "Czech Republic",
+      "home_goals": 2,
+      "away_goals": 1,
+      "result": "H",
+      "venue": "Estadio Akron",
+      "city": "Guadalajara",
+      "country": "Mexico",
+      "scorers": {
+        "home": [
+          "Oh Hyeon-gyu",
+          "Hwang In-beom"
+        ],
+        "away": [
+          "Ladislav Krejc\u00ed"
+        ]
+      },
+      "notes": "Czech Republic scored first via header from Ladislav Krejc\u00ed. South Korea completed a comeback win."
+    },
+    {
+      "match_id": "WC2026_B1",
+      "date": "2026-06-12",
+      "matchday": 1,
+      "group": "B",
+      "stage": "group_stage",
+      "home_team": "Canada",
+      "away_team": "Bosnia-Herzegovina",
+      "home_goals": 1,
+      "away_goals": 1,
+      "result": "D",
+      "venue": "BMO Field",
+      "city": "Toronto",
+      "country": "Canada",
+      "scorers": {
+        "home": [
+          "Cyle Larin (78')"
+        ],
+        "away": [
+          "Nikola Vasilj assist"
+        ]
+      },
+      "notes": "Canada's first World Cup point on home soil. Substitute Cyle Larin scored equaliser in 78th minute."
+    },
+    {
+      "match_id": "WC2026_D1",
+      "date": "2026-06-12",
+      "matchday": 1,
+      "group": "D",
+      "stage": "group_stage",
+      "home_team": "USA",
+      "away_team": "Paraguay",
+      "home_goals": 4,
+      "away_goals": 1,
+      "result": "H",
+      "venue": "SoFi Stadium",
+      "city": "Los Angeles",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Folarin Balogun (x2)",
+          "Christian Pulisic",
+          "other"
+        ],
+        "away": []
+      },
+      "notes": "Dominant USA win. Folarin Balogun scored twice, Christian Pulisic strong performance."
+    },
+    {
+      "match_id": "WC2026_B2",
+      "date": "2026-06-13",
+      "matchday": 1,
+      "group": "B",
+      "stage": "group_stage",
+      "home_team": "Qatar",
+      "away_team": "Switzerland",
+      "home_goals": 1,
+      "away_goals": 1,
+      "result": "D",
+      "venue": "Levi's Stadium",
+      "city": "San Francisco Bay Area",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Qatar's first ever World Cup point. Dramatic late equaliser by Qatar."
+    },
+    {
+      "match_id": "WC2026_C1",
+      "date": "2026-06-13",
+      "matchday": 1,
+      "group": "C",
+      "stage": "group_stage",
+      "home_team": "Brazil",
+      "away_team": "Morocco",
+      "home_goals": 1,
+      "away_goals": 1,
+      "result": "D",
+      "venue": "MetLife Stadium",
+      "city": "New York/New Jersey",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Brazil held by strong Morocco defensive display."
+    },
+    {
+      "match_id": "WC2026_AUS_TUR",
+      "date": "06/13/2026",
+      "stage": "group_stage",
+      "home_team": "Australia",
+      "away_team": "Turkey",
+      "home_goals": 2,
+      "away_goals": 0,
+      "result": "H"
+    },
+    {
+      "match_id": "WC2026_HAI_SCO",
+      "date": "06/13/2026",
+      "stage": "group_stage",
+      "home_team": "Haiti",
+      "away_team": "Scotland",
+      "home_goals": 0,
+      "away_goals": 1,
+      "result": "A"
+    },
+    {
+      "match_id": "WC2026_IVO_ECU",
+      "date": "06/14/2026",
+      "stage": "group_stage",
+      "home_team": "Ivory Coast",
+      "away_team": "Ecuador",
+      "home_goals": 1,
+      "away_goals": 0,
+      "result": "H"
+    },
+    {
+      "match_id": "WC2026_GER_CUR",
+      "date": "06/14/2026",
+      "stage": "group_stage",
+      "home_team": "Germany",
+      "away_team": "Cura\u00e7ao",
+      "home_goals": 7,
+      "away_goals": 1,
+      "result": "H"
+    },
+    {
+      "match_id": "WC2026_SWE_TUN",
+      "date": "06/14/2026",
+      "stage": "group_stage",
+      "home_team": "Sweden",
+      "away_team": "Tunisia",
+      "home_goals": 5,
+      "away_goals": 1,
+      "result": "H"
+    },
+    {
+      "match_id": "WC2026_NET_JAP",
+      "date": "06/14/2026",
+      "stage": "group_stage",
+      "home_team": "Netherlands",
+      "away_team": "Japan",
+      "home_goals": 2,
+      "away_goals": 2,
+      "result": "D"
+    }
+  ],
+  "standings": {
+    "A": [
+      {
+        "team": "Mexico",
+        "played": 1,
+        "won": 1,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 2,
+        "ga": 0,
+        "gd": 2,
+        "pts": 3
+      },
+      {
+        "team": "South Korea",
+        "played": 1,
+        "won": 1,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 2,
+        "ga": 1,
+        "gd": 1,
+        "pts": 3
+      },
+      {
+        "team": "Czech Republic",
+        "played": 1,
+        "won": 0,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 1,
+        "ga": 2,
+        "gd": -1,
+        "pts": 0
+      },
+      {
+        "team": "South Africa",
+        "played": 1,
+        "won": 0,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 0,
+        "ga": 2,
+        "gd": -2,
+        "pts": 0
+      }
+    ],
+    "B": [
+      {
+        "team": "Canada",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 1
+      },
+      {
+        "team": "Bosnia-Herzegovina",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 1
+      },
+      {
+        "team": "Qatar",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 1
+      },
+      {
+        "team": "Switzerland",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 1
+      }
+    ],
+    "C": [
+      {
+        "team": "Brazil",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 1
+      },
+      {
+        "team": "Morocco",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 1
+      },
+      {
+        "team": "Haiti",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Scotland",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      }
+    ],
+    "D": [
+      {
+        "team": "USA",
+        "played": 1,
+        "won": 1,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 4,
+        "ga": 1,
+        "gd": 3,
+        "pts": 3
+      },
+      {
+        "team": "Paraguay",
+        "played": 1,
+        "won": 0,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 1,
+        "ga": 4,
+        "gd": -3,
+        "pts": 0
+      },
+      {
+        "team": "Australia",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Turkey",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      }
+    ],
+    "E": [
+      {
+        "team": "Germany",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Ivory Coast",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Ecuador",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Cura\u00e7ao",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      }
+    ],
+    "F": [
+      {
+        "team": "Netherlands",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Japan",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Sweden",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Tunisia",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      }
+    ],
+    "G": [
+      {
+        "team": "Belgium",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Egypt",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Iran",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "New Zealand",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      }
+    ],
+    "H": [
+      {
+        "team": "Spain",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Cabo Verde",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Saudi Arabia",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Uruguay",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      }
+    ],
+    "I": [
+      {
+        "team": "France",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Senegal",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Iraq",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Norway",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      }
+    ],
+    "J": [
+      {
+        "team": "Argentina",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Algeria",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Austria",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Jordan",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      }
+    ],
+    "K": [
+      {
+        "team": "Portugal",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "DR Congo",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Uzbekistan",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Colombia",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      }
+    ],
+    "L": [
+      {
+        "team": "England",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Croatia",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Ghana",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      },
+      {
+        "team": "Panama",
+        "played": 0,
+        "won": 0,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 0
+      }
+    ]
+  },
+  "elo_updates_needed": [
+    {
+      "home": "Mexico",
+      "away": "South Africa",
+      "hg": 2,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "South Korea",
+      "away": "Czech Republic",
+      "hg": 2,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Canada",
+      "away": "Bosnia-Herzegovina",
+      "hg": 1,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "USA",
+      "away": "Paraguay",
+      "hg": 4,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Qatar",
+      "away": "Switzerland",
+      "hg": 1,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Brazil",
+      "away": "Morocco",
+      "hg": 1,
+      "ag": 1,
+      "applied": true
+    }
+  ]
+}
