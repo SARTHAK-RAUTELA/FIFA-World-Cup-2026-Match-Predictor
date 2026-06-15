@@ -681,10 +681,15 @@ def _render_data_analysis(pred: Dict):
     with st.expander("Data Analysis & Model Breakdown", expanded=False):
         comp = conf["components"]
         c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Prediction Clarity", f"{comp['prediction_clarity']:.1f}%")
+        clarity_key = "favoritism_strength" if "favoritism_strength" in comp else "prediction_clarity"
+        c1.metric("Favoritism Strength", f"{comp[clarity_key]:.1f}%",
+                  help="How far the top outcome is above random chance. 0%=coin flip, 50%=strong fav, 100%=certain.")
         c2.metric("Data Quality",       f"{comp['data_quality']:.1f}%")
         c3.metric("Model Agreement",    f"{comp['model_agreement']:.1f}%")
         c4.metric("Lineup Certainty",   f"{comp['lineup_certainty']:.1f}%")
+        if comp.get("market_consensus", 50) != 50:
+            st.caption(f"Market consensus: {comp.get('market_consensus', 50):.0f}%"
+                       + (" ✓ agrees" if comp.get("market_consensus", 50) >= 60 else " ⚠ disagrees"))
         st.progress(min(conf["total"]/100, 1.0),
                     text=f"Overall: {conf['total']:.1f}%  (93% threshold)")
 

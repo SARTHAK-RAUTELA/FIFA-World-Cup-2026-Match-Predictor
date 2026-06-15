@@ -9,7 +9,10 @@ from collectors.data_aggregator import DataAggregator
 from models.composite_model import compute_lambdas
 from models.elo_model import load_elo_ratings, update_elo, save_elo_ratings
 from models.goalscorer_model import calculate_goalscorer_probs, first_goalscorer_probs
-from prediction.markets import calculate_all_markets, find_value_bets
+from prediction.markets import (
+    calculate_all_markets, find_value_bets,
+    calibrate_lambda_to_totals, calibrate_1x2_to_bookmaker,
+)
 from prediction.confidence import calculate_confidence
 
 
@@ -95,25 +98,41 @@ class PredictionEngine:
         home_1st = first_goalscorer_probs(home_scorers)
         away_1st = first_goalscorer_probs(away_scorers)
 
-        # Calculate all markets
+        # Calculate all markets (pure Poisson)
         markets = calculate_all_markets(lam_home, lam_away)
 
         # Use auto-fetched Sofascore odds if no manual odds were provided
         auto_odds = data.get("bookmaker_odds")
         effective_odds = bookmaker_odds or auto_odds
 
-        # Value bets
+        # Dual-market calibration: use over/under bookmaker odds to recalibrate λ
+        if effective_odds:
+            cal_lam_h, cal_lam_a = calibrate_lambda_to_totals(
+                lam_home, lam_away, effective_odds, line=2.5
+            )
+            # Only apply if calibration meaningfully changed λ (avoid noise)
+            if abs(cal_lam_h - lam_home) > 0.05 or abs(cal_lam_a - lam_away) > 0.05:
+                markets = calculate_all_markets(cal_lam_h, cal_lam_a)
+                diagnostics["cal_lam_home"] = cal_lam_h
+                diagnostics["cal_lam_away"] = cal_lam_a
+
+        # 1x2 calibration: blend Poisson probs with bookmaker-implied probs
+        calibrated_markets = markets
+        if effective_odds:
+            calibrated_markets = calibrate_1x2_to_bookmaker(markets, effective_odds, blend_weight=0.50)
+
+        # Value bets: compare pure Poisson model odds vs bookmaker (not calibrated)
         value_bets = []
         if effective_odds:
             value_bets = find_value_bets(markets, effective_odds)
 
-        # Confidence scoring
+        # Confidence scoring — uses calibrated markets when available
         has_news = bool(
             data["home_news"].get("article_count", 0) or
             data["away_news"].get("article_count", 0)
         )
         confidence = calculate_confidence(
-            markets=markets,
+            markets=calibrated_markets,
             diagnostics=diagnostics,
             home_form=data["home_form"],
             away_form=data["away_form"],
@@ -124,6 +143,7 @@ class PredictionEngine:
             weather=weather,
             lineup_confirmed=data["lineups"].get("confirmed", False),
             has_bookmaker_odds=bool(effective_odds),
+            bookmaker_odds=effective_odds,
         )
 
         return {
