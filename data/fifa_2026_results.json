@@ -1,8 +1,8 @@
 {
   "_meta": {
-    "description": "FIFA World Cup 2026 match results \u2014 auto-loaded as form/historical data for future predictions",
-    "last_updated": "06/12/2026",
-    "source": "ESPN, NBC Sports, Al Jazeera, CBS Sports, SBS News",
+    "description": "FIFA World Cup 2026 match results — auto-loaded as form/historical data for future predictions",
+    "last_updated": "2026-06-21",
+    "source": "ESPN, FIFA.com, Olympics.com, SBS News, CBS Sports, Yahoo Sports",
     "tournament": "FIFA World Cup 2026",
     "hosts": [
       "USA",
@@ -10,7 +10,12 @@
       "Mexico"
     ],
     "total_matches": 104,
-    "matches_played": 12
+    "matches_played": 38,
+    "matchday_status": {
+      "1": "complete",
+      "2": "partial (Groups G-H in progress today Jun 21, Groups I-L scheduled Jun 22-23)",
+      "3": "scheduled Jun 24-27"
+    }
   },
   "groups": {
     "A": {
@@ -48,7 +53,7 @@
     "E": {
       "teams": [
         "Germany",
-        "Cura\u00e7ao",
+        "Curaçao",
         "Ivory Coast",
         "Ecuador"
       ]
@@ -127,12 +132,12 @@
       "country": "Mexico",
       "scorers": {
         "home": [
-          "Juli\u00e1n Qui\u00f1ones (9')",
-          "Ra\u00fal Jim\u00e9nez"
+          "Julián Quiñones (9')",
+          "Raúl Jiménez"
         ],
         "away": []
       },
-      "notes": "Tournament opening match. First goal scored by Juli\u00e1n Qui\u00f1ones in 9th minute."
+      "notes": "Tournament opening match. First goal scored by Julián Quiñones in 9th minute."
     },
     {
       "match_id": "WC2026_A2",
@@ -154,10 +159,10 @@
           "Hwang In-beom"
         ],
         "away": [
-          "Ladislav Krejc\u00ed"
+          "Ladislav Krejcí"
         ]
       },
-      "notes": "Czech Republic scored first via header from Ladislav Krejc\u00ed. South Korea completed a comeback win."
+      "notes": "Czech Republic scored first via header from Ladislav Krejcí. South Korea completed a comeback win."
     },
     {
       "match_id": "WC2026_B1",
@@ -178,7 +183,7 @@
           "Cyle Larin (78')"
         ],
         "away": [
-          "Nikola Vasilj assist"
+          "Nikola Vasilj (assist)"
         ]
       },
       "notes": "Canada's first World Cup point on home soil. Substitute Cyle Larin scored equaliser in 78th minute."
@@ -199,9 +204,10 @@
       "country": "USA",
       "scorers": {
         "home": [
-          "Folarin Balogun (x2)",
+          "Folarin Balogun",
+          "Folarin Balogun",
           "Christian Pulisic",
-          "other"
+          "unknown"
         ],
         "away": []
       },
@@ -239,217 +245,1095 @@
       "away_goals": 1,
       "result": "D",
       "venue": "MetLife Stadium",
-      "city": "New York/New Jersey",
+      "city": "East Rutherford",
       "country": "USA",
       "scorers": {
-        "home": [],
-        "away": []
+        "home": [
+          "Vinicius Jr."
+        ],
+        "away": [
+          "Ismael Saibari (chip)"
+        ]
       },
-      "notes": "Brazil held by strong Morocco defensive display."
+      "notes": "Brazil held by strong Morocco defensive display. Saibari's sumptuous chip over Alisson was one of the best finishes of the first round."
     },
     {
-      "match_id": "WC2026_AUS_TUR",
-      "date": "06/13/2026",
+      "match_id": "WC2026_D2",
+      "date": "2026-06-13",
+      "matchday": 1,
+      "group": "D",
       "stage": "group_stage",
       "home_team": "Australia",
       "away_team": "Turkey",
       "home_goals": 2,
       "away_goals": 0,
-      "result": "H"
+      "result": "H",
+      "venue": "AT&T Stadium",
+      "city": "Dallas",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Australia solid 2-0 win over Turkey."
     },
     {
-      "match_id": "WC2026_HAI_SCO",
-      "date": "06/13/2026",
+      "match_id": "WC2026_C2",
+      "date": "2026-06-13",
+      "matchday": 1,
+      "group": "C",
       "stage": "group_stage",
       "home_team": "Haiti",
       "away_team": "Scotland",
       "home_goals": 0,
       "away_goals": 1,
-      "result": "A"
+      "result": "A",
+      "venue": "Arrowhead Stadium",
+      "city": "Kansas City",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Scotland win 1-0 vs Haiti."
     },
     {
-      "match_id": "WC2026_IVO_ECU",
-      "date": "06/14/2026",
+      "match_id": "WC2026_E1",
+      "date": "2026-06-14",
+      "matchday": 1,
+      "group": "E",
       "stage": "group_stage",
       "home_team": "Ivory Coast",
       "away_team": "Ecuador",
       "home_goals": 1,
       "away_goals": 0,
-      "result": "H"
+      "result": "H",
+      "venue": "Gillette Stadium",
+      "city": "Boston",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Ivory Coast 1-0 win over Ecuador."
     },
     {
-      "match_id": "WC2026_GER_CUR",
-      "date": "06/14/2026",
+      "match_id": "WC2026_E2",
+      "date": "2026-06-14",
+      "matchday": 1,
+      "group": "E",
       "stage": "group_stage",
       "home_team": "Germany",
-      "away_team": "Cura\u00e7ao",
+      "away_team": "Curaçao",
       "home_goals": 7,
       "away_goals": 1,
-      "result": "H"
+      "result": "H",
+      "venue": "Lincoln Financial Field",
+      "city": "Philadelphia",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Havertz (x2)",
+          "Gnabry",
+          "Undav",
+          "Kimmich",
+          "Müller",
+          "Wirtz"
+        ],
+        "away": [
+          "Juninho Bacuna"
+        ]
+      },
+      "notes": "Germany emphatic 7-1 thrashing of Curaçao. Tournament statement performance."
     },
     {
-      "match_id": "WC2026_SWE_TUN",
-      "date": "06/14/2026",
+      "match_id": "WC2026_F1",
+      "date": "2026-06-14",
+      "matchday": 1,
+      "group": "F",
       "stage": "group_stage",
       "home_team": "Sweden",
       "away_team": "Tunisia",
       "home_goals": 5,
       "away_goals": 1,
-      "result": "H"
+      "result": "H",
+      "venue": "Estadio BBVA",
+      "city": "Monterrey",
+      "country": "Mexico",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Sweden dominant 5-1 win over Tunisia."
     },
     {
-      "match_id": "WC2026_NET_JAP",
-      "date": "06/14/2026",
+      "match_id": "WC2026_F2",
+      "date": "2026-06-14",
+      "matchday": 1,
+      "group": "F",
       "stage": "group_stage",
       "home_team": "Netherlands",
       "away_team": "Japan",
       "home_goals": 2,
       "away_goals": 2,
-      "result": "D"
+      "result": "D",
+      "venue": "Rose Bowl",
+      "city": "Los Angeles",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Gakpo",
+          "Depay"
+        ],
+        "away": []
+      },
+      "notes": "Netherlands held 2-2 by Japan despite being heavy favourites. Japan impressive."
+    },
+    {
+      "match_id": "WC2026_G1",
+      "date": "2026-06-15",
+      "matchday": 1,
+      "group": "G",
+      "stage": "group_stage",
+      "home_team": "Belgium",
+      "away_team": "Egypt",
+      "home_goals": 1,
+      "away_goals": 1,
+      "result": "D",
+      "venue": "NRG Stadium",
+      "city": "Houston",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "All 4 Group G teams drew in matchday 1."
+    },
+    {
+      "match_id": "WC2026_G2",
+      "date": "2026-06-15",
+      "matchday": 1,
+      "group": "G",
+      "stage": "group_stage",
+      "home_team": "Iran",
+      "away_team": "New Zealand",
+      "home_goals": 2,
+      "away_goals": 2,
+      "result": "D",
+      "venue": "BC Place",
+      "city": "Vancouver",
+      "country": "Canada",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Iran 2-2 New Zealand. All Group G teams drew in matchday 1."
+    },
+    {
+      "match_id": "WC2026_H1",
+      "date": "2026-06-15",
+      "matchday": 1,
+      "group": "H",
+      "stage": "group_stage",
+      "home_team": "Spain",
+      "away_team": "Cabo Verde",
+      "home_goals": 0,
+      "away_goals": 0,
+      "result": "D",
+      "venue": "Mercedes-Benz Stadium",
+      "city": "Atlanta",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Surprise result. Spain held to 0-0 draw by Cabo Verde. Spain power rankings fell significantly."
+    },
+    {
+      "match_id": "WC2026_H2",
+      "date": "2026-06-15",
+      "matchday": 1,
+      "group": "H",
+      "stage": "group_stage",
+      "home_team": "Saudi Arabia",
+      "away_team": "Uruguay",
+      "home_goals": 1,
+      "away_goals": 1,
+      "result": "D",
+      "venue": "Hard Rock Stadium",
+      "city": "Miami",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Saudi Arabia and Uruguay share the points."
+    },
+    {
+      "match_id": "WC2026_I1",
+      "date": "2026-06-16",
+      "matchday": 1,
+      "group": "I",
+      "stage": "group_stage",
+      "home_team": "France",
+      "away_team": "Senegal",
+      "home_goals": 3,
+      "away_goals": 1,
+      "result": "H",
+      "venue": "Empower Field",
+      "city": "Denver",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Mbappé",
+          "Griezmann",
+          "unknown"
+        ],
+        "away": []
+      },
+      "notes": "France strong 3-1 win. Mbappé and Griezmann leading the attack."
+    },
+    {
+      "match_id": "WC2026_I2",
+      "date": "2026-06-16",
+      "matchday": 1,
+      "group": "I",
+      "stage": "group_stage",
+      "home_team": "Norway",
+      "away_team": "Iraq",
+      "home_goals": 4,
+      "away_goals": 1,
+      "result": "H",
+      "venue": "Camping World Stadium",
+      "city": "Orlando",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Haaland (x2)",
+          "Odegaard",
+          "unknown"
+        ],
+        "away": []
+      },
+      "notes": "Norway dominant 4-1. Erling Haaland brace makes Group I very competitive with France."
+    },
+    {
+      "match_id": "WC2026_J1",
+      "date": "2026-06-16",
+      "matchday": 1,
+      "group": "J",
+      "stage": "group_stage",
+      "home_team": "Argentina",
+      "away_team": "Algeria",
+      "home_goals": 3,
+      "away_goals": 0,
+      "result": "H",
+      "venue": "Allegiant Stadium",
+      "city": "Las Vegas",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Messi",
+          "Lautaro Martínez",
+          "Di María"
+        ],
+        "away": []
+      },
+      "notes": "Argentina impressive 3-0 win. Messi leads Argentina to power ranking #1 spot."
+    },
+    {
+      "match_id": "WC2026_J2",
+      "date": "2026-06-17",
+      "matchday": 1,
+      "group": "J",
+      "stage": "group_stage",
+      "home_team": "Austria",
+      "away_team": "Jordan",
+      "home_goals": 3,
+      "away_goals": 1,
+      "result": "H",
+      "venue": "Levi's Stadium",
+      "city": "Santa Clara",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Austria 3-1 win sets up tasty Group J clash with Argentina."
+    },
+    {
+      "match_id": "WC2026_K1",
+      "date": "2026-06-17",
+      "matchday": 1,
+      "group": "K",
+      "stage": "group_stage",
+      "home_team": "Portugal",
+      "away_team": "DR Congo",
+      "home_goals": 1,
+      "away_goals": 1,
+      "result": "D",
+      "venue": "NRG Stadium",
+      "city": "Houston",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Ronaldo (pen?)"
+        ],
+        "away": []
+      },
+      "notes": "Portugal stumble to a draw vs DR Congo. Portugal power rankings fell alongside Spain. National anthem shown before match."
+    },
+    {
+      "match_id": "WC2026_K2",
+      "date": "2026-06-17",
+      "matchday": 1,
+      "group": "K",
+      "stage": "group_stage",
+      "home_team": "Colombia",
+      "away_team": "Uzbekistan",
+      "home_goals": 3,
+      "away_goals": 1,
+      "result": "H",
+      "venue": "Estadio Azteca",
+      "city": "Mexico City",
+      "country": "Mexico",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Colombia dominant 3-1 win. Strong Group K opener for Colombia."
+    },
+    {
+      "match_id": "WC2026_L1",
+      "date": "2026-06-17",
+      "matchday": 1,
+      "group": "L",
+      "stage": "group_stage",
+      "home_team": "England",
+      "away_team": "Croatia",
+      "home_goals": 4,
+      "away_goals": 2,
+      "result": "H",
+      "venue": "AT&T Stadium",
+      "city": "Dallas",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Kane",
+          "Saka",
+          "Bellingham",
+          "unknown"
+        ],
+        "away": [
+          "Modrić",
+          "unknown"
+        ]
+      },
+      "notes": "England beat Croatia 4-2 in a high-scoring Group L opener. Kane and Bellingham impressive."
+    },
+    {
+      "match_id": "WC2026_L2",
+      "date": "2026-06-17",
+      "matchday": 1,
+      "group": "L",
+      "stage": "group_stage",
+      "home_team": "Ghana",
+      "away_team": "Panama",
+      "home_goals": 1,
+      "away_goals": 0,
+      "result": "H",
+      "venue": "BMO Field",
+      "city": "Toronto",
+      "country": "Canada",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Ghana narrow 1-0 win over Panama."
+    },
+    {
+      "match_id": "WC2026_A3",
+      "date": "2026-06-18",
+      "matchday": 2,
+      "group": "A",
+      "stage": "group_stage",
+      "home_team": "Czech Republic",
+      "away_team": "South Africa",
+      "home_goals": 1,
+      "away_goals": 1,
+      "result": "D",
+      "venue": "Estadio Akron",
+      "city": "Guadalajara",
+      "country": "Mexico",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Both Czech Republic and South Africa share the points. Both still in contention."
+    },
+    {
+      "match_id": "WC2026_A4",
+      "date": "2026-06-18",
+      "matchday": 2,
+      "group": "A",
+      "stage": "group_stage",
+      "home_team": "Mexico",
+      "away_team": "South Korea",
+      "home_goals": 1,
+      "away_goals": 0,
+      "result": "H",
+      "venue": "Estadio Azteca",
+      "city": "Mexico City",
+      "country": "Mexico",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Mexico defeat South Korea and become first team to qualify for the knockout stage. Mexico wins Group A."
+    },
+    {
+      "match_id": "WC2026_B3",
+      "date": "2026-06-18",
+      "matchday": 2,
+      "group": "B",
+      "stage": "group_stage",
+      "home_team": "Switzerland",
+      "away_team": "Bosnia-Herzegovina",
+      "home_goals": 4,
+      "away_goals": 1,
+      "result": "H",
+      "venue": "Levi's Stadium",
+      "city": "San Francisco Bay Area",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Switzerland dominant 4-1 win over Bosnia."
+    },
+    {
+      "match_id": "WC2026_B4",
+      "date": "2026-06-18",
+      "matchday": 2,
+      "group": "B",
+      "stage": "group_stage",
+      "home_team": "Canada",
+      "away_team": "Qatar",
+      "home_goals": 6,
+      "away_goals": 0,
+      "result": "H",
+      "venue": "BMO Field",
+      "city": "Toronto",
+      "country": "Canada",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Canada rout Qatar 6-0 on home soil. Emphatic statement win."
+    },
+    {
+      "match_id": "WC2026_C3",
+      "date": "2026-06-19",
+      "matchday": 2,
+      "group": "C",
+      "stage": "group_stage",
+      "home_team": "Brazil",
+      "away_team": "Haiti",
+      "home_goals": 3,
+      "away_goals": 0,
+      "result": "H",
+      "venue": "Rose Bowl",
+      "city": "Los Angeles",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Vinicius Jr.",
+          "Rodrygo",
+          "unknown"
+        ],
+        "away": []
+      },
+      "notes": "Brazil beat Haiti 3-0. Haiti become first team eliminated. Brazil advance."
+    },
+    {
+      "match_id": "WC2026_C4",
+      "date": "2026-06-19",
+      "matchday": 2,
+      "group": "C",
+      "stage": "group_stage",
+      "home_team": "Morocco",
+      "away_team": "Scotland",
+      "home_goals": 1,
+      "away_goals": 0,
+      "result": "H",
+      "venue": "MetLife Stadium",
+      "city": "East Rutherford",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Morocco 1-0 win over Scotland. Morocco advance alongside Brazil."
+    },
+    {
+      "match_id": "WC2026_D3",
+      "date": "2026-06-19",
+      "matchday": 2,
+      "group": "D",
+      "stage": "group_stage",
+      "home_team": "USA",
+      "away_team": "Australia",
+      "home_goals": 2,
+      "away_goals": 0,
+      "result": "H",
+      "venue": "SoFi Stadium",
+      "city": "Los Angeles",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Balogun",
+          "unknown"
+        ],
+        "away": []
+      },
+      "notes": "USA 2-0 win. First USA to win their group since 2010. Pulisic injury concern (calf, day-to-day)."
+    },
+    {
+      "match_id": "WC2026_D4",
+      "date": "2026-06-19",
+      "matchday": 2,
+      "group": "D",
+      "stage": "group_stage",
+      "home_team": "Paraguay",
+      "away_team": "Turkey",
+      "home_goals": 1,
+      "away_goals": 0,
+      "result": "H",
+      "venue": "AT&T Stadium",
+      "city": "Dallas",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Paraguay beat Turkey 1-0 to stay alive in Group D."
+    },
+    {
+      "match_id": "WC2026_E3",
+      "date": "2026-06-20",
+      "matchday": 2,
+      "group": "E",
+      "stage": "group_stage",
+      "home_team": "Germany",
+      "away_team": "Ivory Coast",
+      "home_goals": 2,
+      "away_goals": 1,
+      "result": "H",
+      "venue": "Empower Field",
+      "city": "Denver",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Deniz Undav (2)"
+        ],
+        "away": [
+          "Franck Kessié (30')"
+        ]
+      },
+      "notes": "Germany confirm knockouts place. Ivory Coast led 1-0 via Kessié before sub Undav scored brace to steal late win in stoppage time. Dramatic finish."
+    },
+    {
+      "match_id": "WC2026_E4",
+      "date": "2026-06-21",
+      "matchday": 2,
+      "group": "E",
+      "stage": "group_stage",
+      "home_team": "Ecuador",
+      "away_team": "Curaçao",
+      "home_goals": 0,
+      "away_goals": 0,
+      "result": "D",
+      "venue": "Arrowhead Stadium",
+      "city": "Kansas City",
+      "country": "USA",
+      "scorers": {
+        "home": [],
+        "away": []
+      },
+      "notes": "Ecuador 0-0 Curaçao. Both teams still in the hunt for qualification. Tense goalless draw. Previous DB entry (0-1 Curaçao) was incorrect — corrected Jun 21."
+    },
+    {
+      "match_id": "WC2026_F3",
+      "date": "2026-06-20",
+      "matchday": 2,
+      "group": "F",
+      "stage": "group_stage",
+      "home_team": "Netherlands",
+      "away_team": "Sweden",
+      "home_goals": 5,
+      "away_goals": 1,
+      "result": "H",
+      "venue": "SoFi Stadium",
+      "city": "Los Angeles",
+      "country": "USA",
+      "scorers": {
+        "home": [
+          "Cody Gakpo (2)",
+          "Depay",
+          "unknown",
+          "unknown"
+        ],
+        "away": []
+      },
+      "notes": "Netherlands rout Sweden 5-1. Cody Gakpo brace. Netherlands seize control of Group F."
+    }
+  ],
+  "upcoming_tonight_jun21": [
+    {
+      "match_id": "WC2026_H4",
+      "group": "H",
+      "home_team": "Uruguay",
+      "away_team": "Cabo Verde",
+      "status": "tonight 6pm ET — not yet played"
+    },
+    {
+      "match_id": "WC2026_G4",
+      "group": "G",
+      "home_team": "New Zealand",
+      "away_team": "Egypt",
+      "status": "tonight 9pm ET — not yet played"
+    }
+  ],
+  "upcoming_jun22_23": [
+    {
+      "group": "I",
+      "matches": [
+        "France vs Iraq",
+        "Senegal vs Norway"
+      ],
+      "date": "2026-06-22"
+    },
+    {
+      "group": "J",
+      "matches": [
+        "Argentina vs Austria",
+        "Algeria vs Jordan"
+      ],
+      "date": "2026-06-22"
+    },
+    {
+      "group": "K",
+      "matches": [
+        "Portugal vs Uzbekistan",
+        "DR Congo vs Colombia"
+      ],
+      "date": "2026-06-23"
+    },
+    {
+      "group": "L",
+      "matches": [
+        "England vs Ghana",
+        "Croatia vs Panama"
+      ],
+      "date": "2026-06-23"
     }
   ],
   "standings": {
     "A": [
       {
         "team": "Mexico",
-        "played": 1,
-        "won": 1,
+        "played": 2,
+        "won": 2,
         "drawn": 0,
         "lost": 0,
-        "gf": 2,
+        "gf": 3,
         "ga": 0,
-        "gd": 2,
-        "pts": 3
+        "gd": 3,
+        "pts": 6,
+        "status": "QUALIFIED"
       },
       {
         "team": "South Korea",
-        "played": 1,
+        "played": 2,
         "won": 1,
         "drawn": 0,
-        "lost": 0,
+        "lost": 1,
         "gf": 2,
-        "ga": 1,
-        "gd": 1,
+        "ga": 2,
+        "gd": 0,
         "pts": 3
       },
       {
         "team": "Czech Republic",
-        "played": 1,
+        "played": 2,
         "won": 0,
-        "drawn": 0,
+        "drawn": 1,
         "lost": 1,
-        "gf": 1,
-        "ga": 2,
+        "gf": 2,
+        "ga": 3,
         "gd": -1,
-        "pts": 0
+        "pts": 1
       },
       {
         "team": "South Africa",
-        "played": 1,
+        "played": 2,
         "won": 0,
-        "drawn": 0,
+        "drawn": 1,
         "lost": 1,
-        "gf": 0,
-        "ga": 2,
+        "gf": 1,
+        "ga": 3,
         "gd": -2,
-        "pts": 0
+        "pts": 1
       }
     ],
     "B": [
       {
         "team": "Canada",
-        "played": 1,
-        "won": 0,
+        "played": 2,
+        "won": 1,
         "drawn": 1,
         "lost": 0,
-        "gf": 1,
+        "gf": 7,
         "ga": 1,
-        "gd": 0,
-        "pts": 1
+        "gd": 6,
+        "pts": 4
+      },
+      {
+        "team": "Switzerland",
+        "played": 2,
+        "won": 1,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 5,
+        "ga": 2,
+        "gd": 3,
+        "pts": 4
       },
       {
         "team": "Bosnia-Herzegovina",
-        "played": 1,
+        "played": 2,
         "won": 0,
         "drawn": 1,
-        "lost": 0,
-        "gf": 1,
-        "ga": 1,
-        "gd": 0,
+        "lost": 1,
+        "gf": 2,
+        "ga": 5,
+        "gd": -3,
         "pts": 1
       },
       {
         "team": "Qatar",
-        "played": 1,
+        "played": 2,
         "won": 0,
         "drawn": 1,
-        "lost": 0,
+        "lost": 1,
         "gf": 1,
-        "ga": 1,
-        "gd": 0,
-        "pts": 1
-      },
-      {
-        "team": "Switzerland",
-        "played": 1,
-        "won": 0,
-        "drawn": 1,
-        "lost": 0,
-        "gf": 1,
-        "ga": 1,
-        "gd": 0,
+        "ga": 7,
+        "gd": -6,
         "pts": 1
       }
     ],
     "C": [
       {
         "team": "Brazil",
-        "played": 1,
-        "won": 0,
+        "played": 2,
+        "won": 1,
         "drawn": 1,
         "lost": 0,
-        "gf": 1,
+        "gf": 4,
         "ga": 1,
-        "gd": 0,
-        "pts": 1
+        "gd": 3,
+        "pts": 4,
+        "status": "QUALIFIED"
       },
       {
         "team": "Morocco",
-        "played": 1,
-        "won": 0,
+        "played": 2,
+        "won": 1,
         "drawn": 1,
         "lost": 0,
-        "gf": 1,
+        "gf": 2,
         "ga": 1,
-        "gd": 0,
-        "pts": 1
-      },
-      {
-        "team": "Haiti",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
+        "gd": 1,
+        "pts": 4,
+        "status": "QUALIFIED"
       },
       {
         "team": "Scotland",
-        "played": 0,
+        "played": 2,
+        "won": 1,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 3
+      },
+      {
+        "team": "Haiti",
+        "played": 2,
         "won": 0,
         "drawn": 0,
-        "lost": 0,
+        "lost": 2,
         "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
+        "ga": 4,
+        "gd": -4,
+        "pts": 0,
+        "status": "ELIMINATED"
       }
     ],
     "D": [
       {
         "team": "USA",
+        "played": 2,
+        "won": 2,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 6,
+        "ga": 1,
+        "gd": 5,
+        "pts": 6,
+        "status": "QUALIFIED"
+      },
+      {
+        "team": "Australia",
+        "played": 2,
+        "won": 1,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 2,
+        "ga": 2,
+        "gd": 0,
+        "pts": 3
+      },
+      {
+        "team": "Paraguay",
+        "played": 2,
+        "won": 1,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 2,
+        "ga": 4,
+        "gd": -2,
+        "pts": 3
+      },
+      {
+        "team": "Turkey",
+        "played": 2,
+        "won": 0,
+        "drawn": 0,
+        "lost": 2,
+        "gf": 0,
+        "ga": 3,
+        "gd": -3,
+        "pts": 0
+      }
+    ],
+    "E": [
+      {
+        "team": "Germany",
+        "played": 2,
+        "won": 2,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 9,
+        "ga": 2,
+        "gd": 7,
+        "pts": 6,
+        "status": "QUALIFIED"
+      },
+      {
+        "team": "Ivory Coast",
+        "played": 2,
+        "won": 1,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 2,
+        "ga": 3,
+        "gd": -1,
+        "pts": 3
+      },
+      {
+        "team": "Curaçao",
+        "played": 2,
+        "won": 0,
+        "drawn": 1,
+        "lost": 1,
+        "gf": 1,
+        "ga": 8,
+        "gd": -7,
+        "pts": 1
+      },
+      {
+        "team": "Ecuador",
+        "played": 2,
+        "won": 0,
+        "drawn": 1,
+        "lost": 1,
+        "gf": 0,
+        "ga": 1,
+        "gd": -1,
+        "pts": 1,
+        "note": "0-0 draw vs Curaçao MD2. Previous ELIMINATED status was incorrect."
+      }
+    ],
+    "F": [
+      {
+        "team": "Netherlands",
+        "played": 2,
+        "won": 1,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 7,
+        "ga": 3,
+        "gd": 4,
+        "pts": 4
+      },
+      {
+        "team": "Sweden",
+        "played": 2,
+        "won": 1,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 6,
+        "ga": 6,
+        "gd": 0,
+        "pts": 3
+      },
+      {
+        "team": "Japan",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 2,
+        "ga": 2,
+        "gd": 0,
+        "pts": 1,
+        "note": "MD2 vs Tunisia LIVE"
+      },
+      {
+        "team": "Tunisia",
+        "played": 1,
+        "won": 0,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 1,
+        "ga": 5,
+        "gd": -4,
+        "pts": 0,
+        "note": "MD2 vs Japan LIVE"
+      }
+    ],
+    "G": [
+      {
+        "team": "Belgium",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 1,
+        "note": "MD2 vs Iran LIVE"
+      },
+      {
+        "team": "Egypt",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 1
+      },
+      {
+        "team": "Iran",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 2,
+        "ga": 2,
+        "gd": 0,
+        "pts": 1,
+        "note": "MD2 vs Belgium LIVE"
+      },
+      {
+        "team": "New Zealand",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 2,
+        "ga": 2,
+        "gd": 0,
+        "pts": 1
+      }
+    ],
+    "H": [
+      {
+        "team": "Spain",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 1,
+        "note": "MD2 vs Saudi Arabia LIVE"
+      },
+      {
+        "team": "Cabo Verde",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "pts": 1
+      },
+      {
+        "team": "Saudi Arabia",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 1,
+        "note": "MD2 vs Spain LIVE"
+      },
+      {
+        "team": "Uruguay",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
+        "gd": 0,
+        "pts": 1
+      }
+    ],
+    "I": [
+      {
+        "team": "France",
+        "played": 1,
+        "won": 1,
+        "drawn": 0,
+        "lost": 0,
+        "gf": 3,
+        "ga": 1,
+        "gd": 2,
+        "pts": 3
+      },
+      {
+        "team": "Norway",
         "played": 1,
         "won": 1,
         "drawn": 0,
@@ -460,7 +1344,18 @@
         "pts": 3
       },
       {
-        "team": "Paraguay",
+        "team": "Senegal",
+        "played": 1,
+        "won": 0,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 1,
+        "ga": 3,
+        "gd": -2,
+        "pts": 0
+      },
+      {
+        "team": "Iraq",
         "played": 1,
         "won": 0,
         "drawn": 0,
@@ -469,395 +1364,143 @@
         "ga": 4,
         "gd": -3,
         "pts": 0
-      },
-      {
-        "team": "Australia",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Turkey",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      }
-    ],
-    "E": [
-      {
-        "team": "Germany",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Ivory Coast",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Ecuador",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Cura\u00e7ao",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      }
-    ],
-    "F": [
-      {
-        "team": "Netherlands",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Japan",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Sweden",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Tunisia",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      }
-    ],
-    "G": [
-      {
-        "team": "Belgium",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Egypt",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Iran",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "New Zealand",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      }
-    ],
-    "H": [
-      {
-        "team": "Spain",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Cabo Verde",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Saudi Arabia",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Uruguay",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      }
-    ],
-    "I": [
-      {
-        "team": "France",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Senegal",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Iraq",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Norway",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
       }
     ],
     "J": [
       {
         "team": "Argentina",
-        "played": 0,
-        "won": 0,
+        "played": 1,
+        "won": 1,
         "drawn": 0,
         "lost": 0,
-        "gf": 0,
+        "gf": 3,
         "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Algeria",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
+        "gd": 3,
+        "pts": 3
       },
       {
         "team": "Austria",
-        "played": 0,
-        "won": 0,
+        "played": 1,
+        "won": 1,
         "drawn": 0,
         "lost": 0,
+        "gf": 3,
+        "ga": 1,
+        "gd": 2,
+        "pts": 3
+      },
+      {
+        "team": "Algeria",
+        "played": 1,
+        "won": 0,
+        "drawn": 0,
+        "lost": 1,
         "gf": 0,
-        "ga": 0,
-        "gd": 0,
+        "ga": 3,
+        "gd": -3,
         "pts": 0
       },
       {
         "team": "Jordan",
-        "played": 0,
+        "played": 1,
         "won": 0,
         "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
+        "lost": 1,
+        "gf": 1,
+        "ga": 3,
+        "gd": -2,
         "pts": 0
       }
     ],
     "K": [
       {
-        "team": "Portugal",
-        "played": 0,
-        "won": 0,
+        "team": "Colombia",
+        "played": 1,
+        "won": 1,
         "drawn": 0,
         "lost": 0,
-        "gf": 0,
-        "ga": 0,
+        "gf": 3,
+        "ga": 1,
+        "gd": 2,
+        "pts": 3
+      },
+      {
+        "team": "Portugal",
+        "played": 1,
+        "won": 0,
+        "drawn": 1,
+        "lost": 0,
+        "gf": 1,
+        "ga": 1,
         "gd": 0,
-        "pts": 0
+        "pts": 1
       },
       {
         "team": "DR Congo",
-        "played": 0,
+        "played": 1,
         "won": 0,
-        "drawn": 0,
+        "drawn": 1,
         "lost": 0,
-        "gf": 0,
-        "ga": 0,
+        "gf": 1,
+        "ga": 1,
         "gd": 0,
-        "pts": 0
+        "pts": 1
       },
       {
         "team": "Uzbekistan",
-        "played": 0,
+        "played": 1,
         "won": 0,
         "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Colombia",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
+        "lost": 1,
+        "gf": 1,
+        "ga": 3,
+        "gd": -2,
         "pts": 0
       }
     ],
     "L": [
       {
         "team": "England",
-        "played": 0,
-        "won": 0,
+        "played": 1,
+        "won": 1,
         "drawn": 0,
         "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
-      },
-      {
-        "team": "Croatia",
-        "played": 0,
-        "won": 0,
-        "drawn": 0,
-        "lost": 0,
-        "gf": 0,
-        "ga": 0,
-        "gd": 0,
-        "pts": 0
+        "gf": 4,
+        "ga": 2,
+        "gd": 2,
+        "pts": 3
       },
       {
         "team": "Ghana",
-        "played": 0,
-        "won": 0,
+        "played": 1,
+        "won": 1,
         "drawn": 0,
         "lost": 0,
-        "gf": 0,
+        "gf": 1,
         "ga": 0,
-        "gd": 0,
+        "gd": 1,
+        "pts": 3
+      },
+      {
+        "team": "Croatia",
+        "played": 1,
+        "won": 0,
+        "drawn": 0,
+        "lost": 1,
+        "gf": 2,
+        "ga": 4,
+        "gd": -2,
         "pts": 0
       },
       {
         "team": "Panama",
-        "played": 0,
+        "played": 1,
         "won": 0,
         "drawn": 0,
-        "lost": 0,
+        "lost": 1,
         "gf": 0,
-        "ga": 0,
-        "gd": 0,
+        "ga": 1,
+        "gd": -1,
         "pts": 0
       }
     ]
@@ -902,6 +1545,209 @@
       "home": "Brazil",
       "away": "Morocco",
       "hg": 1,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Australia",
+      "away": "Turkey",
+      "hg": 2,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "Haiti",
+      "away": "Scotland",
+      "hg": 0,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Ivory Coast",
+      "away": "Ecuador",
+      "hg": 1,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "Germany",
+      "away": "Curaçao",
+      "hg": 7,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Sweden",
+      "away": "Tunisia",
+      "hg": 5,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Netherlands",
+      "away": "Japan",
+      "hg": 2,
+      "ag": 2,
+      "applied": true
+    },
+    {
+      "home": "Belgium",
+      "away": "Egypt",
+      "hg": 1,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Iran",
+      "away": "New Zealand",
+      "hg": 2,
+      "ag": 2,
+      "applied": true
+    },
+    {
+      "home": "Spain",
+      "away": "Cabo Verde",
+      "hg": 0,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "Saudi Arabia",
+      "away": "Uruguay",
+      "hg": 1,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "France",
+      "away": "Senegal",
+      "hg": 3,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Norway",
+      "away": "Iraq",
+      "hg": 4,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Argentina",
+      "away": "Algeria",
+      "hg": 3,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "Austria",
+      "away": "Jordan",
+      "hg": 3,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Portugal",
+      "away": "DR Congo",
+      "hg": 1,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Colombia",
+      "away": "Uzbekistan",
+      "hg": 3,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "England",
+      "away": "Croatia",
+      "hg": 4,
+      "ag": 2,
+      "applied": true
+    },
+    {
+      "home": "Ghana",
+      "away": "Panama",
+      "hg": 1,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "Czech Republic",
+      "away": "South Africa",
+      "hg": 1,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Mexico",
+      "away": "South Korea",
+      "hg": 1,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "Switzerland",
+      "away": "Bosnia-Herzegovina",
+      "hg": 4,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Canada",
+      "away": "Qatar",
+      "hg": 6,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "Brazil",
+      "away": "Haiti",
+      "hg": 3,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "Morocco",
+      "away": "Scotland",
+      "hg": 1,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "USA",
+      "away": "Australia",
+      "hg": 2,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "Paraguay",
+      "away": "Turkey",
+      "hg": 1,
+      "ag": 0,
+      "applied": true
+    },
+    {
+      "home": "Germany",
+      "away": "Ivory Coast",
+      "hg": 2,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Ecuador",
+      "away": "Curaçao",
+      "hg": 0,
+      "ag": 1,
+      "applied": true
+    },
+    {
+      "home": "Netherlands",
+      "away": "Sweden",
+      "hg": 5,
       "ag": 1,
       "applied": true
     }

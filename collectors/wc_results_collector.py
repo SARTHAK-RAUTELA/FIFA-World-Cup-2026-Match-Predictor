@@ -1,13 +1,13 @@
 """
-Local WC 2026 results collector — reads data/fifa_2026_results.json.
-Provides form data for all WC 2026 teams using actual tournament results,
-and applies pending ELO updates from those results to elo_state.json.
+Local WC 2026 results collector — reads data/fifa_2026_results.json and data/team_analysis.json.
+Provides form data, ELO updates, and team style/performance profiles for predictions.
 """
 import json
 import os
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 _RESULTS_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "fifa_2026_results.json")
+_ANALYSIS_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "team_analysis.json")
 
 
 def _load_data() -> Dict:
@@ -110,6 +110,71 @@ def apply_pending_elo_updates() -> int:
         _save_data(data)
 
     return applied_count
+
+
+def _load_analysis() -> Dict:
+    try:
+        with open(_ANALYSIS_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def get_team_analysis(team_name: str) -> Optional[Dict]:
+    """
+    Return the team's WC 2026 performance profile from team_analysis.json.
+    Returns None if team not found. Includes playing_style, key_players, wc_stats,
+    prediction_factors (style_attack_bonus, style_defense_bonus, momentum_factor).
+    """
+    data = _load_analysis()
+    teams = data.get("teams", {})
+    # Direct match first
+    if team_name in teams:
+        return teams[team_name]
+    # Fuzzy match
+    tl = team_name.lower().strip()
+    for name, profile in teams.items():
+        if tl == name.lower() or tl in name.lower() or name.lower() in tl:
+            return profile
+    return None
+
+
+def get_team_wc_stats(team_name: str) -> Dict:
+    """
+    Return condensed WC 2026 tournament stats for use in lambda adjustment.
+    Returns dict with avg_goals_scored, avg_goals_conceded, xg_overperformance,
+    style_attack_bonus, style_defense_bonus, momentum_factor.
+    """
+    profile = get_team_analysis(team_name)
+    if not profile:
+        return {
+            "avg_goals_scored": None,
+            "avg_goals_conceded": None,
+            "xg_overperformance": 0.0,
+            "style_attack_bonus": 1.0,
+            "style_defense_bonus": 1.0,
+            "momentum_factor": 1.0,
+            "played": 0,
+        }
+    stats = profile.get("wc_2026_stats", {})
+    factors = profile.get("prediction_factors", {})
+    return {
+        "avg_goals_scored": stats.get("avg_goals_scored"),
+        "avg_goals_conceded": stats.get("avg_goals_conceded"),
+        "xg_overperformance": stats.get("xg_overperformance", 0.0),
+        "style_attack_bonus": factors.get("style_attack_bonus", 1.0),
+        "style_defense_bonus": factors.get("style_defense_bonus", 1.0),
+        "momentum_factor": factors.get("momentum_factor", 1.0),
+        "played": stats.get("played", 0),
+        "form_trend": profile.get("form_trend", "unknown"),
+        "threat_level": profile.get("threat_level", 5),
+    }
+
+
+def get_tournament_insights() -> Dict:
+    """Return tournament-level insights: upsets, top scorers, qualified teams, etc."""
+    data = _load_analysis()
+    return data.get("tournament_insights", {})
 
 
 def record_result(

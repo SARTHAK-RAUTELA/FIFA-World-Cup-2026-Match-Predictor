@@ -1,0 +1,1030 @@
+{
+  "_meta": {
+    "description": "FIFA World Cup 2026 team performance profiles — playing styles, player stats, WC stats, prediction factors",
+    "last_updated": "2026-06-21",
+    "source": "ESPN Power Rankings, Goal.com, Sofascore, CBS Sports, xGscore.io, tournament observation",
+    "how_to_use": "Load via collectors/wc_results_collector.get_team_analysis(). Used by composite_model for style/xG adjustments."
+  },
+  "teams": {
+    "Germany": {
+      "group": "E",
+      "playing_style": "high_press_transition",
+      "formation": "4-2-3-1",
+      "style_description": "High-intensity pressing, fast vertical transitions, technical midfield, wing play. Young exciting squad led by world-class experience. Super-sub Undav proven match-winner off bench.",
+      "strengths": ["clinical finishing", "pressing intensity", "depth of squad", "Kimmich midfield control", "late game comebacks"],
+      "weaknesses": ["can be caught on counter when pressing high", "defensive vulnerability to direct play"],
+      "key_players": [
+        {"name": "Joshua Kimmich", "position": "CM", "role": "engine", "form": "excellent"},
+        {"name": "Kai Havertz", "position": "ST", "role": "target man scorer", "form": "excellent"},
+        {"name": "Deniz Undav", "position": "ST", "role": "super sub", "form": "on fire - 3 goals in 1 game vs Ivory Coast"},
+        {"name": "Leroy Sane", "position": "LW", "role": "pace/creativity", "form": "good"},
+        {"name": "Florian Wirtz", "position": "AM", "role": "creativity", "form": "very good"},
+        {"name": "Manuel Neuer", "position": "GK", "role": "sweeper keeper", "form": "solid"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 2, "drawn": 0, "lost": 0,
+        "goals_for": 9, "goals_against": 2,
+        "avg_goals_scored": 4.5, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 4.2, "xg_against_estimate": 1.5,
+        "xg_overperformance": 0.3,
+        "clean_sheets": 0,
+        "status": "QUALIFIED"
+      },
+      "form_trend": "excellent",
+      "threat_level": 9,
+      "prediction_factors": {
+        "style_attack_bonus": 1.25,
+        "style_defense_bonus": 0.95,
+        "momentum_factor": 1.15,
+        "note": "Tournament statement. Best xG from home games (3.06). Strong favorites for group win."
+      }
+    },
+    "USA": {
+      "group": "D",
+      "playing_style": "organized_press_counter",
+      "formation": "4-3-3",
+      "style_description": "Well-organized mid-block with vertical counter-pressing. Direct transitions, wing play wide, target man Balogun. Strong collective unit. First US team to win their WC group since 2010.",
+      "strengths": ["team cohesion", "Balogun finishing", "physical press", "defensive organization", "home advantage crowd"],
+      "weaknesses": ["Pulisic injury (calf, day-to-day)", "depth in creative midfield", "aerial defending"],
+      "key_players": [
+        {"name": "Folarin Balogun", "position": "ST", "role": "scorer", "form": "excellent - 3 WC goals"},
+        {"name": "Christian Pulisic", "position": "LW", "role": "creativity/goals", "form": "good but INJURY CONCERN - calf"},
+        {"name": "Tyler Adams", "position": "CM", "role": "defensive anchor", "form": "good"},
+        {"name": "Weston McKennie", "position": "CM", "role": "box-to-box", "form": "good"},
+        {"name": "Matt Turner", "position": "GK", "role": "shot stopper", "form": "solid"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 2, "drawn": 0, "lost": 0,
+        "goals_for": 6, "goals_against": 1,
+        "avg_goals_scored": 3.0, "avg_goals_conceded": 0.5,
+        "xg_for_estimate": 2.5, "xg_against_estimate": 0.8,
+        "xg_overperformance": 0.5,
+        "clean_sheets": 1,
+        "status": "QUALIFIED"
+      },
+      "form_trend": "excellent",
+      "threat_level": 8,
+      "prediction_factors": {
+        "style_attack_bonus": 1.15,
+        "style_defense_bonus": 1.1,
+        "momentum_factor": 1.2,
+        "note": "Won Group D. Host nation boost. Pulisic injury may impact knockout rounds."
+      }
+    },
+    "Brazil": {
+      "group": "C",
+      "playing_style": "possession_fluid",
+      "formation": "4-2-3-1",
+      "style_description": "Classic samba football with modern pressing. Creative front three rotating around Vinicius Jr. Strong midfield duo in Bruno Guimarães/Paqueta. Morocco draw showed vulnerability vs deep blocks.",
+      "strengths": ["Vinicius Jr. individual quality", "technical midfield", "attacking transitions", "set piece threat", "experienced in big matches"],
+      "weaknesses": ["can be frustrated by compact low-blocks", "Morocco 1-1 showed vulnerability", "over-reliant on Vinicius"],
+      "key_players": [
+        {"name": "Vinicius Jr.", "position": "LW", "role": "key man/scorer", "form": "very good - 2 WC goals"},
+        {"name": "Rodrygo", "position": "RW", "role": "goals/assists", "form": "very good"},
+        {"name": "Bruno Guimarães", "position": "CM", "role": "anchor/playmaker", "form": "excellent"},
+        {"name": "Alisson", "position": "GK", "role": "world class GK", "form": "solid"},
+        {"name": "Marquinhos", "position": "CB", "role": "defensive leader", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 1, "lost": 0,
+        "goals_for": 4, "goals_against": 1,
+        "avg_goals_scored": 2.0, "avg_goals_conceded": 0.5,
+        "xg_for_estimate": 2.2, "xg_against_estimate": 0.9,
+        "xg_overperformance": -0.2,
+        "clean_sheets": 1,
+        "status": "QUALIFIED"
+      },
+      "form_trend": "good",
+      "threat_level": 9,
+      "prediction_factors": {
+        "style_attack_bonus": 1.10,
+        "style_defense_bonus": 1.05,
+        "momentum_factor": 1.05,
+        "note": "Morocco draw slightly dampened, but 3-0 vs Haiti impressive. Still top-3 WC contenders."
+      }
+    },
+    "Morocco": {
+      "group": "C",
+      "playing_style": "defensive_counterattack",
+      "formation": "4-1-4-1",
+      "style_description": "Compact defensive structure inspired by 2022 WC semi-final run. Hakimi bombing forward, Saibari as false-9 creative pivot. Brahim Díaz inventive from right midfield. Set piece threat. Organized and dangerous on break.",
+      "strengths": ["defensive organization", "Hakimi overlapping", "counter-attack speed", "set pieces", "team spirit/unity"],
+      "weaknesses": ["limited possession game", "can concede if pressed high", "depth in attack"],
+      "key_players": [
+        {"name": "Achraf Hakimi", "position": "RB", "role": "attacking fullback", "form": "excellent - fully fit"},
+        {"name": "Ismael Saibari", "position": "CF/AM", "role": "creative scorer", "form": "excellent - goal vs Brazil was WC classic"},
+        {"name": "Brahim Díaz", "position": "AM/RW", "role": "creativity", "form": "very good"},
+        {"name": "Azzedine Ounahi", "position": "CM", "role": "engine", "form": "good"},
+        {"name": "Yassine Bounou", "position": "GK", "role": "shot stopper", "form": "excellent"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 1, "lost": 0,
+        "goals_for": 2, "goals_against": 1,
+        "avg_goals_scored": 1.0, "avg_goals_conceded": 0.5,
+        "xg_for_estimate": 0.9, "xg_against_estimate": 1.2,
+        "xg_overperformance": 0.1,
+        "clean_sheets": 1,
+        "status": "QUALIFIED"
+      },
+      "form_trend": "very_good",
+      "threat_level": 8,
+      "prediction_factors": {
+        "style_attack_bonus": 0.85,
+        "style_defense_bonus": 1.20,
+        "momentum_factor": 1.10,
+        "note": "Ranked 7th in world. Africa's strongest team. Low xG style but clinical and defensively elite."
+      }
+    },
+    "Netherlands": {
+      "group": "F",
+      "playing_style": "possession_wing_play",
+      "formation": "4-3-3",
+      "style_description": "Dutch total football evolved. Van Dijk dominant in defense. Gakpo and Depay leading attack. Drew vs Japan in MD1 (unexpected) then demolished Sweden 5-1. High pressing with technical quality.",
+      "strengths": ["Gakpo form", "Van Dijk defensive authority", "De Jong midfield control", "goal scoring variety", "set piece quality"],
+      "weaknesses": ["Japan draw suggests vulnerability to counter-attack", "can be overconfident"],
+      "key_players": [
+        {"name": "Cody Gakpo", "position": "LW", "role": "key scorer", "form": "excellent - 3 WC goals"},
+        {"name": "Memphis Depay", "position": "ST", "role": "creativity/goals", "form": "good"},
+        {"name": "Frenkie de Jong", "position": "CM", "role": "midfield control", "form": "very good"},
+        {"name": "Virgil van Dijk", "position": "CB", "role": "defensive leader", "form": "excellent"},
+        {"name": "Xavi Simons", "position": "AM", "role": "creativity", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 1, "lost": 0,
+        "goals_for": 7, "goals_against": 3,
+        "avg_goals_scored": 3.5, "avg_goals_conceded": 1.5,
+        "xg_for_estimate": 3.2, "xg_against_estimate": 1.8,
+        "xg_overperformance": 0.3,
+        "clean_sheets": 0,
+        "status": "strong for qualification"
+      },
+      "form_trend": "ascending",
+      "threat_level": 8,
+      "prediction_factors": {
+        "style_attack_bonus": 1.20,
+        "style_defense_bonus": 0.95,
+        "momentum_factor": 1.15,
+        "note": "Seize Group F control. High-scoring games (7 for, 3 against in 2 games)."
+      }
+    },
+    "Argentina": {
+      "group": "J",
+      "playing_style": "messi_centric_fluid",
+      "formation": "4-3-3 / 4-2-3-1",
+      "style_description": "Messi-orchestrated attacking play. Strong midfield (Mac Allister, De Paul). Lautaro Martínez clinical finisher. Defending champions with elite mental strength. World power ranking #1 per Goal.com.",
+      "strengths": ["Messi individual genius", "Lautaro finishing", "Mac Allister midfield engine", "champion mentality", "tactical flexibility"],
+      "weaknesses": ["aging squad", "over-reliance on Messi", "central defense can be exposed on transitions"],
+      "key_players": [
+        {"name": "Lionel Messi", "position": "RW/free", "role": "captain/key man/scorer", "form": "excellent - scored vs Algeria"},
+        {"name": "Lautaro Martínez", "position": "ST", "role": "clinical scorer", "form": "excellent - scored vs Algeria"},
+        {"name": "Ángel Di María", "position": "LW", "role": "creativity/scorer", "form": "very good"},
+        {"name": "Rodrigo De Paul", "position": "CM", "role": "box-to-box", "form": "good"},
+        {"name": "Alexis Mac Allister", "position": "CM", "role": "press/creativity", "form": "very good"},
+        {"name": "Cristian Romero", "position": "CB", "role": "defensive leader", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 1, "drawn": 0, "lost": 0,
+        "goals_for": 3, "goals_against": 0,
+        "avg_goals_scored": 3.0, "avg_goals_conceded": 0.0,
+        "xg_for_estimate": 2.5, "xg_against_estimate": 0.5,
+        "xg_overperformance": 0.5,
+        "clean_sheets": 1,
+        "status": "strong for qualification"
+      },
+      "form_trend": "excellent",
+      "threat_level": 10,
+      "prediction_factors": {
+        "style_attack_bonus": 1.20,
+        "style_defense_bonus": 1.05,
+        "momentum_factor": 1.10,
+        "note": "World #1 power ranking. Defending champions. 3-0 clean sheet vs Algeria impressive start."
+      }
+    },
+    "France": {
+      "group": "I",
+      "playing_style": "direct_physical_press",
+      "formation": "4-2-3-1 / 4-3-3",
+      "style_description": "Physical, direct, hard-pressing. Mbappé the danger man in central striker role. Griezmann creative playmaker. Strong midfield work rate. Won 3-1 vs Senegal convincingly.",
+      "strengths": ["Mbappé pace/finishing", "Griezmann creativity", "physical midfield", "defensive depth", "experienced in tournaments"],
+      "weaknesses": ["can be slow to build up vs deep blocks", "Theo Hernandez vulnerability at LB"],
+      "key_players": [
+        {"name": "Kylian Mbappé", "position": "ST/CF", "role": "key man/pace/scorer", "form": "excellent"},
+        {"name": "Antoine Griezmann", "position": "AM/SS", "role": "creativity/assists/goals", "form": "very good"},
+        {"name": "Aurélien Tchouaméni", "position": "CM", "role": "defensive anchor", "form": "good"},
+        {"name": "Ousmane Dembélé", "position": "RW", "role": "pace/dribbling", "form": "good"},
+        {"name": "Mike Maignan", "position": "GK", "role": "modern sweeper keeper", "form": "very good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 1, "drawn": 0, "lost": 0,
+        "goals_for": 3, "goals_against": 1,
+        "avg_goals_scored": 3.0, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 2.8, "xg_against_estimate": 0.8,
+        "xg_overperformance": 0.2,
+        "clean_sheets": 0,
+        "status": "strong for qualification"
+      },
+      "form_trend": "very_good",
+      "threat_level": 9,
+      "prediction_factors": {
+        "style_attack_bonus": 1.15,
+        "style_defense_bonus": 1.00,
+        "momentum_factor": 1.10,
+        "note": "Strong 3-1 win vs Senegal. Group I competitive with Norway. Key match vs Norway in MD3."
+      }
+    },
+    "Norway": {
+      "group": "I",
+      "playing_style": "direct_haaland_centric",
+      "formation": "4-3-3",
+      "style_description": "Everything funnelled to Erling Haaland. Physical direct play. Odegaard creative engine. 4-1 vs Iraq impressive. Surprisingly competitive vs France in Group I.",
+      "strengths": ["Haaland finishing", "Odegaard playmaking", "physical directness", "set pieces"],
+      "weaknesses": ["over-reliance on Haaland", "tactical rigidity without Haaland", "defensive uncertainty vs elite teams"],
+      "key_players": [
+        {"name": "Erling Haaland", "position": "ST", "role": "goal machine", "form": "excellent - 2 WC goals vs Iraq"},
+        {"name": "Martin Odegaard", "position": "CM/AM", "role": "playmaker/captain", "form": "very good"},
+        {"name": "Alexander Sörloth", "position": "ST", "role": "backup striker", "form": "good"},
+        {"name": "Sander Berge", "position": "CM", "role": "defensive midfield", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 1, "drawn": 0, "lost": 0,
+        "goals_for": 4, "goals_against": 1,
+        "avg_goals_scored": 4.0, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 2.8, "xg_against_estimate": 0.9,
+        "xg_overperformance": 1.2,
+        "clean_sheets": 0,
+        "status": "strong for qualification"
+      },
+      "form_trend": "excellent",
+      "threat_level": 8,
+      "prediction_factors": {
+        "style_attack_bonus": 1.20,
+        "style_defense_bonus": 0.95,
+        "momentum_factor": 1.15,
+        "note": "Haaland-led Norway a genuine dark horse. 4-1 vs Iraq. Big France vs Norway clash MD3."
+      }
+    },
+    "England": {
+      "group": "L",
+      "playing_style": "organized_press_width",
+      "formation": "4-3-3",
+      "style_description": "Physical pressing game with wide threats. Kane the focal point. Bellingham box-to-box dynamism. Saka creativity from right. Won 4-2 vs Croatia — high scoring but defensively concerning.",
+      "strengths": ["Harry Kane finishing", "Jude Bellingham dynamic play", "Bukayo Saka width", "set piece quality", "squad depth"],
+      "weaknesses": ["defensive fragility (conceded 2 vs Croatia)", "tournament mentality historically poor", "over-reliance on Kane"],
+      "key_players": [
+        {"name": "Harry Kane", "position": "ST", "role": "scorer/captain", "form": "very good"},
+        {"name": "Jude Bellingham", "position": "CM/AM", "role": "box-to-box key man", "form": "excellent"},
+        {"name": "Bukayo Saka", "position": "RW", "role": "creativity/goals", "form": "very good"},
+        {"name": "Declan Rice", "position": "CDM", "role": "defensive shield", "form": "good"},
+        {"name": "Trent Alexander-Arnold", "position": "RB", "role": "creative fullback", "form": "very good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 1, "drawn": 0, "lost": 0,
+        "goals_for": 4, "goals_against": 2,
+        "avg_goals_scored": 4.0, "avg_goals_conceded": 2.0,
+        "xg_for_estimate": 3.0, "xg_against_estimate": 1.5,
+        "xg_overperformance": 1.0,
+        "clean_sheets": 0,
+        "status": "strong for qualification"
+      },
+      "form_trend": "good",
+      "threat_level": 8,
+      "prediction_factors": {
+        "style_attack_bonus": 1.15,
+        "style_defense_bonus": 0.90,
+        "momentum_factor": 1.05,
+        "note": "4-2 vs Croatia thrilling but defensive concerns. High-scoring games expected for England."
+      }
+    },
+    "Spain": {
+      "group": "H",
+      "playing_style": "tiki_taka_possession",
+      "formation": "4-3-3",
+      "style_description": "Classic Spanish possession football. Rodri/Pedri/Gavi midfield dominance. Young Yamal dangerous on right. HOWEVER — held 0-0 by Cabo Verde in MD1 was major shock. Power rankings fell significantly.",
+      "strengths": ["midfield possession control", "Pedri creativity", "Yamal youth/pace", "tactical flexibility", "Rodri defensive authority"],
+      "weaknesses": ["can be slow to penetrate deep blocks", "0-0 vs Cabo Verde raised questions", "scoring clinical-ness"],
+      "key_players": [
+        {"name": "Pedri", "position": "CM", "role": "creativity/engine", "form": "good"},
+        {"name": "Lamine Yamal", "position": "RW", "role": "pace/dribbling", "form": "good"},
+        {"name": "Álvaro Morata", "position": "ST", "role": "scorer/hold-up", "form": "inconsistent"},
+        {"name": "Rodri", "position": "CDM", "role": "defensive anchor", "form": "very good"},
+        {"name": "Gavi", "position": "CM", "role": "pressing/creativity", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 0, "drawn": 1, "lost": 0,
+        "goals_for": 0, "goals_against": 0,
+        "avg_goals_scored": 0.0, "avg_goals_conceded": 0.0,
+        "xg_for_estimate": 1.8, "xg_against_estimate": 0.3,
+        "xg_overperformance": -1.8,
+        "clean_sheets": 1,
+        "status": "NEEDS result in MD2 vs Saudi Arabia (LIVE today)"
+      },
+      "form_trend": "below_expectations",
+      "threat_level": 7,
+      "prediction_factors": {
+        "style_attack_bonus": 0.85,
+        "style_defense_bonus": 1.10,
+        "momentum_factor": 0.90,
+        "note": "SURPRISE 0-0 vs Cabo Verde MD1. Power rankings dropped. MD2 vs Saudi Arabia currently LIVE."
+      }
+    },
+    "Portugal": {
+      "group": "K",
+      "playing_style": "possession_attack_minded",
+      "formation": "4-3-3",
+      "style_description": "Portugal drawn 1-1 with DR Congo was a surprise. B. Fernandes orchestrating play. Félix dangerous on left. Ronaldo as captain leading by example. Technical quality but questions raised after draw.",
+      "strengths": ["Bruno Fernandes creativity", "João Félix technical quality", "Rúben Dias defensive leadership", "set pieces"],
+      "weaknesses": ["Portugal drew vs DR Congo — concerning", "power rankings fell", "vulnerability on counter"],
+      "key_players": [
+        {"name": "Bruno Fernandes", "position": "AM/CM", "role": "captain/playmaker", "form": "good"},
+        {"name": "João Félix", "position": "LW/SS", "role": "technical quality", "form": "good"},
+        {"name": "Cristiano Ronaldo", "position": "ST", "role": "captain/experience", "form": "adequate"},
+        {"name": "Rúben Dias", "position": "CB", "role": "defensive leader", "form": "very good"},
+        {"name": "Vitinha", "position": "CM", "role": "midfield press", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 0, "drawn": 1, "lost": 0,
+        "goals_for": 1, "goals_against": 1,
+        "avg_goals_scored": 1.0, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 2.0, "xg_against_estimate": 0.8,
+        "xg_overperformance": -1.0,
+        "clean_sheets": 0,
+        "status": "must improve MD2"
+      },
+      "form_trend": "below_expectations",
+      "threat_level": 8,
+      "prediction_factors": {
+        "style_attack_bonus": 0.90,
+        "style_defense_bonus": 1.00,
+        "momentum_factor": 0.90,
+        "note": "Draw vs DR Congo a big surprise. Portugal power rankings fell. Need win vs Uzbekistan MD2."
+      }
+    },
+    "Belgium": {
+      "group": "G",
+      "playing_style": "direct_physical",
+      "formation": "4-3-3",
+      "style_description": "Belgium drew 1-1 with Egypt in MD1. De Bruyne orchestrating. Lukaku as target man. Physical directness. Golden generation may be aging but still quality.",
+      "strengths": ["De Bruyne vision", "Lukaku physicality", "experience", "tactical discipline"],
+      "weaknesses": ["aging squad", "drew vs Egypt — not dominant", "defensive vulnerability"],
+      "key_players": [
+        {"name": "Kevin De Bruyne", "position": "AM", "role": "playmaker/captain", "form": "good"},
+        {"name": "Romelu Lukaku", "position": "ST", "role": "target man", "form": "adequate"},
+        {"name": "Dodi Lukebakio", "position": "RW", "role": "pace/goals", "form": "good"},
+        {"name": "Youri Tielemans", "position": "CM", "role": "box-to-box", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 0, "drawn": 1, "lost": 0,
+        "goals_for": 1, "goals_against": 1,
+        "avg_goals_scored": 1.0, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 1.5, "xg_against_estimate": 0.9,
+        "xg_overperformance": -0.5,
+        "clean_sheets": 0,
+        "status": "MD2 vs Iran LIVE — pivotal match for Group G"
+      },
+      "form_trend": "average",
+      "threat_level": 7,
+      "prediction_factors": {
+        "style_attack_bonus": 1.00,
+        "style_defense_bonus": 1.00,
+        "momentum_factor": 0.95,
+        "note": "Drew 1-1 vs Egypt MD1. MD2 vs Iran currently LIVE."
+      }
+    },
+    "Mexico": {
+      "group": "A",
+      "playing_style": "organized_counter_press",
+      "formation": "4-3-3",
+      "style_description": "Mexico playing on home soil (Azteca advantage). Organized and energetic. First team to qualify MD2. Won Group A decisively with 2-0 and 1-0 wins.",
+      "strengths": ["home crowd advantage", "tournament experience", "winning mentality", "Quiñones pace"],
+      "weaknesses": ["historically struggle in knockout rounds", "limited depth vs elite opposition"],
+      "key_players": [
+        {"name": "Julián Quiñones", "position": "LW", "role": "pace/scorer", "form": "excellent - tournament opening goal"},
+        {"name": "Raúl Jiménez", "position": "ST", "role": "experience/holds up play", "form": "good"},
+        {"name": "Edson Álvarez", "position": "CDM", "role": "midfield anchor", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 2, "drawn": 0, "lost": 0,
+        "goals_for": 3, "goals_against": 0,
+        "avg_goals_scored": 1.5, "avg_goals_conceded": 0.0,
+        "xg_for_estimate": 1.8, "xg_against_estimate": 0.6,
+        "xg_overperformance": -0.3,
+        "clean_sheets": 2,
+        "status": "QUALIFIED"
+      },
+      "form_trend": "excellent",
+      "threat_level": 7,
+      "prediction_factors": {
+        "style_attack_bonus": 0.95,
+        "style_defense_bonus": 1.15,
+        "momentum_factor": 1.15,
+        "note": "First team qualified. 2 clean sheets. Conservative but effective on home soil."
+      }
+    },
+    "Canada": {
+      "group": "B",
+      "playing_style": "direct_physical_home",
+      "formation": "4-4-2 / 4-3-3",
+      "style_description": "Canada energized by home crowd. 6-0 vs Qatar was statement. Jonathan David and Alphonso Davies key. Direct physical play with width. Top of Group B.",
+      "strengths": ["Davies pace down left", "David finishing", "home crowd energy", "set piece threat"],
+      "weaknesses": ["consistency (drew MD1 1-1 then won 6-0)", "defensive organization"],
+      "key_players": [
+        {"name": "Alphonso Davies", "position": "LW/LB", "role": "pace/width", "form": "very good"},
+        {"name": "Jonathan David", "position": "ST", "role": "clinical scorer", "form": "excellent"},
+        {"name": "Cyle Larin", "position": "ST", "role": "impact sub", "form": "good - equalised vs Bosnia"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 1, "lost": 0,
+        "goals_for": 7, "goals_against": 1,
+        "avg_goals_scored": 3.5, "avg_goals_conceded": 0.5,
+        "xg_for_estimate": 2.8, "xg_against_estimate": 0.8,
+        "xg_overperformance": 0.7,
+        "clean_sheets": 1,
+        "status": "leading Group B"
+      },
+      "form_trend": "ascending",
+      "threat_level": 7,
+      "prediction_factors": {
+        "style_attack_bonus": 1.10,
+        "style_defense_bonus": 1.05,
+        "momentum_factor": 1.15,
+        "note": "6-0 vs Qatar a massive statement. Home host advantage. Watch for knockouts."
+      }
+    },
+    "Japan": {
+      "group": "F",
+      "playing_style": "technical_press_counter",
+      "formation": "4-2-3-1",
+      "style_description": "Japan's technical pressing game surprised Netherlands with 2-2. Disciplined, hard-working, quick transitions. Best xG in tournament per search (1.33 per game).",
+      "strengths": ["tactical discipline", "pressing intensity", "quick transitions", "technical quality", "underdog mentality"],
+      "weaknesses": ["physical duels vs taller opponents", "limited individual world-class players"],
+      "key_players": [
+        {"name": "Takefusa Kubo", "position": "AM/RW", "role": "creativity/pace", "form": "very good"},
+        {"name": "Ayase Ueda", "position": "ST", "role": "finisher", "form": "good"},
+        {"name": "Junya Ito", "position": "RW", "role": "pace/directness", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 0, "drawn": 1, "lost": 0,
+        "goals_for": 2, "goals_against": 2,
+        "avg_goals_scored": 2.0, "avg_goals_conceded": 2.0,
+        "xg_for_estimate": 1.33, "xg_against_estimate": 1.8,
+        "xg_overperformance": 0.67,
+        "clean_sheets": 0,
+        "status": "MD2 vs Tunisia LIVE today"
+      },
+      "form_trend": "good",
+      "threat_level": 7,
+      "prediction_factors": {
+        "style_attack_bonus": 1.05,
+        "style_defense_bonus": 0.95,
+        "momentum_factor": 1.05,
+        "note": "2-2 vs Netherlands showed Japan quality. Best xG in tournament (1.33/game). MD2 vs Tunisia currently LIVE."
+      }
+    },
+    "South Korea": {
+      "group": "A",
+      "playing_style": "organized_press",
+      "formation": "4-3-3",
+      "style_description": "South Korea beat Czech Republic 2-1 in MD1 but lost 0-1 to Mexico in MD2. Hwang In-beom and Son Heung-min (if fit) key creative forces.",
+      "strengths": ["collective pressing", "counter-attack speed", "tournament experience (2002 nostalgia)", "Oh Hyeon-gyu finishing"],
+      "weaknesses": ["MD2 loss to Mexico", "Son Heung-min fitness uncertainty"],
+      "key_players": [
+        {"name": "Son Heung-min", "position": "LW", "role": "captain/key man", "form": "good"},
+        {"name": "Oh Hyeon-gyu", "position": "ST", "role": "scorer", "form": "good"},
+        {"name": "Hwang In-beom", "position": "CM", "role": "goals/creativity", "form": "very good"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 0, "lost": 1,
+        "goals_for": 2, "goals_against": 2,
+        "avg_goals_scored": 1.0, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 1.33, "xg_against_estimate": 1.1,
+        "xg_overperformance": -0.33,
+        "clean_sheets": 0,
+        "status": "in contention for second place"
+      },
+      "form_trend": "average",
+      "threat_level": 6,
+      "prediction_factors": {
+        "style_attack_bonus": 1.00,
+        "style_defense_bonus": 1.00,
+        "momentum_factor": 0.90,
+        "note": "Beat Czech in MD1 but lost to Mexico MD2. Need MD3 result."
+      }
+    },
+    "Switzerland": {
+      "group": "B",
+      "playing_style": "organized_balanced",
+      "formation": "4-3-3",
+      "style_description": "Switzerland well-organized. Drew MD1 vs Qatar then beat Bosnia 4-1 in MD2. Xhaka the midfield anchor. Balanced approach with good defensive structure.",
+      "strengths": ["Xhaka leadership", "tactical discipline", "resilience", "counter-attack"],
+      "weaknesses": ["limited individual star quality", "can struggle vs elite possession teams"],
+      "key_players": [
+        {"name": "Granit Xhaka", "position": "CDM", "role": "captain/anchor", "form": "very good"},
+        {"name": "Xherdan Shaqiri", "position": "AM", "role": "creativity", "form": "good"},
+        {"name": "Breel Embolo", "position": "ST", "role": "pace/scorer", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 1, "lost": 0,
+        "goals_for": 5, "goals_against": 2,
+        "avg_goals_scored": 2.5, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 2.0, "xg_against_estimate": 1.0,
+        "xg_overperformance": 0.5,
+        "clean_sheets": 0,
+        "status": "top of Group B"
+      },
+      "form_trend": "good",
+      "threat_level": 6,
+      "prediction_factors": {
+        "style_attack_bonus": 1.05,
+        "style_defense_bonus": 1.05,
+        "momentum_factor": 1.05,
+        "note": "4-1 vs Bosnia a good statement. Level with Canada on points. Battle for Group B top spot."
+      }
+    },
+    "Scotland": {
+      "group": "C",
+      "playing_style": "direct_physical",
+      "formation": "4-3-3",
+      "style_description": "Scotland won MD1 vs Haiti 1-0 then lost MD2 0-1 to Morocco. Physical direct approach. Still in contention for third-place finish.",
+      "strengths": ["team spirit", "set pieces", "physical directness"],
+      "weaknesses": ["limited technical quality", "lost to Morocco", "attacking creativity"],
+      "key_players": [
+        {"name": "Scott McTominay", "position": "CM", "role": "goals/engine", "form": "good"},
+        {"name": "Andy Robertson", "position": "LB", "role": "attacking fullback", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 0, "lost": 1,
+        "goals_for": 1, "goals_against": 1,
+        "avg_goals_scored": 0.5, "avg_goals_conceded": 0.5,
+        "xg_for_estimate": 0.7, "xg_against_estimate": 0.9,
+        "xg_overperformance": -0.2,
+        "clean_sheets": 1,
+        "status": "in contention third place"
+      },
+      "form_trend": "average",
+      "threat_level": 5,
+      "prediction_factors": {
+        "style_attack_bonus": 0.85,
+        "style_defense_bonus": 1.05,
+        "momentum_factor": 0.95,
+        "note": "Low-scoring games expected. Need MD3 result to advance."
+      }
+    },
+    "Australia": {
+      "group": "D",
+      "playing_style": "organized_counter",
+      "formation": "4-5-1 / 4-3-3",
+      "style_description": "Australia organized defensively. Won MD1 2-0 vs Turkey, lost MD2 0-2 to USA. Still in contention for second place behind USA.",
+      "strengths": ["defensive organization", "Goodwin's tactical setup", "team work rate"],
+      "weaknesses": ["limited attacking quality", "Socceroos underpowered vs elite teams"],
+      "key_players": [
+        {"name": "Mathew Ryan", "position": "GK", "role": "shot stopper", "form": "good"},
+        {"name": "Mitchell Duke", "position": "ST", "role": "target man", "form": "adequate"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 0, "lost": 1,
+        "goals_for": 2, "goals_against": 2,
+        "avg_goals_scored": 1.0, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 0.8, "xg_against_estimate": 1.5,
+        "xg_overperformance": 0.2,
+        "clean_sheets": 0,
+        "status": "in contention"
+      },
+      "form_trend": "average",
+      "threat_level": 5,
+      "prediction_factors": {
+        "style_attack_bonus": 0.85,
+        "style_defense_bonus": 1.05,
+        "momentum_factor": 0.90,
+        "note": "Won MD1 vs Turkey, lost MD2 vs USA. Level with Paraguay on points and GD."
+      }
+    },
+    "Colombia": {
+      "group": "K",
+      "playing_style": "possession_attack",
+      "formation": "4-2-3-1",
+      "style_description": "Colombia dominant 3-1 vs Uzbekistan in MD1. James Rodriguez creative hub. Luis Díaz dangerous on wing. South American flair with tactical discipline.",
+      "strengths": ["James Rodriguez orchestration", "Luis Díaz pace", "Falcao (if fit)", "South American tournament experience"],
+      "weaknesses": ["can be exposed defensively on counter"],
+      "key_players": [
+        {"name": "James Rodríguez", "position": "AM", "role": "playmaker", "form": "very good"},
+        {"name": "Luis Díaz", "position": "LW", "role": "pace/dribbling", "form": "very good"},
+        {"name": "Jhon Durán", "position": "ST", "role": "scorer", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 1, "drawn": 0, "lost": 0,
+        "goals_for": 3, "goals_against": 1,
+        "avg_goals_scored": 3.0, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 2.2, "xg_against_estimate": 0.8,
+        "xg_overperformance": 0.8,
+        "clean_sheets": 0,
+        "status": "leading Group K"
+      },
+      "form_trend": "excellent",
+      "threat_level": 7,
+      "prediction_factors": {
+        "style_attack_bonus": 1.15,
+        "style_defense_bonus": 1.00,
+        "momentum_factor": 1.10,
+        "note": "Strong MD1 win. Top of Group K. James Rodriguez playing at his best."
+      }
+    },
+    "Sweden": {
+      "group": "F",
+      "playing_style": "direct_physical",
+      "formation": "4-4-2",
+      "style_description": "Sweden demolished Tunisia 5-1 in MD1 then lost 1-5 to Netherlands in MD2. Inconsistent but high-scoring. Isak and Gyokeres as strike partnership.",
+      "strengths": ["Isak/Gyokeres goal-scoring", "direct play", "physical presence"],
+      "weaknesses": ["defensive vulnerability (6 goals in 2 games)", "conceded 5 to Netherlands"],
+      "key_players": [
+        {"name": "Alexander Isak", "position": "ST", "role": "scorer", "form": "good"},
+        {"name": "Viktor Gyokeres", "position": "ST", "role": "physical striker", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 0, "lost": 1,
+        "goals_for": 6, "goals_against": 6,
+        "avg_goals_scored": 3.0, "avg_goals_conceded": 3.0,
+        "xg_for_estimate": 2.5, "xg_against_estimate": 3.2,
+        "xg_overperformance": 0.5,
+        "clean_sheets": 0,
+        "status": "in contention"
+      },
+      "form_trend": "mixed",
+      "threat_level": 6,
+      "prediction_factors": {
+        "style_attack_bonus": 1.10,
+        "style_defense_bonus": 0.85,
+        "momentum_factor": 0.85,
+        "note": "High-scoring but defensively unreliable. Match vs Tunisia/Japan MD3 crucial."
+      }
+    },
+    "Iran": {
+      "group": "G",
+      "playing_style": "organized_defensive",
+      "formation": "4-5-1 / 5-4-1",
+      "style_description": "Iran drew 2-2 with New Zealand in MD1. Disciplined defensive structure with counter. Sardar Azmoun the focal point.",
+      "strengths": ["defensive organization", "counter-attack", "set piece discipline"],
+      "weaknesses": ["limited attacking firepower vs elite teams", "2-2 vs NZ was surprising"],
+      "key_players": [
+        {"name": "Sardar Azmoun", "position": "ST", "role": "target man", "form": "good"},
+        {"name": "Mehdi Taremi", "position": "ST/AM", "role": "scorer", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 0, "drawn": 1, "lost": 0,
+        "goals_for": 2, "goals_against": 2,
+        "avg_goals_scored": 2.0, "avg_goals_conceded": 2.0,
+        "xg_for_estimate": 1.2, "xg_against_estimate": 1.5,
+        "xg_overperformance": 0.8,
+        "clean_sheets": 0,
+        "status": "MD2 vs Belgium LIVE tonight — huge match in Group G"
+      },
+      "form_trend": "average",
+      "threat_level": 6,
+      "prediction_factors": {
+        "style_attack_bonus": 0.90,
+        "style_defense_bonus": 1.05,
+        "momentum_factor": 0.95,
+        "note": "Surprised 2-2 vs New Zealand MD1. MD2 vs Belgium LIVE tonight — underdog but organized."
+      }
+    },
+    "Uruguay": {
+      "group": "H",
+      "playing_style": "direct_physical_defensive",
+      "formation": "4-4-2",
+      "style_description": "Uruguay traditional direct physical play. Núñez as goal threat. Bentancur midfield. Drew 1-1 vs Saudi Arabia in MD1. Playing Cabo Verde MD2 today — winnable game.",
+      "strengths": ["defensive resilience", "Darwin Núñez pace/power", "tournament experience", "tactical discipline"],
+      "weaknesses": ["direct reliance on Núñez", "can be frustrated by organized defenses"],
+      "key_players": [
+        {"name": "Darwin Núñez", "position": "ST", "role": "pace/power scorer", "form": "good"},
+        {"name": "Rodrigo Bentancur", "position": "CM", "role": "engine", "form": "good"},
+        {"name": "Federico Valverde", "position": "CM/AM", "role": "energy/goals", "form": "very good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 0, "drawn": 1, "lost": 0,
+        "goals_for": 1, "goals_against": 1,
+        "avg_goals_scored": 1.0, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 1.5, "xg_against_estimate": 0.8,
+        "xg_overperformance": -0.5,
+        "clean_sheets": 0,
+        "status": "MD2 vs Cabo Verde today"
+      },
+      "form_trend": "average",
+      "threat_level": 7,
+      "prediction_factors": {
+        "style_attack_bonus": 1.00,
+        "style_defense_bonus": 1.05,
+        "momentum_factor": 1.00,
+        "note": "Experience at World Cups. Playing Cabo Verde MD2 today — should win and advance."
+      }
+    },
+    "Ghana": {
+      "group": "L",
+      "playing_style": "direct_counter",
+      "formation": "4-4-2",
+      "style_description": "Ghana 1-0 vs Panama in MD1. Narrow win. Kudus Mohammed the key creative player. Direct approach with physicality.",
+      "strengths": ["Mohammed Kudus creativity", "physical pressing", "set pieces"],
+      "weaknesses": ["limited depth", "can struggle vs organized defenses"],
+      "key_players": [
+        {"name": "Mohammed Kudus", "position": "AM/RW", "role": "key man/scorer", "form": "good"},
+        {"name": "Jordan Ayew", "position": "ST", "role": "experience", "form": "adequate"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 1, "drawn": 0, "lost": 0,
+        "goals_for": 1, "goals_against": 0,
+        "avg_goals_scored": 1.0, "avg_goals_conceded": 0.0,
+        "xg_for_estimate": 0.9, "xg_against_estimate": 0.6,
+        "xg_overperformance": 0.1,
+        "clean_sheets": 1,
+        "status": "strong for qualification"
+      },
+      "form_trend": "good",
+      "threat_level": 6,
+      "prediction_factors": {
+        "style_attack_bonus": 0.90,
+        "style_defense_bonus": 1.05,
+        "momentum_factor": 1.05,
+        "note": "Top of Group L with England. MD2 vs England is massive. Underdog but organized."
+      }
+    },
+    "Paraguay": {
+      "group": "D",
+      "playing_style": "organized_direct",
+      "formation": "4-4-2",
+      "style_description": "Paraguay beat Turkey 1-0 in MD2 after losing 1-4 to USA in MD1. Back in contention for second place alongside Australia.",
+      "strengths": ["resilience", "defensive organization"],
+      "weaknesses": ["limited attacking quality", "lost 1-4 to USA"],
+      "key_players": [
+        {"name": "Miguel Almirón", "position": "AM", "role": "creativity/energy", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 0, "lost": 1,
+        "goals_for": 2, "goals_against": 4,
+        "avg_goals_scored": 1.0, "avg_goals_conceded": 2.0,
+        "xg_for_estimate": 1.0, "xg_against_estimate": 2.0,
+        "xg_overperformance": 0.0,
+        "clean_sheets": 0,
+        "status": "in contention"
+      },
+      "form_trend": "mixed",
+      "threat_level": 5,
+      "prediction_factors": {
+        "style_attack_bonus": 0.90,
+        "style_defense_bonus": 1.00,
+        "momentum_factor": 0.95,
+        "note": "Level with Australia on 3pts/0GD. MD3 vs USA will be tough."
+      }
+    },
+    "Curaçao": {
+      "group": "E",
+      "playing_style": "organized_defensive_counter",
+      "formation": "5-4-1",
+      "style_description": "MAJOR UPSET team. Lost 1-7 to Germany but then beat Ecuador 1-0 in MD2. Dick Advocaat's organized defensive setup frustrated Ecuador completely. Backs-against-wall mentality.",
+      "strengths": ["defensive organization", "set-piece discipline", "underdog mentality", "Juninho Bacuna energy"],
+      "weaknesses": ["limited attacking quality vs elite teams", "7-1 loss to Germany shows ceiling"],
+      "key_players": [
+        {"name": "Juninho Bacuna", "position": "CM", "role": "engine", "form": "good"},
+        {"name": "Leandro Bacuna", "position": "CM", "role": "experience", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 0, "lost": 1,
+        "goals_for": 2, "goals_against": 7,
+        "avg_goals_scored": 1.0, "avg_goals_conceded": 3.5,
+        "xg_for_estimate": 0.5, "xg_against_estimate": 4.5,
+        "xg_overperformance": 0.5,
+        "clean_sheets": 1,
+        "status": "SURPRISE — in contention vs Ivory Coast MD3"
+      },
+      "form_trend": "surprising",
+      "threat_level": 4,
+      "prediction_factors": {
+        "style_attack_bonus": 0.75,
+        "style_defense_bonus": 1.15,
+        "momentum_factor": 1.30,
+        "note": "UPSET specialists. Beat Ecuador 1-0 is one of biggest WC 2026 upsets. High momentum for MD3."
+      }
+    },
+    "Ivory Coast": {
+      "group": "E",
+      "playing_style": "direct_physical_afcon",
+      "formation": "4-3-3",
+      "style_description": "Ivory Coast won MD1 1-0 vs Ecuador but lost MD2 1-2 to Germany in unlucky stoppage-time defeat. Kessié scored but Undav brace stole win. Still very much alive for qualification.",
+      "strengths": ["Franck Kessié physicality/goals", "Zaha/Pepe wing threats", "AFCON experience"],
+      "weaknesses": ["unlucky MD2 loss", "can be exposed on counter"],
+      "key_players": [
+        {"name": "Franck Kessié", "position": "CM", "role": "engine/goals", "form": "good - scored vs Germany"},
+        {"name": "Wilfried Zaha", "position": "RW", "role": "pace/dribbling", "form": "good"},
+        {"name": "Sébastien Haller", "position": "ST", "role": "target man", "form": "adequate"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 1, "drawn": 0, "lost": 1,
+        "goals_for": 2, "goals_against": 3,
+        "avg_goals_scored": 1.0, "avg_goals_conceded": 1.5,
+        "xg_for_estimate": 1.2, "xg_against_estimate": 1.8,
+        "xg_overperformance": -0.2,
+        "clean_sheets": 0,
+        "status": "in contention vs Curaçao MD3"
+      },
+      "form_trend": "mixed",
+      "threat_level": 6,
+      "prediction_factors": {
+        "style_attack_bonus": 0.95,
+        "style_defense_bonus": 0.95,
+        "momentum_factor": 0.90,
+        "note": "Level with Curaçao on 3pts but -1 vs Curaçao's -5 GD. MD3 vs Curaçao — should advance."
+      }
+    },
+    "Croatia": {
+      "group": "L",
+      "playing_style": "technical_possession",
+      "formation": "4-2-3-1 / 4-3-3",
+      "style_description": "Croatia lost 2-4 to England in MD1. Modrić still trying to inspire. Aging generation struggling. Need big result vs Panama and England.",
+      "strengths": ["Modrić experience/creativity", "tournament DNA (2018 finalist, 2022 semi-finalists)", "technical quality"],
+      "weaknesses": ["aging squad", "4-2 loss to England damaging", "limited pace"],
+      "key_players": [
+        {"name": "Luka Modrić", "position": "CM", "role": "captain/experience", "form": "adequate"},
+        {"name": "Ivan Perišić", "position": "LW", "role": "pace/goals", "form": "good"},
+        {"name": "Mateo Kovačić", "position": "CM", "role": "engine", "form": "good"}
+      ],
+      "wc_2026_stats": {
+        "played": 1, "won": 0, "drawn": 0, "lost": 1,
+        "goals_for": 2, "goals_against": 4,
+        "avg_goals_scored": 2.0, "avg_goals_conceded": 4.0,
+        "xg_for_estimate": 1.5, "xg_against_estimate": 2.8,
+        "xg_overperformance": 0.5,
+        "clean_sheets": 0,
+        "status": "must win MD2 vs Panama"
+      },
+      "form_trend": "below_expectations",
+      "threat_level": 6,
+      "prediction_factors": {
+        "style_attack_bonus": 0.95,
+        "style_defense_bonus": 0.90,
+        "momentum_factor": 0.85,
+        "note": "Lost badly to England. Must beat Panama and hope for result. Modrić last WC?"
+      }
+    },
+    "Ecuador": {
+      "group": "E",
+      "playing_style": "organized_balanced",
+      "formation": "4-3-3",
+      "style_description": "ELIMINATED. Ecuador lost both MD1 (0-1 vs Ivory Coast) and MD2 (0-1 vs Curaçao in huge upset). Out of tournament.",
+      "strengths": ["Copa America experience"],
+      "weaknesses": ["ELIMINATED", "failed to score in 2 games", "lost to Curaçao"],
+      "key_players": [
+        {"name": "Enner Valencia", "position": "ST", "role": "veteran scorer", "form": "poor - no WC goals"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 0, "drawn": 0, "lost": 2,
+        "goals_for": 0, "goals_against": 2,
+        "avg_goals_scored": 0.0, "avg_goals_conceded": 1.0,
+        "xg_for_estimate": 1.0, "xg_against_estimate": 0.8,
+        "xg_overperformance": -1.0,
+        "clean_sheets": 0,
+        "status": "ELIMINATED"
+      },
+      "form_trend": "terrible",
+      "threat_level": 3,
+      "prediction_factors": {
+        "style_attack_bonus": 0.70,
+        "style_defense_bonus": 0.90,
+        "momentum_factor": 0.70,
+        "note": "ELIMINATED. Massive underperformance. Lost to Curaçao 0-1 in tournament shock."
+      }
+    },
+    "Haiti": {
+      "group": "C",
+      "playing_style": "organized_defensive",
+      "formation": "4-5-1",
+      "style_description": "ELIMINATED. Lost MD1 0-1 to Scotland and MD2 0-3 to Brazil. First team eliminated from WC 2026.",
+      "strengths": ["limited"],
+      "weaknesses": ["ELIMINATED", "no goals scored", "quality gap vs tournament teams"],
+      "key_players": [],
+      "wc_2026_stats": {
+        "played": 2, "won": 0, "drawn": 0, "lost": 2,
+        "goals_for": 0, "goals_against": 4,
+        "avg_goals_scored": 0.0, "avg_goals_conceded": 2.0,
+        "xg_for_estimate": 0.4, "xg_against_estimate": 2.5,
+        "xg_overperformance": -0.4,
+        "clean_sheets": 0,
+        "status": "ELIMINATED"
+      },
+      "form_trend": "poor",
+      "threat_level": 2,
+      "prediction_factors": {
+        "style_attack_bonus": 0.60,
+        "style_defense_bonus": 0.80,
+        "momentum_factor": 0.70,
+        "note": "ELIMINATED. First team out. Significant quality gap."
+      }
+    },
+    "Turkey": {
+      "group": "D",
+      "playing_style": "organized_counter",
+      "formation": "4-3-3",
+      "style_description": "EFFECTIVELY ELIMINATED. Lost both games 0-2 (vs Australia) and 0-1 (vs Paraguay). Need near-miracle in MD3.",
+      "strengths": ["limited WC 2026 performance"],
+      "weaknesses": ["0 goals in 2 games", "two losses"],
+      "key_players": [
+        {"name": "Hakan Çalhanoğlu", "position": "CM", "role": "playmaker", "form": "below_expectations"}
+      ],
+      "wc_2026_stats": {
+        "played": 2, "won": 0, "drawn": 0, "lost": 2,
+        "goals_for": 0, "goals_against": 3,
+        "avg_goals_scored": 0.0, "avg_goals_conceded": 1.5,
+        "xg_for_estimate": 0.8, "xg_against_estimate": 1.5,
+        "xg_overperformance": -0.8,
+        "clean_sheets": 0,
+        "status": "effectively ELIMINATED"
+      },
+      "form_trend": "poor",
+      "threat_level": 4,
+      "prediction_factors": {
+        "style_attack_bonus": 0.80,
+        "style_defense_bonus": 0.90,
+        "momentum_factor": 0.75,
+        "note": "0 goals in 2 WC games. Hakan Çalhanoğlu not in form. Very unlikely to advance."
+      }
+    }
+  },
+  "tournament_insights": {
+    "biggest_wins": [
+      {"match": "Canada 6-0 Qatar", "context": "Host nation dominance MD2"},
+      {"match": "Germany 7-1 Curaçao", "context": "Tournament statement MD1 - biggest WC 2026 win so far"},
+      {"match": "Sweden 5-1 Tunisia", "context": "MD1 Group F opener"},
+      {"match": "Netherlands 5-1 Sweden", "context": "Netherlands seize Group F control MD2"}
+    ],
+    "biggest_upsets": [
+      {"match": "Spain 0-0 Cabo Verde", "context": "Spain expected to win easily, held by minnows"},
+      {"match": "Portugal 1-1 DR Congo", "context": "Portugal one of pre-tournament favorites, drawn by DR Congo"},
+      {"match": "Ecuador 0-1 Curaçao", "context": "South American side eliminated by Caribbean island nation"},
+      {"match": "Netherlands 2-2 Japan", "context": "Japan held Netherlands — showing Japan's quality"}
+    ],
+    "high_scorers_so_far": [
+      {"team": "Germany", "goals": 9, "games": 2, "avg": 4.5},
+      {"team": "Canada", "goals": 7, "games": 2, "avg": 3.5},
+      {"team": "Netherlands", "goals": 7, "games": 2, "avg": 3.5},
+      {"team": "USA", "goals": 6, "games": 2, "avg": 3.0},
+      {"team": "Sweden", "goals": 6, "games": 2, "avg": 3.0}
+    ],
+    "most_defensive_teams": [
+      {"team": "Mexico", "goals_conceded": 0, "games": 2, "avg": 0.0},
+      {"team": "Morocco", "goals_conceded": 1, "games": 2, "avg": 0.5},
+      {"team": "USA", "goals_conceded": 1, "games": 2, "avg": 0.5},
+      {"team": "Brazil", "goals_conceded": 1, "games": 2, "avg": 0.5}
+    ],
+    "qualified_teams": ["Mexico", "USA", "Germany", "Brazil", "Morocco"],
+    "eliminated_teams": ["Haiti", "Ecuador", "Turkey (effectively)"],
+    "key_injury_concerns": [
+      {"player": "Christian Pulisic", "team": "USA", "issue": "calf injury", "status": "day-to-day", "impact": "major - USA's creative spark"},
+      {"player": "unknown", "team": "unknown", "issue": "monitor news API", "status": "check news collector"}
+    ]
+  },
+  "algorithm_improvements": {
+    "research_sources": [
+      "dashee87.github.io - Dixon-Coles time-weighting",
+      "PMC article - Deep learning for sport event outcomes (2025)",
+      "Oxford Journal RSSSC - Bayesian state-space models for EPL (2025)",
+      "R-bloggers - Football Betting Model Step-by-Step 2026",
+      "arxiv - Bayesian weighted discrete-time dynamic models 2025",
+      "xgscore.io - Tournament xG data",
+      "zone14.ai - World Cup 2026 stats guide"
+    ],
+    "recommended_improvements": [
+      {
+        "name": "Tournament xG multiplier",
+        "description": "Apply team's actual WC xG per game as adjustment to base lambda. If a team scores 4.5 goals/game (Germany) vs xG 4.2, their effective lambda should be higher than ELO-based estimates alone.",
+        "implemented_in": "composite_model.py via tournament_context_factor()",
+        "priority": "HIGH"
+      },
+      {
+        "name": "Playing style adjustment",
+        "description": "High-press teams (Germany, France) vs low-block counter teams (Morocco, Mexico) have different scoring patterns. Low-block teams inflate 0-0 and 1-0 probability vs Dixon-Coles prediction.",
+        "implemented_in": "team_analysis.json style_attack_bonus/style_defense_bonus fields",
+        "priority": "MEDIUM"
+      },
+      {
+        "name": "Bayesian sequential ELO updates",
+        "description": "Current ELO K=40 for group stage. Bayesian state-space approach suggests dynamic K that increases with match importance and decreases uncertainty over time. Consider K=50 for early WC matches to build tournament picture faster.",
+        "implemented_in": "elo_model.py ELO_K_FACTOR",
+        "priority": "MEDIUM"
+      },
+      {
+        "name": "Form recency weighting for WC context",
+        "description": "WC matches should weight 3x more than club form. A team in great WC form (Germany 9 goals in 2) should boost their lambda significantly vs just using pre-tournament ELO.",
+        "implemented_in": "wc_results_collector.py get_team_wc_form() already does this; composite_model should increase WC form weight.",
+        "priority": "HIGH"
+      },
+      {
+        "name": "Elimination/pressure factor",
+        "description": "Teams needing a result in MD2/MD3 tend to take more risks. This inflates goals both ways. Predict higher-scoring games when both teams or one team needs a win to advance.",
+        "implemented_in": "need to add pressure_factor to composite_model",
+        "priority": "MEDIUM"
+      },
+      {
+        "name": "xG vs actual goals correction",
+        "description": "Germany is scoring 4.5 goals/game but xG suggests ~4.2. Teams overperforming xG should have a mild downward regression applied (they will likely score fewer in next match). Teams underperforming xG (Spain 0 goals vs 1.8 xG) should have upward adjustment.",
+        "implemented_in": "xg_overperformance field in team_analysis.json",
+        "priority": "MEDIUM"
+      }
+    ]
+  }
+}

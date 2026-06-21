@@ -1,5 +1,6 @@
 """
-Composite model combining Poisson, ELO, form, player impact, sentiment, and weather.
+Composite model combining Poisson, ELO, form, player impact, sentiment, weather,
+and FIFA 2026 live tournament context (xG, playing style, momentum).
 Produces final expected goals (λ) used for all market calculations.
 """
 from typing import Dict, Tuple, Optional, List
@@ -13,6 +14,81 @@ from models.player_impact import calculate_player_impact
 
 
 WC_LEAGUE_AVG_GOALS = 2.68  # Historical World Cup average
+
+
+def _get_tournament_context(home_team: str, away_team: str) -> Tuple[Dict, Dict]:
+    """Load WC 2026 live stats for both teams from team_analysis.json."""
+    try:
+        from collectors.wc_results_collector import get_team_wc_stats
+        home_ctx = get_team_wc_stats(home_team)
+        away_ctx = get_team_wc_stats(away_team)
+        return home_ctx, away_ctx
+    except Exception:
+        empty = {
+            "avg_goals_scored": None, "avg_goals_conceded": None,
+            "xg_overperformance": 0.0, "style_attack_bonus": 1.0,
+            "style_defense_bonus": 1.0, "momentum_factor": 1.0, "played": 0,
+        }
+        return empty, empty
+
+
+def apply_tournament_context(
+    lam_h: float, lam_a: float,
+    home_ctx: Dict, away_ctx: Dict,
+) -> Tuple[float, float]:
+    """
+    Blend ELO/form-based lambdas with tournament-observed scoring rates.
+    Rules:
+    - If team has 2+ WC matches, their observed avg_goals_scored gets 30% weight
+      blended into lambda (xG regression: overperforming teams regress toward xG).
+    - Style bonuses (attack/defense) applied with 15% weight.
+    - Momentum factor applied with 10% weight.
+    """
+    # --- Home team attack ---
+    home_played = home_ctx.get("played", 0)
+    away_played = away_ctx.get("played", 0)
+
+    if home_played >= 2 and home_ctx.get("avg_goals_scored") is not None:
+        obs_lam_h = home_ctx["avg_goals_scored"]
+        # xG overperformance regression: if scoring > xG, nudge down slightly
+        xg_over_h = home_ctx.get("xg_overperformance", 0.0)
+        obs_lam_h = obs_lam_h - (xg_over_h * 0.2)  # 20% regression toward xG
+        obs_lam_h = max(0.3, obs_lam_h)
+        lam_h = lam_h * 0.70 + obs_lam_h * 0.30
+    elif home_played == 1 and home_ctx.get("avg_goals_scored") is not None:
+        obs_lam_h = home_ctx["avg_goals_scored"]
+        lam_h = lam_h * 0.85 + obs_lam_h * 0.15
+
+    # --- Away team attack ---
+    if away_played >= 2 and away_ctx.get("avg_goals_scored") is not None:
+        obs_lam_a = away_ctx["avg_goals_scored"]
+        xg_over_a = away_ctx.get("xg_overperformance", 0.0)
+        obs_lam_a = obs_lam_a - (xg_over_a * 0.2)
+        obs_lam_a = max(0.3, obs_lam_a)
+        lam_a = lam_a * 0.70 + obs_lam_a * 0.30
+    elif away_played == 1 and away_ctx.get("avg_goals_scored") is not None:
+        obs_lam_a = away_ctx["avg_goals_scored"]
+        lam_a = lam_a * 0.85 + obs_lam_a * 0.15
+
+    # --- Playing style: home attack vs away defense ---
+    h_atk_style = home_ctx.get("style_attack_bonus", 1.0)
+    h_def_style = home_ctx.get("style_defense_bonus", 1.0)
+    a_atk_style = away_ctx.get("style_attack_bonus", 1.0)
+    a_def_style = away_ctx.get("style_defense_bonus", 1.0)
+    STYLE_WEIGHT = 0.15
+    lam_h *= (1.0 + (h_atk_style - 1.0) * STYLE_WEIGHT)
+    lam_h /= (1.0 + (a_def_style - 1.0) * STYLE_WEIGHT)
+    lam_a *= (1.0 + (a_atk_style - 1.0) * STYLE_WEIGHT)
+    lam_a /= (1.0 + (h_def_style - 1.0) * STYLE_WEIGHT)
+
+    # --- Momentum ---
+    h_momentum = home_ctx.get("momentum_factor", 1.0)
+    a_momentum = away_ctx.get("momentum_factor", 1.0)
+    MOMENTUM_WEIGHT = 0.10
+    lam_h *= (1.0 + (h_momentum - 1.0) * MOMENTUM_WEIGHT)
+    lam_a *= (1.0 + (a_momentum - 1.0) * MOMENTUM_WEIGHT)
+
+    return round(max(0.30, min(4.50, lam_h)), 3), round(max(0.30, min(4.50, lam_a)), 3)
 
 
 def compute_lambdas(
@@ -125,6 +201,10 @@ def compute_lambdas(
     lam_h = round(max(0.30, min(4.50, lam_h)), 3)
     lam_a = round(max(0.30, min(4.50, lam_a)), 3)
 
+    # --- Tournament context: WC 2026 live scoring rates + style + momentum ---
+    home_ctx, away_ctx = _get_tournament_context(home_team, away_team)
+    lam_h, lam_a = apply_tournament_context(lam_h, lam_a, home_ctx, away_ctx)
+
     diagnostics = {
         "elo_home": elo_home,
         "elo_away": elo_away,
@@ -144,6 +224,8 @@ def compute_lambdas(
         "weather_impact": weather_impact,
         "final_lam_home": lam_h,
         "final_lam_away": lam_a,
+        "tournament_context_home": home_ctx,
+        "tournament_context_away": away_ctx,
     }
 
     return lam_h, lam_a, diagnostics
