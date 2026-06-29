@@ -4,7 +4,7 @@ and FIFA 2026 live tournament context (xG, playing style, momentum).
 Produces final expected goals (λ) used for all market calculations.
 """
 from typing import Dict, Tuple, Optional, List
-from config import MODEL_WEIGHTS, HOME_ADVANTAGE
+from config import MODEL_WEIGHTS, HOME_ADVANTAGE, WC2026_OBSERVED_AVG_GOALS, KO_LAMBDA_REDUCTION
 from models.poisson_model import build_score_matrix
 from models.elo_model import expected_goals_from_elo, win_probability, get_team_elo, load_elo_ratings
 from models.form_analyzer import (
@@ -13,7 +13,7 @@ from models.form_analyzer import (
 from models.player_impact import calculate_player_impact
 
 
-WC_LEAGUE_AVG_GOALS = 2.68  # Historical World Cup average
+WC_LEAGUE_AVG_GOALS = WC2026_OBSERVED_AVG_GOALS  # 2.83 — updated from 72 group stage games
 
 
 def _get_tournament_context(home_team: str, away_team: str) -> Tuple[Dict, Dict]:
@@ -91,6 +91,55 @@ def apply_tournament_context(
     return round(max(0.30, min(4.50, lam_h)), 3), round(max(0.30, min(4.50, lam_a)), 3)
 
 
+def _ko_stage_adjustment(lam_h: float, lam_a: float, stage: str) -> Tuple[float, float]:
+    """
+    Knockout rounds are more defensive. Apply reduction factor for KO stages.
+    Also model the fact that KO teams are more evenly matched (survivors of group stage).
+    """
+    ko_stages = {"round_of_32", "round_of_16", "quarter_final", "semi_final", "final"}
+    if stage not in ko_stages:
+        return lam_h, lam_a
+
+    reduction = KO_LAMBDA_REDUCTION  # 0.90 default
+    # Semi-finals and final: even more defensive
+    if stage in ("semi_final", "final"):
+        reduction = 0.87
+    elif stage == "quarter_final":
+        reduction = 0.88
+
+    return round(lam_h * reduction, 3), round(lam_a * reduction, 3)
+
+
+def _golden_boot_boost(team: str, lineup: List[Dict], top_scorers_wc: Dict) -> float:
+    """
+    Players chasing the Golden Boot score more in KO games.
+    Returns a multiplier > 1.0 if a top scorer is in the lineup.
+    """
+    if not top_scorers_wc or not lineup:
+        return 1.0
+
+    # Hardcoded WC 2026 top scorers with goals
+    TOP_SCORERS_JUNE29 = {
+        "Messi": 6, "Haaland": 6, "Mbappé": 4, "Dembélé": 4,
+        "Vinicius": 4, "Sarr": 4, "Kane": 3, "Manzambi": 3,
+        "Undav": 3, "Gakpo": 3, "Cunha": 3, "Balogun": 3,
+    }
+
+    lineup_names = {p.get("name", "").lower() for p in lineup}
+    max_goals = 0
+    for name, goals in TOP_SCORERS_JUNE29.items():
+        if any(name.lower() in ln or ln in name.lower() for ln in lineup_names):
+            max_goals = max(max_goals, goals)
+
+    if max_goals >= 6:
+        return 1.08  # Messi / Haaland — major impact
+    elif max_goals >= 4:
+        return 1.05
+    elif max_goals >= 3:
+        return 1.03
+    return 1.0
+
+
 def compute_lambdas(
     home_team: str,
     away_team: str,
@@ -103,6 +152,8 @@ def compute_lambdas(
     weather_impact: float = 1.0,
     is_neutral: bool = True,
     elo_ratings: Optional[Dict] = None,
+    stage: str = "group_stage",
+    top_scorers_wc: Optional[Dict] = None,
 ) -> Tuple[float, float, Dict]:
     """
     Compute composite λ_home and λ_away from all available signals.
@@ -205,6 +256,15 @@ def compute_lambdas(
     home_ctx, away_ctx = _get_tournament_context(home_team, away_team)
     lam_h, lam_a = apply_tournament_context(lam_h, lam_a, home_ctx, away_ctx)
 
+    # --- KO stage: apply conservative defensive reduction ---
+    lam_h, lam_a = _ko_stage_adjustment(lam_h, lam_a, stage)
+
+    # --- Golden Boot pursuit boost ---
+    home_gb = _golden_boot_boost(home_team, home_lineup, top_scorers_wc or {})
+    away_gb = _golden_boot_boost(away_team, away_lineup, top_scorers_wc or {})
+    lam_h = round(min(4.50, lam_h * home_gb), 3)
+    lam_a = round(min(4.50, lam_a * away_gb), 3)
+
     diagnostics = {
         "elo_home": elo_home,
         "elo_away": elo_away,
@@ -226,6 +286,10 @@ def compute_lambdas(
         "final_lam_away": lam_a,
         "tournament_context_home": home_ctx,
         "tournament_context_away": away_ctx,
+        "stage": stage,
+        "ko_reduction_applied": stage in {"round_of_32","round_of_16","quarter_final","semi_final","final"},
+        "home_golden_boot_boost": home_gb,
+        "away_golden_boot_boost": away_gb,
     }
 
     return lam_h, lam_a, diagnostics

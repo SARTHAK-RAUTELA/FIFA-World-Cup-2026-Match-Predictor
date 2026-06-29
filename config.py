@@ -44,8 +44,9 @@ SPORTS_DB_WC_LEAGUE_IDS = [4480, 4328]
 # FIFA 2026 World Cup competition codes
 FIFA_WC_CODES = ["WC", "FIFA2026", "WC2026"]
 
-# Dixon-Coles correction parameter (negative correlation in low-scoring outcomes)
-DIXON_COLES_RHO = -0.13
+# Dixon-Coles correction parameter — calibrated on WC 2026 actual low-score frequency
+# Raised from -0.13 to -0.15 based on 72 group stage games showing higher 0-0/1-0 rate
+DIXON_COLES_RHO = -0.15
 
 # Model weights for composite prediction
 MODEL_WEIGHTS = {
@@ -55,6 +56,17 @@ MODEL_WEIGHTS = {
     "player_impact": 0.10,
     "sentiment": 0.05,
 }
+
+# WC 2026 observed avg goals per match (updated after 72 group stage games)
+WC2026_OBSERVED_AVG_GOALS = 2.83
+
+# Knockout stage lambda reduction — teams play more defensively in KO rounds
+# Reduces both lambdas by this fraction to model conservative KO tactics
+KO_LAMBDA_REDUCTION = 0.90
+
+# Bookmaker 1x2 blend weight for KO stage (higher trust in bookmaker odds when more data available)
+KO_BOOKMAKER_BLEND = 0.62   # was 0.50 for group stage
+GROUP_BOOKMAKER_BLEND = 0.55  # slightly raised from 0.50
 
 # ELO initial ratings for FIFA 2026 teams (based on FIFA rankings + WC qualifying performance)
 FIFA_2026_ELO_RATINGS = {

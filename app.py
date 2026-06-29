@@ -52,12 +52,32 @@ def fetch_prediction(
     _engine, home: str, away: str,
     match_id: str, sofascore_id: Optional[int],
     city: str, match_date: str,
+    stage: str = "group_stage",
+    bankroll: float = 100.0,
 ) -> Dict:
     return _engine.predict_match(
         home_team=home, away_team=away,
         match_id=match_id or None, sofascore_id=sofascore_id,
         venue_city=city or "Dallas", match_date=match_date,
+        stage=stage, bankroll=bankroll,
     )
+
+
+def _auto_detect_stage(target_date=None) -> str:
+    """Map a calendar date to the WC 2026 tournament stage."""
+    from datetime import date as _date
+    d = target_date or _date.today()
+    if d < _date(2026, 6, 28):
+        return "group_stage"
+    if d <= _date(2026, 7, 3):
+        return "round_of_32"
+    if d <= _date(2026, 7, 7):
+        return "round_of_16"
+    if d <= _date(2026, 7, 12):
+        return "quarter_final"
+    if d <= _date(2026, 7, 16):
+        return "semi_final"
+    return "final"
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -1039,6 +1059,80 @@ def _tab_live(fixture: Dict, pred: Dict, live_collector):
 
 
 # ════════════════════════════════════════════════════════════════════════
+# Stakes / Kelly Criterion renderer
+# ════════════════════════════════════════════════════════════════════════
+
+def _render_stakes(pred: Dict, home: str, away: str):
+    stakes = pred.get("stakes")
+    if not stakes:
+        return
+
+    portfolio = stakes.get("portfolio", {})
+    card      = stakes.get("betting_card", [])
+    ko        = stakes.get("ko_markets", {})
+    risk      = portfolio.get("risk_rating", "NO_VALUE")
+    bankroll  = stakes.get("bankroll", 100.0)
+
+    risk_color = {"HIGH_VALUE": "#00e676", "MODERATE_VALUE": "#f9a825",
+                  "MARGINAL_VALUE": "#ff9800", "NO_VALUE": "#6b8099"}.get(risk, "#6b8099")
+
+    _mhdr(f"Kelly Criterion Stakes  —  Bankroll ${bankroll:.0f}")
+
+    # Portfolio summary strip
+    cols = st.columns(4)
+    cols[0].metric("Bets Found",     portfolio.get("num_bets", 0))
+    cols[1].metric("Total Stake",    f"${portfolio.get('total_stake', 0):.2f}")
+    cols[2].metric("Expected Profit",f"${portfolio.get('total_expected_profit', 0):.2f}")
+    cols[3].metric("Portfolio ROI",  f"{portfolio.get('portfolio_roi_pct', 0):.1f}%")
+
+    st.markdown(
+        f'<div style="background:#0a1520;border-left:3px solid {risk_color};'
+        f'border-radius:5px;padding:8px 14px;margin:6px 0;font-size:.78rem">'
+        f'<span style="color:{risk_color};font-weight:700">{risk.replace("_"," ")}</span>'
+        f'&nbsp;&nbsp;<span style="color:#8899aa">{portfolio.get("risk_note","")}</span>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    if card:
+        conf_colors = {"HIGH": "#00e676", "MEDIUM": "#f9a825", "LOW": "#7fa8d1", "MODEL_ONLY": "#9c6ae1"}
+        rows = []
+        for b in card:
+            conf  = b.get("confidence", "LOW")
+            cc    = conf_colors.get(conf, "#7fa8d1")
+            rows.append({
+                "Market":     b["market"],
+                "Selection":  b["selection"],
+                "Edge":       f"+{b['edge_pct']:.1f}%",
+                "Bk Odds":    f"{b['bookie_odds']:.2f}",
+                "Stake":      f"${b['recommended_stake']:.2f}",
+                "Exp Profit": f"${b['expected_profit']:.2f}",
+                "ROI":        f"{b.get('roi_pct', 0):.1f}%",
+                "Confidence": conf,
+            })
+        st.dataframe(
+            rows,
+            hide_index=True,
+            use_container_width=True,
+            column_config={
+                "Edge":       st.column_config.TextColumn("Edge", width="small"),
+                "Confidence": st.column_config.TextColumn("Conf"),
+            },
+        )
+
+    # KO qualify markets
+    if ko and ko.get("home_to_qualify"):
+        hq = ko["home_to_qualify"]
+        aq = ko["away_to_qualify"]
+        ps = ko.get("penalty_shootout", {})
+        _mhdr("KO Qualify Markets (inc. ET + Pens)")
+        kc = st.columns(3)
+        kc[0].metric(f"{home[:12]} to Qualify", f"{hq['prob']*100:.1f}%", f"odds {hq['odds']:.2f}")
+        kc[1].metric(f"{away[:12]} to Qualify", f"{aq['prob']*100:.1f}%", f"odds {aq['odds']:.2f}")
+        kc[2].metric("P(Penalty Shootout)", f"{ps.get('p_penalty_shootout',0)*100:.1f}%")
+
+
+# ════════════════════════════════════════════════════════════════════════
 # Main prediction renderer
 # ════════════════════════════════════════════════════════════════════════
 
@@ -1076,6 +1170,9 @@ def render_prediction(pred: Dict, fixture: Dict = None):
     if vbets:
         with st.expander(f"All Value Bets ({len(vbets)} found)", expanded=False):
             _render_value_bets_table(vbets, oddsrc)
+
+    # Kelly Criterion stakes — always render (shows NO_VALUE message when no edge)
+    _render_stakes(pred, home, away)
 
     st.divider()
 
@@ -1128,6 +1225,16 @@ st.markdown(
 
 engine = load_engine()
 
+STAGE_OPTIONS = {
+    "Auto-detect from date": None,
+    "Group Stage":           "group_stage",
+    "Round of 32":           "round_of_32",
+    "Round of 16":           "round_of_16",
+    "Quarter Final":         "quarter_final",
+    "Semi Final":            "semi_final",
+    "Final":                 "final",
+}
+
 with st.sidebar:
     st.markdown("## FIFA 2026 Predictor")
     st.caption(f"ELO database: {len(engine.elo_ratings)} teams")
@@ -1143,6 +1250,29 @@ with st.sidebar:
         home_input = st.text_input("Home Team", placeholder="e.g. Brazil")
         away_input = st.text_input("Away Team", placeholder="e.g. Morocco")
         date_str   = date.today().isoformat()
+        target_date = date.today()
+
+    st.divider()
+    st.markdown("**Tournament Stage:**")
+    stage_label = st.selectbox(
+        "Stage",
+        list(STAGE_OPTIONS.keys()),
+        index=0,
+        label_visibility="collapsed",
+    )
+    _stage_raw = STAGE_OPTIONS[stage_label]
+    if _stage_raw is None:
+        _d = target_date if "Today" in mode else date.today()
+        selected_stage = _auto_detect_stage(_d)
+        st.caption(f"Auto-detected: **{selected_stage.replace('_',' ').title()}**")
+    else:
+        selected_stage = _stage_raw
+
+    st.markdown("**Bankroll ($):**")
+    selected_bankroll = st.number_input(
+        "Bankroll", min_value=10.0, max_value=100000.0,
+        value=100.0, step=50.0, label_visibility="collapsed",
+    )
 
     st.divider()
     if st.button("Refresh Data", use_container_width=True):
@@ -1199,7 +1329,8 @@ if "Today" in mode:
 
             with st.spinner(f"Predicting {h} vs {a}..."):
                 try:
-                    pred = fetch_prediction(engine, h, a, fid, sfid, city, mdate)
+                    pred = fetch_prediction(engine, h, a, fid, sfid, city, mdate,
+                                            stage=selected_stage, bankroll=selected_bankroll)
                     render_prediction(pred, fixture)
                 except Exception as exc:
                     st.error(f"Prediction failed: {exc}")
@@ -1214,7 +1345,8 @@ else:
         st.markdown(f"## {h}  vs  {a}")
         with st.spinner(f"Predicting {h} vs {a}..."):
             try:
-                pred = fetch_prediction(engine, h, a, "", None, "Dallas", date_str)
+                pred = fetch_prediction(engine, h, a, "", None, "Dallas", date_str,
+                                        stage=selected_stage, bankroll=selected_bankroll)
                 render_prediction(pred)
             except Exception as exc:
                 st.error(f"Prediction failed: {exc}")

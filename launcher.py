@@ -51,6 +51,16 @@ KNOWN_TEAMS = sorted([
 ])
 
 
+def _auto_stage(target_date=None) -> str:
+    d = target_date or date.today()
+    if d < date(2026, 6, 28):   return "group_stage"
+    if d <= date(2026, 7, 3):   return "round_of_32"
+    if d <= date(2026, 7, 7):   return "round_of_16"
+    if d <= date(2026, 7, 12):  return "quarter_final"
+    if d <= date(2026, 7, 16):  return "semi_final"
+    return "final"
+
+
 def clear():
     os.system("cls" if sys.platform == "win32" else "clear")
 
@@ -154,9 +164,13 @@ def show_team_list():
 
 
 def run_prediction(engine: PredictionEngine, home: str, away: str,
-                   odds: dict = None, sofascore_id: int = None, threshold: float = 0.0):
+                   odds: dict = None, sofascore_id: int = None, threshold: float = 0.0,
+                   stage: str = None):
+    if stage is None:
+        stage = _auto_stage()
     console.print()
     console.print(Rule(f"[bold white] {home}  vs  {away} [/bold white]", style="bright_blue"))
+    console.print(f"  [dim]Stage: {stage.replace('_',' ').upper()}[/dim]")
 
     with console.status("[cyan]  Collecting data and running models...[/cyan]", spinner="dots"):
         pred = engine.predict_match(
@@ -164,6 +178,7 @@ def run_prediction(engine: PredictionEngine, home: str, away: str,
             away_team=away,
             sofascore_id=sofascore_id,
             bookmaker_odds=odds or None,
+            stage=stage,
         )
 
     render_prediction_panel(pred)
@@ -183,7 +198,9 @@ def run_today_matches(engine: PredictionEngine, target_date=None):
         ))
         return []
 
-    console.print(f"\n  [green]Found {len(fixtures)} match(es)[/green]\n")
+    stage = _auto_stage(target_date)
+    console.print(f"\n  [green]Found {len(fixtures)} match(es)[/green]  "
+                  f"[dim]Stage: {stage.replace('_',' ').upper()}[/dim]\n")
     render_match_list(fixtures)
 
     for i, f in enumerate(fixtures, 1):
@@ -201,6 +218,7 @@ def run_today_matches(engine: PredictionEngine, target_date=None):
                     sofascore_id=f.get("sofascore_id"),
                     venue_city=f.get("city", "Dallas"),
                     match_date=(f.get("date", "")[:10] if f.get("date") else None),
+                    stage=stage,
                 )
                 pred["fixture"] = f
             except Exception as e:
@@ -276,7 +294,7 @@ def main():
             console.print(Rule("[bold white] SPECIFIC MATCH [/bold white]", style="cyan"))
             home = pick_team("Home / Team 1 (e.g. USA)")
             away = pick_team("Away / Team 2 (e.g. Paraguay)")
-            run_prediction(engine, home, away)
+            run_prediction(engine, home, away, stage=_auto_stage())
 
         elif choice == "3":
             console.print()
@@ -310,14 +328,14 @@ def main():
                 console.print()
                 use_auto = Confirm.ask("  Use these auto-fetched odds?", default=True)
                 if use_auto:
-                    run_prediction(engine, home, away, odds=auto_odds, sofascore_id=sofa_id)
+                    run_prediction(engine, home, away, odds=auto_odds, sofascore_id=sofa_id, stage=_auto_stage())
                 else:
                     odds = input_odds()
-                    run_prediction(engine, home, away, odds=odds, sofascore_id=sofa_id)
+                    run_prediction(engine, home, away, odds=odds, sofascore_id=sofa_id, stage=_auto_stage())
             else:
                 console.print("  [dim]No auto-odds available. Enter manually:[/dim]")
                 odds = input_odds()
-                run_prediction(engine, home, away, odds=odds)
+                run_prediction(engine, home, away, odds=odds, stage=_auto_stage())
 
         elif choice == "4":
             if not last_fixtures:

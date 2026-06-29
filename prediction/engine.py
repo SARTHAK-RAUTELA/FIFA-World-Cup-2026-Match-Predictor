@@ -14,6 +14,10 @@ from prediction.markets import (
     calibrate_lambda_to_totals, calibrate_1x2_to_bookmaker,
 )
 from prediction.confidence import calculate_confidence
+from prediction.stakes_analyzer import analyze_stakes
+from config import KO_BOOKMAKER_BLEND, GROUP_BOOKMAKER_BLEND
+
+KO_STAGES = {"round_of_32", "round_of_16", "quarter_final", "semi_final", "final"}
 
 
 class PredictionEngine:
@@ -32,6 +36,8 @@ class PredictionEngine:
         match_date: Optional[str] = None,
         bookmaker_odds: Optional[Dict] = None,
         force_refresh: bool = False,
+        stage: str = "group_stage",
+        bankroll: float = 100.0,
     ) -> Dict:
         """
         Full prediction pipeline for a single match.
@@ -70,6 +76,7 @@ class PredictionEngine:
             weather_impact=weather_impact,
             is_neutral=True,  # FIFA 2026 in USA/Canada/Mexico — mostly neutral
             elo_ratings=self.elo_ratings,
+            stage=stage,
         )
 
         # Fetch WC top scorers for goalscorer model
@@ -117,9 +124,11 @@ class PredictionEngine:
                 diagnostics["cal_lam_away"] = cal_lam_a
 
         # 1x2 calibration: blend Poisson probs with bookmaker-implied probs
+        # KO stage: trust bookmaker more (62%), group stage: 55%
+        blend_weight = KO_BOOKMAKER_BLEND if stage in KO_STAGES else GROUP_BOOKMAKER_BLEND
         calibrated_markets = markets
         if effective_odds:
-            calibrated_markets = calibrate_1x2_to_bookmaker(markets, effective_odds, blend_weight=0.50)
+            calibrated_markets = calibrate_1x2_to_bookmaker(markets, effective_odds, blend_weight=blend_weight)
 
         # Value bets: compare pure Poisson model odds vs bookmaker (not calibrated)
         value_bets = []
@@ -146,6 +155,15 @@ class PredictionEngine:
             bookmaker_odds=effective_odds,
         )
 
+        # Stakes analysis (Kelly Criterion)
+        stakes = analyze_stakes(
+            markets=calibrated_markets,
+            value_bets=value_bets,
+            bookmaker_odds=effective_odds,
+            bankroll=bankroll,
+            stage=stage,
+        )
+
         return {
             "home_team": home_team,
             "away_team": away_team,
@@ -153,10 +171,13 @@ class PredictionEngine:
             "sofascore_id": sofascore_id,
             "venue_city": venue_city,
             "date": m_date,
-            "markets": markets,
+            "stage": stage,
+            "markets": calibrated_markets,
+            "markets_raw": markets,
             "diagnostics": diagnostics,
             "confidence": confidence,
             "value_bets": value_bets,
+            "stakes": stakes,
             "bookmaker_odds_source": "manual" if bookmaker_odds else ("sofascore" if auto_odds else None),
             "data": {
                 "home_form_count": len(data["home_form"]),
