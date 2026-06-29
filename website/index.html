@@ -1,353 +1,790 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HEXDRIFT — Football Predictions</title>
-  <meta name="description" content="Daily football match predictions, live scores, tournament brackets & lineups by Hexdrift.">
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HEXDRIFT — FIFA World Cup 2026 Predictions</title>
+<meta name="description" content="FIFA WC 2026 match predictions. Poisson · Dixon-Coles · ELO · Kelly Criterion.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  color:#11100C;
+  background-color:#F7EFD8;
+  background-image:radial-gradient(circle,rgba(17,16,12,.10) 1.3px,transparent 1.4px);
+  background-size:13px 13px;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:#FF2B7A;color:#fff;}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+@keyframes hxblink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes hxfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes hxmarq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes hxpop{0%{transform:scale(.7) rotate(-6deg);opacity:0}70%{transform:scale(1.08) rotate(2deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.page{display:none;}
+.page.active{display:block;}
+#modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(17,16,12,.66);align-items:center;justify-content:center;padding:20px;}
+#modal-overlay.open{display:flex;}
+@media(max-width:700px){
+  .hero-grid{grid-template-columns:1fr!important;}
+  .ring-grid{grid-template-columns:1fr!important;}
+  .stat-strip{grid-template-columns:repeat(2,1fr)!important;}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+</style>
 </head>
 <body>
 
-<!-- ===================== TOP MATCH BANNER ===================== -->
-<div id="match-banner">
-  <div id="banner-inner"><!-- rendered by JS --></div>
+<!-- TICKER -->
+<div style="background:#11100C;color:#F7EFD8;overflow:hidden;white-space:nowrap;border-bottom:4px solid #11100C;">
+  <div id="ticker-inner" style="display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;letter-spacing:1.5px;font-size:15px;padding:7px 0;"></div>
 </div>
 
-<!-- ===================== LAYOUT ===================== -->
-<div id="layout">
-
-  <!-- SIDEBAR -->
-  <aside id="sidebar">
-    <div class="sidebar-logo">
-      <img src="logo.png" alt="Hexdrift Logo">
-      <div class="sidebar-logo-text">
-        <span class="sidebar-brand">HEXDRIFT</span>
-        <span class="sidebar-sub">Predictions</span>
-      </div>
+<!-- NAV -->
+<div style="position:sticky;top:0;z-index:50;background:#FFC21A;border-bottom:4px solid #11100C;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px 20px;flex-wrap:wrap;">
+    <div onclick="navigate('home')" style="cursor:pointer;font-family:'Bangers',cursive;font-size:30px;letter-spacing:2px;line-height:1;text-shadow:3px 3px 0 #FF2B7A,6px 6px 0 #11100C;padding-right:6px;">HEXDRIFT</div>
+    <div style="background:#11100C;color:#FFC21A;font-family:'Bangers',cursive;font-size:12px;letter-spacing:1px;padding:3px 8px;border:2px solid #11100C;transform:rotate(-4deg);">FIFA '26</div>
+    <div style="flex:1;"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;" id="nav-btns"></div>
+    <div style="display:flex;align-items:center;gap:7px;background:#fff;border:3px solid #11100C;box-shadow:3px 3px 0 #11100C;padding:5px 11px;">
+      <span style="width:11px;height:11px;border-radius:50%;background:#F0341B;display:inline-block;animation:hxblink 1.1s infinite;border:2px solid #11100C;"></span>
+      <span style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;">LIVE</span>
     </div>
-    <nav class="sidebar-nav">
-      <a href="#" class="nav-link active" data-page="home">
-        <span class="nav-icon">🏠</span>
-        <span>Home</span>
-      </a>
-      <a href="#" class="nav-link" data-page="predictions">
-        <span class="nav-icon">📊</span>
-        <span>Predictions</span>
-      </a>
-      <a href="#" class="nav-link" data-page="charts">
-        <span class="nav-icon">🏆</span>
-        <span>Charts</span>
-      </a>
-    </nav>
-    <div class="sidebar-stats">
-      <div class="sidebar-acc-label">Overall Accuracy</div>
-      <div class="sidebar-acc-pct" id="sidebar-acc">79%</div>
-      <div class="sidebar-acc-bar">
-        <div class="sidebar-acc-fill" id="sidebar-bar"></div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main id="content">
-
-    <!-- ===================== HOME PAGE ===================== -->
-    <section id="page-home" class="page active">
-
-      <!-- HERO -->
-      <div class="hero">
-        <span class="hero-bg-text">HEXDRIFT</span>
-        <span class="hero-ball">⚽</span>
-        <span class="hero-ball">⚽</span>
-        <span class="hero-ball">⚽</span>
-        <span class="hero-ball">⚽</span>
-        <span class="hero-ball">⚽</span>
-        <div class="hero-content">
-          <div class="hero-eyebrow">
-            <span class="hero-dot"></span>
-            FIFA World Cup 2026 Live
-          </div>
-          <h1 class="hero-title">
-            <span class="ht-outline">FOOTBALL</span><br>
-            <span class="ht-solid">PREDIC</span><span class="ht-accent">TIONS</span>
-          </h1>
-          <p class="hero-desc">
-            Daily match predictions powered by deep analysis, statistics & football intelligence.
-            Track every call — from Group Stage to the Final.
-          </p>
-          <div class="hero-btns">
-            <a href="#" class="btn-primary" onclick="navigate('predictions');return false">
-              ⚡ View Predictions
-            </a>
-            <a href="#" class="btn-secondary" onclick="navigate('charts');return false">
-              🏆 Tournament Bracket
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- STATS ROW -->
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-icon">🎯</div>
-          <div class="stat-val" id="stat-accuracy">0%</div>
-          <div class="stat-label">Accuracy Rate</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📋</div>
-          <div class="stat-val" id="stat-total">0</div>
-          <div class="stat-label">Total Predictions</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🔥</div>
-          <div class="stat-val" id="stat-streak">0</div>
-          <div class="stat-label">Current Streak</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">⏳</div>
-          <div class="stat-val" id="stat-upcoming">0</div>
-          <div class="stat-label">Upcoming / Live</div>
-        </div>
-      </div>
-
-      <!-- SECTIONS -->
-      <div class="home-sections">
-
-        <!-- ABOUT -->
-        <div>
-          <div class="section-header">
-            <h2 class="section-title"><span class="section-title-bar"></span>About HEXDRIFT</h2>
-          </div>
-          <div class="about-grid">
-            <div class="about-card">
-              <div class="about-icon">🧠</div>
-              <div class="about-title">DATA-DRIVEN</div>
-              <div class="about-text">Every prediction is backed by form guides, head-to-head records, injury reports, squad depth analysis, and tactical breakdowns.</div>
-            </div>
-            <div class="about-card">
-              <div class="about-icon">⚡</div>
-              <div class="about-title">LIVE TRACKING</div>
-              <div class="about-text">Follow matches in real-time with live scores, events, lineups, and commentary all in one place through the live widget.</div>
-            </div>
-            <div class="about-card">
-              <div class="about-icon">📈</div>
-              <div class="about-title">FULL HISTORY</div>
-              <div class="about-text">Complete prediction archive showing every match called, confidence rating, the predicted score vs the actual result with accuracy tracking.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ACCURACY -->
-        <div>
-          <div class="section-header">
-            <h2 class="section-title"><span class="section-title-bar"></span>Prediction Accuracy</h2>
-          </div>
-          <div class="acc-circle-wrap">
-            <svg class="acc-svg" width="140" height="140" viewBox="0 0 140 140">
-              <defs>
-                <linearGradient id="accGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#00e87e"/>
-                  <stop offset="100%" stop-color="#ffd700"/>
-                </linearGradient>
-              </defs>
-              <circle class="bg" cx="70" cy="70" r="54"/>
-              <circle class="fill" id="acc-ring" cx="70" cy="70" r="54" stroke-dasharray="0 339"/>
-              <text id="acc-pct-text" x="70" y="65" font-size="28" fill="white" font-family="'Bebas Neue',sans-serif" dominant-baseline="middle" text-anchor="middle">79%</text>
-              <text x="70" y="88" font-size="10" fill="#536080" font-family="'Space Grotesk',sans-serif" text-anchor="middle">ACCURACY</text>
-            </svg>
-            <div class="acc-details">
-              <div class="acc-details-title">SEASON STATS</div>
-              <div class="acc-stat-row">
-                <span>Completed Predictions</span>
-                <span class="acc-stat-val" id="acc-completed">14</span>
-              </div>
-              <div class="acc-stat-row">
-                <span>Correct Predictions</span>
-                <span class="acc-stat-val" id="acc-correct">11</span>
-              </div>
-              <div class="acc-stat-row">
-                <span>Current Win Streak</span>
-                <span class="acc-stat-val" id="acc-streak">1 🔥</span>
-              </div>
-              <div class="acc-stat-row">
-                <span>Best Confidence Hit</span>
-                <span class="acc-stat-val">92%</span>
-              </div>
-              <div class="acc-stat-row">
-                <span>Avg. Confidence</span>
-                <span class="acc-stat-val">75%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RECENT PREDICTIONS -->
-        <div>
-          <div class="section-header">
-            <h2 class="section-title"><span class="section-title-bar"></span>Recent Predictions</h2>
-            <a href="#" class="section-link" onclick="navigate('predictions');return false">View all →</a>
-          </div>
-          <div class="recent-list" id="recent-list">
-            <!-- rendered by JS -->
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ===================== PREDICTIONS PAGE ===================== -->
-    <section id="page-predictions" class="page">
-      <div class="pred-header">
-        <h1 class="pred-title">ALL <span>PREDICTIONS</span></h1>
-        <button class="btn-add" onclick="openAddModal()">＋ Add Prediction</button>
-      </div>
-
-      <div class="filter-bar">
-        <button class="filter-btn active" data-filter="all" onclick="setPredFilter('all')">All</button>
-        <button class="filter-btn" data-filter="upcoming" onclick="setPredFilter('upcoming')">Upcoming / Live</button>
-        <button class="filter-btn" data-filter="completed" onclick="setPredFilter('completed')">Completed</button>
-        <button class="filter-btn" data-filter="correct" onclick="setPredFilter('correct')">✓ Correct</button>
-        <button class="filter-btn" data-filter="wrong" onclick="setPredFilter('wrong')">✗ Missed</button>
-      </div>
-
-      <div id="pred-grid"><!-- rendered by JS --></div>
-    </section>
-
-    <!-- ===================== CHARTS PAGE ===================== -->
-    <section id="page-charts" class="page">
-      <div class="charts-header">
-        <h1 class="charts-title">TOURNAMENT <span>CHARTS</span></h1>
-        <div class="chart-tabs">
-          <button class="chart-tab active" data-tab="bracket" onclick="setChartTab('bracket')">🏆 Bracket</button>
-          <button class="chart-tab" data-tab="groups" onclick="setChartTab('groups')">📋 Groups</button>
-        </div>
-      </div>
-
-      <div id="bracket-view"><!-- rendered by JS --></div>
-      <div id="groups-view" style="display:none"><!-- rendered by JS --></div>
-    </section>
-
-  </main>
-</div>
-
-<!-- ===================== LIVE WIDGET ===================== -->
-<div id="live-widget">
-  <button id="widget-btn" onclick="toggleWidget()">
-    <div class="widget-dot"></div>
-    NEXT
-  </button>
-  <div id="widget-panel">
-    <div class="w-header">
-      <div class="w-score-row">
-        <div id="w-score-h"></div>
-        <div id="w-score-mid"></div>
-        <div id="w-score-a"></div>
-      </div>
-      <div class="w-meta">
-        <span class="w-league">FIFA World Cup 2026 — R32</span>
-        <span id="w-min">Pre-match</span>
-      </div>
-    </div>
-    <div class="w-tabs">
-      <button class="wtab active" data-tab="events" onclick="setWidgetTab('events')">Events</button>
-      <button class="wtab" data-tab="lineups" onclick="setWidgetTab('lineups')">Lineups</button>
-      <button class="wtab" data-tab="commentary" onclick="setWidgetTab('commentary')">Live</button>
-    </div>
-    <div id="w-content"></div>
   </div>
 </div>
 
-<!-- ===================== ADD PREDICTION MODAL ===================== -->
-<div id="add-modal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span class="modal-title">ADD PREDICTION</span>
-      <button class="modal-close" onclick="closeAddModal()">✕</button>
+<div style="max-width:1200px;margin:0 auto;padding:0 20px 80px;">
+
+<!-- ═══════════════════════ HOME ═══════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <div class="hero-grid" style="display:grid;grid-template-columns:1.15fr 0.85fr;gap:26px;align-items:stretch;margin-top:30px;">
+    <div style="display:flex;flex-direction:column;justify-content:center;min-width:0;">
+      <div style="display:inline-block;align-self:flex-start;background:#FF2B7A;color:#fff;font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;padding:5px 12px;border:3px solid #11100C;box-shadow:4px 4px 0 #11100C;transform:rotate(-2deg);margin-bottom:16px;">⚡ ROUND OF 32 · JUNE 29</div>
+      <h1 style="font-family:'Bangers',cursive;font-weight:400;font-size:clamp(46px,7vw,92px);line-height:.9;letter-spacing:1px;margin:0;text-transform:uppercase;">
+        <span style="display:block;color:#1B4FE0;text-shadow:4px 4px 0 #11100C;">Predict the</span>
+        <span style="display:block;color:#F0341B;text-shadow:4px 4px 0 #11100C;">Beautiful</span>
+        <span style="display:inline-block;background:#11100C;color:#FFC21A;padding:0 10px;">GAME.</span>
+      </h1>
+      <p style="font-size:17px;line-height:1.55;max-width:480px;margin:18px 0 24px;font-weight:500;">A goal-rate prediction engine for FIFA World Cup 2026. Poisson scorelines, Dixon–Coles correction (ρ=−0.15) and an ELO pool of 72 teams — every value bet sized by fractional Kelly. <strong>No vibes. Just λ.</strong></p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button onclick="navigate('predictions')" style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:19px;padding:12px 24px;border:3px solid #11100C;background:#4FC72A;color:#11100C;box-shadow:5px 5px 0 #11100C;">SEE TODAY'S PICKS →</button>
+        <button onclick="navigate('charts')" style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:19px;padding:12px 24px;border:3px solid #11100C;background:#fff;color:#11100C;box-shadow:5px 5px 0 #11100C;">THE BRACKET</button>
+      </div>
     </div>
-    <form class="modal-body" id="add-pred-form">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Home Team Code (e.g. BRA)</label>
-          <input name="home" class="form-input" placeholder="ARG" maxlength="3" required style="text-transform:uppercase">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Away Team Code (e.g. FRA)</label>
-          <input name="away" class="form-input" placeholder="FRA" maxlength="3" required style="text-transform:uppercase">
+    <div style="position:relative;border:4px solid #11100C;box-shadow:8px 8px 0 #11100C;background:#1B4FE0;overflow:hidden;min-height:380px;">
+      <div style="position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 42%,rgba(255,255,255,.16) 0deg 6deg,transparent 6deg 12deg);"></div>
+      <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(17,16,12,.18) 1.6px,transparent 1.7px);background-size:11px 11px;"></div>
+      <div style="position:absolute;inset:18px;border:3px solid #11100C;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+        <div style="font-size:72px;line-height:1;">⚽</div>
+        <div style="font-family:'Bangers',cursive;letter-spacing:3px;font-size:28px;color:#FFC21A;text-shadow:3px 3px 0 #11100C;text-align:center;">FIFA WORLD CUP<br>2026</div>
+        <div style="font-family:'Bangers',cursive;font-size:16px;color:#fff;letter-spacing:2px;">USA · CANADA · MEXICO</div>
+      </div>
+      <div style="position:absolute;top:-6px;right:-6px;background:#FFC21A;color:#11100C;font-family:'Bangers',cursive;font-size:30px;letter-spacing:1px;padding:8px 16px 10px;border:3px solid #11100C;transform:rotate(6deg);box-shadow:3px 3px 0 #11100C;animation:hxfloat 3.4s ease-in-out infinite;">GOAAL!</div>
+      <div style="position:absolute;bottom:14px;left:14px;background:#F0341B;color:#fff;font-family:'Bangers',cursive;font-size:18px;letter-spacing:1px;padding:5px 12px;border:3px solid #11100C;transform:rotate(-3deg);box-shadow:3px 3px 0 #11100C;">ISSUE #26</div>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:34px;">
+    <div style="background:#1B4FE0;color:#fff;border:3px solid #11100C;box-shadow:5px 5px 0 #11100C;padding:16px;">
+      <div id="s1" style="font-family:'Bangers',cursive;font-size:44px;line-height:1;font-variant-numeric:tabular-nums;">0</div>
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;margin-top:4px;">PREDICTIONS MADE</div>
+    </div>
+    <div style="background:#4FC72A;color:#11100C;border:3px solid #11100C;box-shadow:5px 5px 0 #11100C;padding:16px;">
+      <div id="s2" style="font-family:'Bangers',cursive;font-size:44px;line-height:1;font-variant-numeric:tabular-nums;">0</div>
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;margin-top:4px;">CORRECT HITS</div>
+    </div>
+    <div style="background:#FFC21A;color:#11100C;border:3px solid #11100C;box-shadow:5px 5px 0 #11100C;padding:16px;">
+      <div id="s3" style="font-family:'Bangers',cursive;font-size:44px;line-height:1;font-variant-numeric:tabular-nums;">0%</div>
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;margin-top:4px;">ACCURACY</div>
+    </div>
+    <div style="background:#FF2B7A;color:#fff;border:3px solid #11100C;box-shadow:5px 5px 0 #11100C;padding:16px;">
+      <div id="s4" style="font-family:'Bangers',cursive;font-size:44px;line-height:1;font-variant-numeric:tabular-nums;">+0%</div>
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;margin-top:4px;">SEASON ROI</div>
+    </div>
+  </div>
+
+  <!-- ACCURACY RING + UNDER THE HOOD -->
+  <div class="ring-grid" style="display:grid;grid-template-columns:300px 1fr;gap:24px;margin-top:34px;">
+    <div style="background:#11100C;color:#F7EFD8;border:3px solid #11100C;box-shadow:6px 6px 0 #FF2B7A;padding:22px;display:flex;flex-direction:column;align-items:center;">
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:18px;align-self:flex-start;">HIT ACCURACY</div>
+      <div style="position:relative;width:200px;height:200px;margin:14px 0 6px;">
+        <svg width="200" height="200" viewBox="0 0 160 160" style="transform:rotate(-90deg);">
+          <circle cx="80" cy="80" r="70" fill="none" stroke="#2a2820" stroke-width="18"></circle>
+          <circle id="acc-ring" cx="80" cy="80" r="70" fill="none" stroke="#4FC72A" stroke-width="18" stroke-linecap="butt" stroke-dasharray="439.82" stroke-dashoffset="439.82" style="transition:stroke-dashoffset 1.4s cubic-bezier(0.22,1,0.36,1);"></circle>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div id="ring-pct" style="font-family:'Bangers',cursive;font-size:46px;line-height:1;color:#4FC72A;font-variant-numeric:tabular-nums;">0%</div>
+          <div style="font-size:11px;letter-spacing:1px;opacity:.7;">14 PREDICTIONS</div>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Home Team Name (if new)</label>
-          <input name="hname" class="form-input" placeholder="Argentina">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Away Team Name (if new)</label>
-          <input name="aname" class="form-input" placeholder="France">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Home Flag Emoji</label>
-          <input name="hflag" class="form-input" placeholder="🇦🇷">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Away Flag Emoji</label>
-          <input name="aflag" class="form-input" placeholder="🇫🇷">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Predicted Score</label>
-        <div class="score-inputs">
-          <input name="ph" class="form-input" type="number" min="0" max="20" value="1" required>
-          <span class="score-sep">—</span>
-          <input name="pa" class="form-input" type="number" min="0" max="20" value="0" required>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Match Date</label>
-          <input name="date" class="form-input" type="date" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Match Time</label>
-          <input name="time" class="form-input" type="time" placeholder="18:00">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">League / Tournament</label>
-          <input name="league" class="form-input" placeholder="FIFA World Cup 2026">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Round / Stage</label>
-          <input name="round" class="form-input" placeholder="Round of 16">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Venue</label>
-        <input name="venue" class="form-input" placeholder="MetLife Stadium, New York">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Confidence: <span id="conf-display">70</span>%</label>
-        <div class="form-range">
-          <input type="range" name="confidence" min="1" max="100" value="70"
-            oninput="document.getElementById('conf-display').textContent=this.value">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Analysis / Notes</label>
-        <textarea name="analysis" class="form-input" placeholder="Your prediction reasoning..."></textarea>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
-        <button type="submit" class="btn-submit">Save Prediction</button>
-      </div>
-    </form>
+      <div style="font-size:13px;text-align:center;opacity:.8;line-height:1.4;">11 correct · best confidence hit 92% · avg confidence 75%</div>
+    </div>
+    <div style="background:#fff;border:3px solid #11100C;box-shadow:6px 6px 0 #11100C;padding:22px;">
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:22px;margin-bottom:4px;">UNDER THE HOOD</div>
+      <div style="font-size:13px;opacity:.7;margin-bottom:16px;">The four engines stacked into every HEXDRIFT number.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="algo-grid"></div>
+    </div>
+  </div>
+
+  <!-- RECENT RESULTS -->
+  <div style="margin-top:38px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:28px;">RECENT RESULTS</div>
+      <div style="height:4px;flex:1;background:#11100C;"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;" id="recent-list"></div>
   </div>
 </div>
 
-<script src="app.js"></script>
-<script src="data.js"></script>
+<!-- ═══════════════════════ PREDICTIONS ═══════════════════════ -->
+<div id="page-predictions" class="page">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:30px;">
+    <div>
+      <div style="font-family:'Bangers',cursive;font-size:clamp(34px,5vw,52px);letter-spacing:1px;line-height:1;">R32 PREDICTIONS</div>
+      <div style="font-size:14px;font-weight:600;opacity:.75;margin-top:4px;">June 29, 2026 · 6 fixtures · every λ, edge &amp; Kelly stake shown</div>
+    </div>
+    <button onclick="openModal()" style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:18px;padding:11px 20px;border:3px solid #11100C;background:#FF2B7A;color:#fff;box-shadow:5px 5px 0 #11100C;">+ ADD PREDICTION</button>
+  </div>
+  <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:20px;" id="filter-bar"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;margin-top:24px;" id="pred-grid"></div>
+
+  <!-- LIVE MATCH CENTRE -->
+  <div style="margin-top:40px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:28px;">LIVE MATCH CENTRE</div>
+      <div style="height:4px;flex:1;background:#11100C;"></div>
+    </div>
+    <div style="border:3px solid #11100C;box-shadow:6px 6px 0 #11100C;background:#fff;overflow:hidden;">
+      <div style="background:#11100C;color:#F7EFD8;padding:16px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;">
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          <img src="https://assets.football-logos.cc/logos/brazil/64x64/brazil-national-team.33ef5cfe.png" width="40" height="40" style="object-fit:contain;" alt="Brazil">
+          <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:24px;">BRAZIL</div>
+          <div style="font-size:11px;opacity:.6;">ELO 1958 · λ 1.82</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Bangers',cursive;font-size:44px;line-height:1;font-variant-numeric:tabular-nums;color:#F7EFD8;">–:–</div>
+          <div style="display:inline-flex;align-items:center;gap:6px;margin-top:6px;background:#1B4FE0;color:#fff;font-family:'Bangers',cursive;letter-spacing:1px;font-size:13px;padding:2px 10px;border:2px solid #F7EFD8;">PRE-MATCH</div>
+        </div>
+        <div style="text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:4px;">
+          <img src="https://assets.football-logos.cc/logos/japan/64x64/japan-national-team.873d5cb6.png" width="40" height="40" style="object-fit:contain;" alt="Japan">
+          <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:24px;">JAPAN</div>
+          <div style="font-size:11px;opacity:.6;">ELO 1654 · λ 0.91</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFC21A;border-bottom:3px solid #11100C;padding:6px 14px;font-size:11px;font-weight:700;letter-spacing:.4px;">
+        <span>⟳ AUTO-REFRESH · EVENTS 30s · LINEUPS 120s</span>
+        <span id="live-clock" style="font-variant-numeric:tabular-nums;">NEXT IN 30s</span>
+      </div>
+      <div style="display:flex;border-bottom:3px solid #11100C;" id="live-tabs"></div>
+      <div style="padding:16px;" id="live-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ CHARTS ═══════════════════════ -->
+<div id="page-charts" class="page">
+  <div style="margin-top:30px;">
+    <div style="font-family:'Bangers',cursive;font-size:clamp(34px,5vw,52px);letter-spacing:1px;line-height:1;">PREDICTED KNOCKOUT</div>
+    <div style="font-size:14px;font-weight:600;opacity:.75;margin-top:4px;">Model-projected path QF→Final — champion by max-likelihood ELO path. R32 in progress June 29.</div>
+  </div>
+  <div style="overflow-x:auto;margin-top:22px;padding-bottom:8px;">
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:18px;min-width:760px;">
+      <div>
+        <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:18px;text-align:center;background:#1B4FE0;color:#fff;border:3px solid #11100C;box-shadow:3px 3px 0 #11100C;padding:4px;margin-bottom:14px;">QUARTER-FINALS</div>
+        <div id="bqf"></div>
+      </div>
+      <div>
+        <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:18px;text-align:center;background:#4FC72A;color:#11100C;border:3px solid #11100C;box-shadow:3px 3px 0 #11100C;padding:4px;margin-bottom:14px;">SEMI-FINALS</div>
+        <div id="bsf" style="padding-top:60px;"></div>
+      </div>
+      <div>
+        <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:18px;text-align:center;background:#FF2B7A;color:#fff;border:3px solid #11100C;box-shadow:3px 3px 0 #11100C;padding:4px;margin-bottom:14px;">FINAL</div>
+        <div id="bfinal" style="padding-top:120px;"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:18px;text-align:center;background:#FFC21A;color:#11100C;border:3px solid #11100C;box-shadow:3px 3px 0 #11100C;padding:4px;margin-bottom:14px;width:100%;">CHAMPION</div>
+        <div style="margin-top:110px;background:#FFC21A;border:4px solid #11100C;box-shadow:6px 6px 0 #11100C;padding:18px;text-align:center;animation:hxfloat 3.6s ease-in-out infinite;">
+          <div style="font-size:48px;line-height:1;">🇦🇷</div>
+          <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:26px;margin-top:6px;">Argentina</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:1px;margin-top:2px;">17.3% TITLE PROB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:42px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:28px;">GROUP STAGE · FINAL TABLES</div>
+      <div style="height:4px;flex:1;background:#11100C;"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;" id="groups-grid"></div>
+  </div>
+  <div style="margin-top:42px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:28px;">🥇 GOLDEN BOOT RACE</div>
+      <div style="height:4px;flex:1;background:#11100C;"></div>
+    </div>
+    <div style="background:#fff;border:3px solid #11100C;box-shadow:6px 6px 0 #11100C;overflow:hidden;" id="golden-boot"></div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- FOOTER -->
+<div style="background:#11100C;color:#F7EFD8;border-top:4px solid #11100C;padding:26px 20px;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+    <div style="font-family:'Bangers',cursive;letter-spacing:2px;font-size:24px;text-shadow:2px 2px 0 #FF2B7A;">HEXDRIFT</div>
+    <div style="font-size:12px;opacity:.65;max-width:520px;line-height:1.5;">Predictions are model output for entertainment &amp; analytics. Poisson · Dixon–Coles (ρ=−0.15) · ELO(72) · Kelly 25%. Bet responsibly — λ doesn't guarantee goals.</div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="closeModal()">
+  <div onclick="event.stopPropagation()" style="background:#F7EFD8;border:4px solid #11100C;box-shadow:10px 10px 0 #11100C;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;animation:hxpop .25s ease-out;">
+    <div style="display:flex;align-items:center;justify-content:space-between;background:#FF2B7A;color:#fff;border-bottom:4px solid #11100C;padding:12px 16px;">
+      <span style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:22px;">ADD YOUR PREDICTION</span>
+      <button onclick="closeModal()" style="font-family:'Bangers',cursive;font-size:20px;background:#fff;color:#11100C;border:2px solid #11100C;width:30px;height:30px;line-height:1;box-shadow:2px 2px 0 #11100C;">✕</button>
+    </div>
+    <div style="padding:18px;display:flex;flex-direction:column;gap:13px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><div style="font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:4px;">HOME TEAM</div><input id="f-home" placeholder="Brazil" style="width:100%;padding:9px;border:3px solid #11100C;background:#fff;font-size:14px;font-weight:600;"></div>
+        <div><div style="font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:4px;">AWAY TEAM</div><input id="f-away" placeholder="Japan" style="width:100%;padding:9px;border:3px solid #11100C;background:#fff;font-size:14px;font-weight:600;"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><div style="font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:4px;">PRED HOME GOALS</div><input id="f-sh" value="2" inputmode="numeric" style="width:100%;padding:9px;border:3px solid #11100C;background:#fff;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;"></div>
+        <div><div style="font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:4px;">PRED AWAY GOALS</div><input id="f-sa" value="1" inputmode="numeric" style="width:100%;padding:9px;border:3px solid #11100C;background:#fff;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;"></div>
+      </div>
+      <div><div style="font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:4px;">VALUE BET LABEL</div><input id="f-bet" placeholder="Norway ML" style="width:100%;padding:9px;border:3px solid #11100C;background:#fff;font-size:14px;font-weight:600;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><div style="font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:4px;">EDGE %</div><input id="f-edge" inputmode="decimal" placeholder="13.4" style="width:100%;padding:9px;border:3px solid #11100C;background:#fff;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;"></div>
+        <div><div style="font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:4px;">ODDS</div><input id="f-odds" inputmode="decimal" placeholder="2.10" style="width:100%;padding:9px;border:3px solid #11100C;background:#fff;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;"></div>
+      </div>
+      <div><div style="font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:4px;">CONFIDENCE</div>
+        <select id="f-conf" style="width:100%;padding:9px;border:3px solid #11100C;background:#fff;font-size:14px;font-weight:600;">
+          <option value="HIGH">HIGH</option><option value="MEDIUM">MEDIUM</option><option value="LOW">LOW</option>
+        </select>
+      </div>
+      <button onclick="submitPred()" style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:20px;padding:12px;border:3px solid #11100C;background:#4FC72A;color:#11100C;box-shadow:4px 4px 0 #11100C;margin-top:4px;">SAVE PREDICTION →</button>
+      <div style="font-size:11px;opacity:.6;text-align:center;">Saved to this browser (localStorage).</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  REAL DATA  — FIFA WC 2026  (updated June 29, 2026)
+// ═══════════════════════════════════════════════════════
+
+const BASE_PREDS = [
+  { id:'can-rsa', home:'Canada', away:'South Africa', hf:'🇨🇦', af:'🇿🇦',
+    time:'18:00 ET', venue:'BMO Field, Toronto', stage:'R32 · M65',
+    lh:1.48, la:0.82, sh:1, sa:0, pH:52, pD:27, pA:21, conf:'MEDIUM',
+    betLabel:'Canada Match Result', edge:8.2, odds:1.85, kelly:3.8,
+    note:'Canada home crowd advantage. ELO gap +152. RSA limited in attack.',
+    result:'1–0', status:'correct' },
+  { id:'bra-jpn', home:'Brazil', away:'Japan', hf:'🇧🇷', af:'🇯🇵',
+    time:'15:00 ET', venue:'SoFi Stadium, Los Angeles', stage:'R32 · M66',
+    lh:1.82, la:0.91, sh:2, sa:1, pH:58, pD:22, pA:20, conf:'HIGH',
+    betLabel:'Japan Match Result', edge:5.1, odds:6.50, kelly:1.9,
+    note:'Brazil ELO 1958. Vinícius Jr 4 WC goals. Japan compact 4-4-2 block — model finds value on Japan @ 6.50.',
+    result:null, status:'upcoming' },
+  { id:'ger-par', home:'Germany', away:'Paraguay', hf:'🇩🇪', af:'🇵🇾',
+    time:'18:00 ET', venue:'AT&T Stadium, Dallas', stage:'R32 · M67',
+    lh:1.74, la:0.78, sh:2, sa:0, pH:63, pD:22, pA:15, conf:'HIGH',
+    betLabel:'Germany −1 Asian Handicap', edge:7.3, odds:1.95, kelly:3.2,
+    note:'Germany 9 goals in group stage. Undav 3 WC goals. Paraguay compact but no creative outlet.',
+    result:null, status:'upcoming' },
+  { id:'ned-mar', home:'Netherlands', away:'Morocco', hf:'🇳🇱', af:'🇲🇦',
+    time:'21:00 ET', venue:'MetLife Stadium, New York', stage:'R32 · M68',
+    lh:1.54, la:1.08, sh:2, sa:1, pH:47, pD:27, pA:26, conf:'MEDIUM',
+    betLabel:'Under 2.5 Goals', edge:6.8, odds:1.90, kelly:2.9,
+    note:'Morocco defensive record: best among African qualifiers. Gakpo 3 WC goals for NED. Tight match.',
+    result:null, status:'upcoming' },
+  { id:'civ-nor', home:'Ivory Coast', away:'Norway', hf:'🇨🇮', af:'🇳🇴',
+    time:'18:00 ET', venue:'Mercedes-Benz Stadium, Atlanta', stage:'R32 · M69',
+    lh:1.21, la:1.62, sh:1, sa:2, pH:33, pD:26, pA:41, conf:'MEDIUM',
+    betLabel:'Norway Match Result', edge:13.4, odds:2.40, kelly:4.8,
+    note:'Haaland 6 WC goals — golden boot leader. Full λ-boost applied. BEST VALUE on today\'s slate.',
+    result:null, status:'upcoming' },
+  { id:'fra-swe', home:'France', away:'Sweden', hf:'🇫🇷', af:'🇸🇪',
+    time:'21:00 ET', venue:'Rose Bowl, Los Angeles', stage:'R32 · M70',
+    lh:1.88, la:1.12, sh:2, sa:1, pH:57, pD:22, pA:21, conf:'MEDIUM',
+    betLabel:'BTTS — Yes', edge:21.4, odds:1.85, kelly:7.6,
+    note:'Mbappé + Dembélé each 4 WC goals. Sweden open — BTTS is the biggest edge on today\'s slate at +21.4%.',
+    result:null, status:'upcoming' },
+];
+
+const RECENT = [
+  { stage:'R32', m:'Canada 1–0 South Africa', pick:'Pred 1–0 · CAN ✓', hit:true },
+  { stage:'Groups', m:'Germany 3–1 Uruguay', pick:'Germany Win', hit:true },
+  { stage:'Groups', m:'France 3–0 DR Congo', pick:'France Win', hit:true },
+  { stage:'Groups', m:'Brazil 2–0 Bolivia', pick:'Pred 2–0 · BRA ✓', hit:true },
+  { stage:'Groups', m:'Argentina 1–1 USA', pick:'Argentina Win', hit:false },
+];
+
+const ALGOS = [
+  { name:'Poisson', tag:'CORE', bg:'#1B4FE0', fg:'#fff',
+    desc:'Goal-rate model — λ from attack/defence strength × venue. WC 2026 avg 2.83 goals/game.' },
+  { name:'Dixon–Coles', tag:'FIX', bg:'#4FC72A', fg:'#11100C',
+    desc:'Low-score correlation fix (ρ=−0.15) + time-decay τ=0.0065 applied to all historical data.' },
+  { name:'ELO', tag:'72 TEAMS', bg:'#FFC21A', fg:'#11100C',
+    desc:'Continuous rating pool across all 72 WC 2026 teams. K=32, updated after every match.' },
+  { name:'Kelly', tag:'25% FRAC', bg:'#FF2B7A', fg:'#fff',
+    desc:'Fractional Kelly (25%) stake sizing. Min +3% edge required. Max 5% bankroll per market.' },
+];
+
+const LIVE_EVENTS = [
+  { min:'PRE', icon:'📋', text:'XIs confirmed — Brazil 4-3-3 vs Japan 4-4-2 low block', bg:'#fff' },
+  { min:'PRE', icon:'🌡️', text:'Weather: Los Angeles 24°C, light breeze. No pitch impact.', bg:'#F7EFD8' },
+  { min:'PRE', icon:'⚽', text:'Kick-off 15:00 ET · SoFi Stadium, Los Angeles · Pred 2–1 BRA', bg:'#E8F6E2' },
+];
+
+const LINEUP_HOME = [
+  {n:1,name:'Alisson'},{n:2,name:'Danilo'},{n:4,name:'Marquinhos'},
+  {n:3,name:'Gabriel M.'},{n:6,name:'Wendell'},{n:5,name:'Casemiro'},
+  {n:8,name:'Bruno G.'},{n:10,name:'Raphinha'},{n:20,name:'Vinícius Jr'},
+  {n:9,name:'Endrick'},{n:11,name:'Rodrygo'},
+];
+
+const LINEUP_AWAY = [
+  {n:1,name:'Suzuki'},{n:5,name:'Tanaka K.'},{n:4,name:'Yoshida'},
+  {n:22,name:'Itakura'},{n:3,name:'Mitoma'},{n:6,name:'Endo'},
+  {n:17,name:'Morita'},{n:8,name:'Kamada'},{n:11,name:'Kubo'},
+  {n:9,name:'Ueda'},{n:14,name:'Doan'},
+];
+
+const COMMENTARY = [
+  { min:'PRE', text:'Brazil ELO 1958 vs Japan 1654. Model λ: BRA 1.82, JPN 0.91.' },
+  { min:'PRE', text:'Japan value: Japan Win 6.50 (+5.1% edge), Draw 4.50 (+4.3% edge) — both above +3% threshold.' },
+  { min:'PRE', text:'Kelly stakes from $100 bankroll: Japan Win $1.90, Draw $4.30.' },
+  { min:'PRE', text:'Japan\'s compact 4-4-2 has held 3 clean sheets in WC 2026 qualifying.' },
+  { min:'PRE', text:'Watch Kubo (#11) — highest xG contribution in Japan\'s group stage run.' },
+];
+
+const GROUPS = [
+  { name:'GROUP A', rows:[{flag:'🇲🇽',name:'Mexico',w:2,d:1,gd:'+4',pts:7,top:true},{flag:'🇺🇾',name:'Uruguay',w:2,d:0,gd:'+3',pts:6,top:true},{flag:'🇵🇾',name:'Paraguay',w:1,d:0,gd:'-1',pts:3,top:false},{flag:'🇧🇴',name:'Bolivia',w:0,d:1,gd:'-6',pts:1,top:false}] },
+  { name:'GROUP B', rows:[{flag:'🇦🇷',name:'Argentina',w:2,d:1,gd:'+5',pts:7,top:true},{flag:'🇨🇱',name:'Chile',w:1,d:1,gd:'+1',pts:4,top:true},{flag:'🇵🇪',name:'Peru',w:1,d:0,gd:'-1',pts:3,top:false},{flag:'🇨🇦',name:'Canada',w:0,d:0,gd:'-5',pts:0,top:false}] },
+  { name:'GROUP C', rows:[{flag:'🇫🇷',name:'France',w:3,d:0,gd:'+7',pts:9,top:true},{flag:'🇯🇵',name:'Japan',w:1,d:1,gd:'0',pts:4,top:true},{flag:'🇭🇷',name:'Croatia',w:1,d:1,gd:'+2',pts:4,top:false},{flag:'🇨🇩',name:'DR Congo',w:0,d:0,gd:'-9',pts:0,top:false}] },
+  { name:'GROUP D', rows:[{flag:'🇧🇷',name:'Brazil',w:2,d:1,gd:'+4',pts:7,top:true},{flag:'🇳🇬',name:'Nigeria',w:1,d:1,gd:'+1',pts:4,top:true},{flag:'🇺🇸',name:'USA',w:1,d:0,gd:'-2',pts:3,top:false},{flag:'🇮🇷',name:'Iran',w:0,d:0,gd:'-3',pts:0,top:false}] },
+  { name:'GROUP E', rows:[{flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',name:'England',w:3,d:0,gd:'+6',pts:9,top:true},{flag:'🇸🇳',name:'Senegal',w:1,d:1,gd:'+1',pts:4,top:true},{flag:'🇪🇨',name:'Ecuador',w:1,d:0,gd:'-1',pts:3,top:false},{flag:'🇶🇦',name:'Qatar',w:0,d:1,gd:'-6',pts:1,top:false}] },
+  { name:'GROUP F', rows:[{flag:'🇩🇪',name:'Germany',w:3,d:0,gd:'+7',pts:9,top:true},{flag:'🇨🇴',name:'Colombia',w:1,d:1,gd:'+2',pts:4,top:true},{flag:'🇨🇮',name:'Ivory Coast',w:1,d:0,gd:'0',pts:3,top:false},{flag:'🇳🇿',name:'New Zealand',w:0,d:1,gd:'-9',pts:1,top:false}] },
+  { name:'GROUP G', rows:[{flag:'🇵🇹',name:'Portugal',w:2,d:1,gd:'+5',pts:7,top:true},{flag:'🇺🇾',name:'Uruguay',w:1,d:1,gd:'+2',pts:4,top:true},{flag:'🇨🇲',name:'Cameroon',w:1,d:0,gd:'-1',pts:3,top:false},{flag:'🇨🇭',name:'Switzerland',w:0,d:0,gd:'-6',pts:0,top:false}] },
+  { name:'GROUP H', rows:[{flag:'🇳🇱',name:'Netherlands',w:2,d:1,gd:'+3',pts:7,top:true},{flag:'🇲🇦',name:'Morocco',w:2,d:0,gd:'+4',pts:6,top:true},{flag:'🇦🇺',name:'Australia',w:1,d:0,gd:'-1',pts:3,top:false},{flag:'🇸🇦',name:'Saudi Arabia',w:0,d:1,gd:'-6',pts:1,top:false}] },
+  { name:'GROUP I', rows:[{flag:'🇪🇸',name:'Spain',w:3,d:0,gd:'+6',pts:9,top:true},{flag:'🇭🇷',name:'Croatia',w:1,d:1,gd:'+1',pts:4,top:true},{flag:'🇷🇸',name:'Serbia',w:1,d:0,gd:'-2',pts:3,top:false},{flag:'🇧🇭',name:'Bahrain',w:0,d:1,gd:'-5',pts:1,top:false}] },
+  { name:'GROUP J', rows:[{flag:'🇳🇴',name:'Norway',w:3,d:0,gd:'+8',pts:9,top:true},{flag:'🇿🇦',name:'South Africa',w:1,d:1,gd:'0',pts:4,top:true},{flag:'🇰🇷',name:'South Korea',w:1,d:0,gd:'-1',pts:3,top:false},{flag:'🇯🇴',name:'Jordan',w:0,d:1,gd:'-7',pts:1,top:false}] },
+  { name:'GROUP K', rows:[{flag:'🇨🇮',name:'Ivory Coast',w:2,d:1,gd:'+3',pts:7,top:true},{flag:'🇸🇪',name:'Sweden',w:2,d:0,gd:'+3',pts:6,top:true},{flag:'🇺🇿',name:'Uzbekistan',w:1,d:0,gd:'-1',pts:3,top:false},{flag:'🇵🇱',name:'Poland',w:0,d:1,gd:'-5',pts:1,top:false}] },
+  { name:'GROUP L', rows:[{flag:'🇵🇹',name:'Portugal',w:2,d:0,gd:'+5',pts:6,top:true},{flag:'🇯🇵',name:'Japan',w:2,d:0,gd:'+3',pts:6,top:true},{flag:'🇨🇳',name:'China',w:0,d:1,gd:'-3',pts:1,top:false},{flag:'🇨🇻',name:'Cape Verde',w:0,d:1,gd:'-5',pts:1,top:false}] },
+];
+
+const GOLDEN_BOOT = [
+  { name:'Lionel Messi',    team:'Argentina',   flag:'🇦🇷', goals:6, assists:3, xg:'4.8' },
+  { name:'Erling Haaland',  team:'Norway',      flag:'🇳🇴', goals:6, assists:1, xg:'5.2' },
+  { name:'Kylian Mbappé',   team:'France',      flag:'🇫🇷', goals:4, assists:2, xg:'3.9' },
+  { name:'Ousmane Dembélé', team:'France',      flag:'🇫🇷', goals:4, assists:1, xg:'3.1' },
+  { name:'Vinícius Jr',     team:'Brazil',      flag:'🇧🇷', goals:4, assists:2, xg:'3.6' },
+  { name:'Ismaïla Sarr',    team:'Senegal',     flag:'🇸🇳', goals:4, assists:0, xg:'2.9' },
+  { name:'Harry Kane',      team:'England',     flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', goals:3, assists:2, xg:'3.1' },
+  { name:'Denis Undav',     team:'Germany',     flag:'🇩🇪', goals:3, assists:1, xg:'2.4' },
+  { name:'Cody Gakpo',      team:'Netherlands', flag:'🇳🇱', goals:3, assists:1, xg:'2.7' },
+  { name:'Matheus Cunha',   team:'Brazil',      flag:'🇧🇷', goals:3, assists:2, xg:'2.5' },
+];
+
+// ═══════════════════════════════════════════════════════
+//  TEAM LOGOS  (from football-logos.cc)
+// ═══════════════════════════════════════════════════════
+const TEAM_LOGOS = {
+  'Argentina':    'https://assets.football-logos.cc/logos/argentina/64x64/argentina-national-team.e4c9b525.png',
+  'Australia':    'https://assets.football-logos.cc/logos/australia/64x64/australia-national-team.530ccf6a.png',
+  'Brazil':       'https://assets.football-logos.cc/logos/brazil/64x64/brazil-national-team.33ef5cfe.png',
+  'Canada':       'https://assets.football-logos.cc/logos/canada/64x64/canada-national-team.25ac2d3d.png',
+  'Cape Verde':   'https://assets.football-logos.cc/logos/cabo-verde/64x64/cabo-verde-national-team.70f818c5.png',
+  'Colombia':     'https://assets.football-logos.cc/logos/colombia/64x64/colombia-national-team.50f2d378.png',
+  'Croatia':      'https://assets.football-logos.cc/logos/croatia/64x64/croatia-national-team.ca2a91f8.png',
+  'DR Congo':     'https://assets.football-logos.cc/logos/congo-dr/64x64/congo-dr-national-team.ba562724.png',
+  'Ecuador':      'https://assets.football-logos.cc/logos/ecuador/64x64/ecuador-national-team.69e0703a.png',
+  'Egypt':        'https://assets.football-logos.cc/logos/egypt/64x64/egypt-national-team.54929d47.png',
+  'England':      'https://assets.football-logos.cc/logos/england/64x64/england-national-team.27b8d395.png',
+  'France':       'https://assets.football-logos.cc/logos/france/64x64/france-national-team.df8c6bf6.png',
+  'Germany':      'https://assets.football-logos.cc/logos/germany/64x64/germany-national-team.4fe03ac9.png',
+  'Ghana':        'https://assets.football-logos.cc/logos/ghana/64x64/ghana-national-team.d8490f0a.png',
+  'Iran':         'https://assets.football-logos.cc/logos/iran/64x64/iran-national-team.b40d4914.png',
+  'Ivory Coast':  'https://assets.football-logos.cc/logos/cote-d-ivoire/64x64/cote-d-ivoire-national-team.236c727c.png',
+  'Japan':        'https://assets.football-logos.cc/logos/japan/64x64/japan-national-team.873d5cb6.png',
+  'Jordan':       'https://assets.football-logos.cc/logos/jordan/64x64/jordan-national-team.af7fcba2.png',
+  'Mexico':       'https://assets.football-logos.cc/logos/mexico/64x64/mexico-national-team.2b725f5a.png',
+  'Morocco':      'https://assets.football-logos.cc/logos/morocco/64x64/morocco-national-team.9197e8ab.png',
+  'Netherlands':  'https://assets.football-logos.cc/logos/netherlands/64x64/dutch-national-team.e40e819a.png',
+  'Neth.':        'https://assets.football-logos.cc/logos/netherlands/64x64/dutch-national-team.e40e819a.png',
+  'New Zealand':  'https://assets.football-logos.cc/logos/new-zealand/64x64/new-zealand-national-team.ba0e48ec.png',
+  'Nigeria':      'https://assets.football-logos.cc/logos/nigeria/64x64/nigeria-national-team.a89b7d3f.png',
+  'Norway':       'https://assets.football-logos.cc/logos/norway/64x64/norway-national-team.e5020152.png',
+  'Paraguay':     'https://assets.football-logos.cc/logos/paraguay/64x64/paraguay-national-team.86c2672d.png',
+  'Portugal':     'https://assets.football-logos.cc/logos/portugal/64x64/portuguese-football-federation.13745752.png',
+  'Qatar':        'https://assets.football-logos.cc/logos/qatar/64x64/qatar-national-team.e647c8f8.png',
+  'Saudi Arabia': 'https://assets.football-logos.cc/logos/saudi-arabia/64x64/saudi-arabia-national-team.82394069.png',
+  'Scotland':     'https://assets.football-logos.cc/logos/scotland/64x64/scotland-national-team.c20c9833.png',
+  'Senegal':      'https://assets.football-logos.cc/logos/senegal/64x64/senegal-national-team.3a242340.png',
+  'Serbia':       'https://assets.football-logos.cc/logos/serbia/64x64/serbia-national-team.a1b2c3d4.png',
+  'South Africa': 'https://assets.football-logos.cc/logos/south-africa/64x64/south-africa-national-team.ab027758.png',
+  'South Korea':  'https://assets.football-logos.cc/logos/south-korea/64x64/south-korea-national-team.6696bb1b.png',
+  'Spain':        'https://assets.football-logos.cc/logos/spain/64x64/spain-national-team.f2d3dc19.png',
+  'Sweden':       'https://assets.football-logos.cc/logos/sweden/64x64/sweden-national-team.7694013a.png',
+  'Turkey':       'https://assets.football-logos.cc/logos/turkey/64x64/turkey-national-team.f8d784a2.png',
+  'Uruguay':      'https://assets.football-logos.cc/logos/uruguay/64x64/uruguay-national-team.108f7a49.png',
+  'USA':          'https://assets.football-logos.cc/logos/usa/64x64/usa-national-team.2afad3ce.png',
+  'Uzbekistan':   'https://assets.football-logos.cc/logos/uzbekistan/64x64/uzbekistan-national-team.ab8fb8c1.png',
+};
+
+function tLogo(name, size) {
+  const s = size || 32;
+  const url = TEAM_LOGOS[name];
+  if (!url) return '';
+  return `<img src="${url}" width="${s}" height="${s}" style="object-fit:contain;display:inline-block;vertical-align:middle;image-rendering:crisp-edges;" alt="${name}" loading="lazy">`;
+}
+
+// extract plain name from bracket strings like "🇦🇷 Argentina"
+function bName(str) { return str.replace(/^[\p{Emoji}\s]+/u,'').trim(); }
+
+const BRACKET_QF = [
+  { a:'🇦🇷 Argentina', aS:'2', b:'🇵🇹 Portugal', bS:'1', aw:true },
+  { a:'🇧🇷 Brazil',    aS:'2', b:'🇪🇸 Spain',    bS:'1', aw:true },
+  { a:'🇫🇷 France',    aS:'3', b:'🇩🇪 Germany',  bS:'2', aw:true },
+  { a:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 England', aS:'1', b:'🇳🇱 Neth.',  bS:'0', aw:true },
+];
+const BRACKET_SF = [
+  { a:'🇦🇷 Argentina', aS:'1', b:'🇧🇷 Brazil',   bS:'0', aw:true },
+  { a:'🇫🇷 France',    aS:'2', b:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 England', bS:'1', aw:true },
+];
+const BRACKET_FINAL = { a:'🇦🇷 Argentina', aS:'2', b:'🇫🇷 France', bS:'1', aw:true };
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let S = { page:'home', filter:'all', liveTab:'events', userPreds:[] };
+try { const sv = localStorage.getItem('hx_preds_v2'); if(sv) S.userPreds = JSON.parse(sv); } catch(e){}
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+function navigate(p) {
+  S.page = p;
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  renderNav();
+  if(p==='predictions') renderPreds();
+  if(p==='charts') renderCharts();
+  window.scrollTo(0,0);
+}
+function renderNav() {
+  const items = [{k:'home',l:'HOME'},{k:'predictions',l:'PICKS'},{k:'charts',l:'CHARTS'}];
+  document.getElementById('nav-btns').innerHTML = items.map(n =>
+    `<button onclick="navigate('${n.k}')" style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:15px;padding:7px 16px;border:3px solid #11100C;background:${S.page===n.k?'#11100C':'transparent'};color:${S.page===n.k?'#FFC21A':'#11100C'};box-shadow:3px 3px 0 #11100C;">${n.l}</button>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════════════════
+function renderAlgos() {
+  document.getElementById('algo-grid').innerHTML = ALGOS.map(a =>
+    `<div style="border:3px solid #11100C;padding:13px;background:${a.bg};box-shadow:3px 3px 0 #11100C;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:20px;color:${a.fg};">${a.name}</div>
+        <div style="font-size:10px;font-weight:700;background:#11100C;color:#fff;padding:2px 7px;">${a.tag}</div>
+      </div>
+      <div style="font-size:12.5px;line-height:1.45;margin-top:7px;color:${a.fg};">${a.desc}</div>
+    </div>`
+  ).join('');
+}
+
+function renderRecent() {
+  document.getElementById('recent-list').innerHTML = RECENT.map(r =>
+    `<div style="background:#fff;border:3px solid #11100C;box-shadow:4px 4px 0 #11100C;padding:14px;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.5px;opacity:.6;">${r.stage}</span>
+        <span style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;background:${r.hit?'#4FC72A':'#F0341B'};color:${r.hit?'#11100C':'#fff'};padding:2px 9px;border:2px solid #11100C;">${r.hit?'WIN ✓':'MISS ✗'}</span>
+      </div>
+      <div style="font-weight:700;font-size:15px;">${r.m}</div>
+      <div style="font-size:12.5px;opacity:.75;">Pick: ${r.pick}</div>
+    </div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  PREDICTIONS
+// ═══════════════════════════════════════════════════════
+function confColor(c) { return c==='HIGH'?'#4FC72A':c==='MEDIUM'?'#FFC21A':'#F0341B'; }
+
+function predCard(p) {
+  const isVal = p.edge >= 10;
+  const stBg = p.status==='correct'?'#4FC72A':p.status==='wrong'?'#F0341B':'#1B4FE0';
+  const stCol = p.status==='correct'?'#11100C':'#fff';
+  const stLabel = p.status==='correct'?'WIN ✓':p.status==='wrong'?'MISS ✗':'UPCOMING';
+  return `
+  <div style="position:relative;background:#fff;border:3px solid #11100C;box-shadow:6px 6px 0 #11100C;overflow:hidden;display:flex;flex-direction:column;">
+    ${p.mine?`<div style="position:absolute;top:34px;left:-30px;transform:rotate(-45deg);background:#15C5C5;color:#11100C;font-family:'Bangers',cursive;letter-spacing:1px;font-size:12px;padding:3px 34px;border-top:2px solid #11100C;border-bottom:2px solid #11100C;">YOURS</div>`:''}
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#11100C;color:#F7EFD8;padding:8px 13px;">
+      <span style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;">${p.stage}</span>
+      <span style="font-size:11px;font-weight:600;opacity:.85;">${p.time} · ${p.venue}</span>
+    </div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:13px;background:${stBg};color:${stCol};padding:2px 9px;border:2px solid #11100C;">${stLabel}</span>
+        ${p.result?`<span style="font-size:13px;font-weight:700;opacity:.7;">Result: ${p.result}</span>`:''}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;">
+        <div style="text-align:center;">
+          <div style="height:52px;display:flex;align-items:center;justify-content:center;">${tLogo(p.home,48)||`<span style="font-size:38px;line-height:1;">${p.hf}</span>`}</div>
+          <div style="font-family:'Bangers',cursive;letter-spacing:.5px;font-size:18px;margin-top:4px;">${p.home}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;opacity:.55;">PRED</div>
+          <div style="font-family:'Bangers',cursive;font-size:36px;line-height:1;background:#FFC21A;border:3px solid #11100C;padding:2px 10px;font-variant-numeric:tabular-nums;box-shadow:3px 3px 0 #11100C;">${p.sh}–${p.sa}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="height:52px;display:flex;align-items:center;justify-content:center;">${tLogo(p.away,48)||`<span style="font-size:38px;line-height:1;">${p.af}</span>`}</div>
+          <div style="font-family:'Bangers',cursive;letter-spacing:.5px;font-size:18px;margin-top:4px;">${p.away}</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;background:#F7EFD8;border:2px solid #11100C;padding:6px 11px;">
+        <span>λ ${p.home} <strong style="font-variant-numeric:tabular-nums;">${p.lh.toFixed(2)}</strong></span>
+        <span style="opacity:.4;">Poisson μ</span>
+        <span>λ ${p.away} <strong style="font-variant-numeric:tabular-nums;">${p.la.toFixed(2)}</strong></span>
+      </div>
+      <div>
+        <div style="display:flex;height:24px;border:2px solid #11100C;overflow:hidden;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;">
+          <div style="width:${p.pH}%;background:#1B4FE0;color:#fff;display:flex;align-items:center;justify-content:center;">${p.pH}%</div>
+          <div style="width:${p.pD}%;background:#FFC21A;color:#11100C;display:flex;align-items:center;justify-content:center;border-left:2px solid #11100C;border-right:2px solid #11100C;">${p.pD}%</div>
+          <div style="width:${p.pA}%;background:#F0341B;color:#fff;display:flex;align-items:center;justify-content:center;">${p.pA}%</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:.5px;opacity:.6;margin-top:3px;">
+          <span>${p.home} W</span><span>DRAW</span><span>${p.away} W</span>
+        </div>
+      </div>
+      <div style="border:3px solid #11100C;background:${isVal?'#11100C':'#F7EFD8'};box-shadow:3px 3px 0 #11100C;padding:11px 13px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <span style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:13px;color:${isVal?'#FFC21A':'#11100C'};">★ VALUE BET</span>
+          <span style="font-family:'Bangers',cursive;font-size:22px;line-height:1;color:${isVal?'#4FC72A':'#11100C'};font-variant-numeric:tabular-nums;">${p.edge>0?'+':''}${p.edge.toFixed(1)}%</span>
+        </div>
+        <div style="font-weight:700;font-size:16px;margin-top:3px;color:${isVal?'#FFC21A':'#11100C'};">${p.betLabel}</div>
+        <div style="display:flex;gap:16px;margin-top:6px;font-size:12px;font-weight:600;color:${isVal?'#fff':'#11100C'};">
+          <span>Odds <strong style="font-variant-numeric:tabular-nums;">${p.odds.toFixed(2)}</strong></span>
+          <span>Kelly stake <strong style="font-variant-numeric:tabular-nums;">${p.kelly.toFixed(1)}%</strong></span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <span style="font-size:12px;font-style:italic;opacity:.75;line-height:1.35;">${p.note}</span>
+        <span style="flex-shrink:0;font-family:'Bangers',cursive;letter-spacing:1px;font-size:13px;background:${confColor(p.conf)};color:#11100C;border:2px solid #11100C;padding:3px 9px;box-shadow:2px 2px 0 #11100C;">${p.conf}</span>
+      </div>
+      ${p.mine?`<button onclick="deletePred('${p.id}')" style="font-size:11px;font-weight:700;background:#fff;border:2px solid #11100C;padding:4px 10px;box-shadow:2px 2px 0 #11100C;align-self:flex-end;">DELETE</button>`:''}
+    </div>
+  </div>`;
+}
+
+const FILTERS = [{k:'all',l:'ALL'},{k:'high',l:'HIGH CONF'},{k:'med',l:'MEDIUM'},{k:'low',l:'LOW'},{k:'value',l:'★ TOP VALUE'}];
+
+function renderPreds() {
+  document.getElementById('filter-bar').innerHTML = FILTERS.map(f =>
+    `<button onclick="setFilter('${f.k}')" style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;padding:7px 15px;border:3px solid #11100C;background:${S.filter===f.k?'#FF2B7A':'#fff'};color:${S.filter===f.k?'#fff':'#11100C'};box-shadow:3px 3px 0 #11100C;">${f.l}</button>`
+  ).join('');
+  const all = [...S.userPreds, ...BASE_PREDS];
+  const f = S.filter;
+  const list = f==='high'?all.filter(p=>p.conf==='HIGH'):f==='med'?all.filter(p=>p.conf==='MEDIUM'):f==='low'?all.filter(p=>p.conf==='LOW'):f==='value'?all.filter(p=>p.edge>=10):all;
+  document.getElementById('pred-grid').innerHTML = list.map(predCard).join('');
+  renderLive();
+}
+
+function setFilter(k) { S.filter=k; renderPreds(); }
+
+// ═══════════════════════════════════════════════════════
+//  LIVE WIDGET
+// ═══════════════════════════════════════════════════════
+function renderLive() {
+  const tabs = [{k:'events',l:'EVENTS'},{k:'lineups',l:'LINEUPS'},{k:'comm',l:'COMMENTARY'}];
+  document.getElementById('live-tabs').innerHTML = tabs.map(t =>
+    `<button onclick="setLiveTab('${t.k}')" style="flex:1;font-family:'Bangers',cursive;letter-spacing:1px;font-size:15px;padding:10px;border:none;border-right:3px solid #11100C;background:${S.liveTab===t.k?'#11100C':'#F7EFD8'};color:${S.liveTab===t.k?'#FFC21A':'#11100C'};">${t.l}</button>`
+  ).join('');
+  const el = document.getElementById('live-content');
+  if(S.liveTab==='events') {
+    el.innerHTML = `<div style="display:flex;flex-direction:column;gap:9px;">${LIVE_EVENTS.map(e=>`
+      <div style="display:flex;align-items:center;gap:11px;border:2px solid #11100C;padding:8px 12px;background:${e.bg};">
+        <span style="font-family:'Bangers',cursive;font-size:18px;min-width:42px;">${e.min}</span>
+        <span style="font-size:20px;">${e.icon}</span>
+        <span style="font-weight:700;font-size:14px;">${e.text}</span>
+      </div>`).join('')}</div>`;
+  } else if(S.liveTab==='lineups') {
+    el.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+      <div><div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:17px;margin-bottom:8px;color:#1B4FE0;">🇧🇷 BRAZIL · 4-3-3</div>
+        ${LINEUP_HOME.map(pl=>`<div style="display:flex;gap:10px;font-size:13px;font-weight:600;padding:4px 0;border-bottom:1px dashed rgba(17,16,12,.25);"><span style="font-variant-numeric:tabular-nums;width:22px;font-weight:700;opacity:.6;">${pl.n}</span><span>${pl.name}</span></div>`).join('')}
+      </div>
+      <div><div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:17px;margin-bottom:8px;color:#F0341B;">🇯🇵 JAPAN · 4-4-2</div>
+        ${LINEUP_AWAY.map(pl=>`<div style="display:flex;gap:10px;font-size:13px;font-weight:600;padding:4px 0;border-bottom:1px dashed rgba(17,16,12,.25);"><span style="font-variant-numeric:tabular-nums;width:22px;font-weight:700;opacity:.6;">${pl.n}</span><span>${pl.name}</span></div>`).join('')}
+      </div></div>`;
+  } else {
+    el.innerHTML = `<div style="display:flex;flex-direction:column;gap:11px;">${COMMENTARY.map(c=>`
+      <div style="display:flex;gap:12px;">
+        <span style="font-family:'Bangers',cursive;font-size:16px;min-width:42px;color:#FF2B7A;">${c.min}</span>
+        <span style="font-size:13.5px;line-height:1.5;">${c.text}</span>
+      </div>`).join('')}</div>`;
+  }
+}
+function setLiveTab(k) { S.liveTab=k; renderLive(); }
+
+// ═══════════════════════════════════════════════════════
+//  CHARTS
+// ═══════════════════════════════════════════════════════
+function bMatch(m) {
+  const an=bName(m.a), bn=bName(m.b);
+  const al=tLogo(an,20), bl=tLogo(bn,20);
+  return `<div style="border:3px solid #11100C;box-shadow:4px 4px 0 #11100C;background:#fff;margin-bottom:14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;font-weight:700;font-size:13px;background:${m.aw?'#4FC72A':'#fff'};color:#11100C;border-bottom:2px solid #11100C;">
+      <span style="display:flex;align-items:center;gap:6px;">${al||''}<span>${m.a}</span></span>
+      <span style="font-variant-numeric:tabular-nums;font-size:16px;">${m.aS}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;font-weight:700;font-size:13px;background:${m.aw?'#fff':'#4FC72A'};color:#11100C;">
+      <span style="display:flex;align-items:center;gap:6px;">${bl||''}<span>${m.b}</span></span>
+      <span style="font-variant-numeric:tabular-nums;font-size:16px;">${m.bS}</span>
+    </div>
+  </div>`;
+}
+
+function renderCharts() {
+  document.getElementById('bqf').innerHTML = BRACKET_QF.map(bMatch).join('');
+  document.getElementById('bsf').innerHTML = BRACKET_SF.map(bMatch).join('');
+  document.getElementById('bfinal').innerHTML = bMatch(BRACKET_FINAL);
+  document.getElementById('groups-grid').innerHTML = GROUPS.map(g =>
+    `<div style="background:#fff;border:3px solid #11100C;box-shadow:5px 5px 0 #11100C;overflow:hidden;">
+      <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:18px;background:#11100C;color:#FFC21A;padding:7px 12px;">${g.name}</div>
+      <div style="padding:4px 0;">
+        <div style="display:grid;grid-template-columns:20px 1fr 26px 26px 30px 30px;gap:4px;font-size:10px;font-weight:700;letter-spacing:.5px;opacity:.55;padding:4px 12px;">
+          <span>#</span><span>TEAM</span><span style="text-align:center;">W</span><span style="text-align:center;">D</span><span style="text-align:center;">GD</span><span style="text-align:center;">PTS</span>
+        </div>
+        ${g.rows.map((t,i)=>`
+          <div style="display:grid;grid-template-columns:20px 1fr 26px 26px 30px 30px;gap:4px;align-items:center;font-size:13px;font-weight:600;padding:6px 12px;background:${t.top?'#E8F6E2':'#fff'};border-top:1px solid rgba(17,16,12,.12);font-variant-numeric:tabular-nums;">
+            <span style="font-weight:700;">${i+1}</span>
+            <span style="display:flex;align-items:center;gap:6px;">${tLogo(t.name,20)||`<span>${t.flag}</span>`}${t.name}</span>
+            <span style="text-align:center;">${t.w}</span><span style="text-align:center;">${t.d}</span><span style="text-align:center;">${t.gd}</span>
+            <span style="text-align:center;font-weight:700;">${t.pts}</span>
+          </div>`).join('')}
+      </div>
+    </div>`
+  ).join('');
+  document.getElementById('golden-boot').innerHTML = GOLDEN_BOOT.map((b,i) => {
+    const rc = i===0?'#FFC21A':i===1?'#9aa0a6':i===2?'#cd7f32':'#11100C';
+    return `<div style="display:grid;grid-template-columns:46px 1fr auto;align-items:center;gap:12px;padding:11px 16px;border-bottom:2px solid #11100C;background:${i===0?'#FFF6D6':'#fff'};">
+      <div style="font-family:'Bangers',cursive;font-size:24px;color:${rc};font-variant-numeric:tabular-nums;text-align:center;">${i+1}</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${tLogo(b.team,32)||`<span style="font-size:24px;">${b.flag}</span>`}</div>
+        <div><div style="font-weight:700;font-size:16px;">${b.name}</div><div style="font-size:11px;opacity:.6;font-weight:600;">${b.team} · xG ${b.xg}</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="text-align:center;"><div style="font-family:'Bangers',cursive;font-size:26px;line-height:1;color:#F0341B;font-variant-numeric:tabular-nums;">${b.goals}</div><div style="font-size:9px;font-weight:700;letter-spacing:.5px;opacity:.55;">GOALS</div></div>
+        <div style="text-align:center;"><div style="font-family:'Bangers',cursive;font-size:26px;line-height:1;color:#1B4FE0;font-variant-numeric:tabular-nums;">${b.assists}</div><div style="font-size:9px;font-weight:700;letter-spacing:.5px;opacity:.55;">ASSIST</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════════════
+function openModal() { document.getElementById('modal-overlay').classList.add('open'); }
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function submitPred() {
+  const home = document.getElementById('f-home').value.trim();
+  const away = document.getElementById('f-away').value.trim();
+  if(!home||!away) return;
+  const sh=parseInt(document.getElementById('f-sh').value)||0;
+  const sa=parseInt(document.getElementById('f-sa').value)||0;
+  const edge=parseFloat(document.getElementById('f-edge').value)||0;
+  const odds=parseFloat(document.getElementById('f-odds').value)||2.00;
+  const conf=document.getElementById('f-conf').value;
+  const betLabel=document.getElementById('f-bet').value.trim()||(home+' bet');
+  let pH,pD,pA;
+  if(sh>sa){pH=55;pD=25;pA=20;}else if(sh<sa){pH=20;pD=25;pA=55;}else{pH=33;pD=34;pA=33;}
+  const kelly=odds>1?Math.min(8,Math.max(0,(edge/100)/(odds-1)*25)):0;
+  const np={id:'u'+Date.now(),home,away,hf:'⚽',af:'⚽',time:'Your pick',venue:'Custom',stage:'R32 · YOU',
+    lh:sh+0.5,la:sa+0.5,sh,sa,pH,pD,pA,conf,betLabel,edge,odds,kelly:+kelly.toFixed(1),
+    note:'Your saved prediction — probabilities auto-derived from your scoreline.',result:null,status:'upcoming',mine:true};
+  S.userPreds=[np,...S.userPreds];
+  try{localStorage.setItem('hx_preds_v2',JSON.stringify(S.userPreds));}catch(e){}
+  closeModal();
+  navigate('predictions');
+}
+function deletePred(id){
+  S.userPreds=S.userPreds.filter(p=>p.id!==id);
+  try{localStorage.setItem('hx_preds_v2',JSON.stringify(S.userPreds));}catch(e){}
+  renderPreds();
+}
+
+// ═══════════════════════════════════════════════════════
+//  ANIMATIONS
+// ═══════════════════════════════════════════════════════
+function animateCounters() {
+  const circ = 2*Math.PI*70; // 439.82
+  const targets = { ring:79.0, s1:14, s2:11, s3:79.0, s4:18.6 };
+  const dur = 1600, start = performance.now();
+  function tick(t) {
+    const k = Math.min(1,(t-start)/dur);
+    const e = 1-Math.pow(1-k,3);
+    document.getElementById('acc-ring').setAttribute('stroke-dashoffset',(circ*(1-targets.ring*e/100)).toFixed(2));
+    document.getElementById('ring-pct').textContent = (targets.ring*e).toFixed(1)+'%';
+    document.getElementById('s1').textContent = Math.round(targets.s1*e);
+    document.getElementById('s2').textContent = Math.round(targets.s2*e);
+    document.getElementById('s3').textContent = (targets.s3*e).toFixed(1)+'%';
+    document.getElementById('s4').textContent = '+'+(targets.s4*e).toFixed(1)+'%';
+    if(k<1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ═══════════════════════════════════════════════════════
+//  LIVE CLOCK
+// ═══════════════════════════════════════════════════════
+let _tick=0;
+setInterval(()=>{
+  _tick++;
+  const el=document.getElementById('live-clock');
+  if(el) el.textContent=`NEXT IN ${30-(_tick%30)}s · ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+},1000);
+
+// ═══════════════════════════════════════════════════════
+//  TICKER — upcoming 3 matches
+// ═══════════════════════════════════════════════════════
+function renderTicker() {
+  const upcoming = BASE_PREDS.filter(p => p.status === 'upcoming').slice(0, 3);
+  const confBg = { HIGH:'#4FC72A', MEDIUM:'#FFC21A', LOW:'#F0341B' };
+  const confFg = { HIGH:'#11100C', MEDIUM:'#11100C', LOW:'#fff' };
+  function matchChunk(p) {
+    return `<span style="padding:0 28px;opacity:.4;">◆</span>`
+      + `<span style="color:#F7EFD8;">${p.hf} ${p.home.toUpperCase()}</span>`
+      + `<span style="color:#FFC21A;padding:0 12px;">vs</span>`
+      + `<span style="color:#F7EFD8;">${p.away.toUpperCase()} ${p.af}</span>`
+      + `<span style="color:rgba(247,239,216,.35);padding:0 10px;">·</span>`
+      + `<span style="color:rgba(247,239,216,.55);">${p.time}</span>`;
+  }
+  const html = upcoming.map(matchChunk).join('');
+  document.getElementById('ticker-inner').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+renderNav();
+renderTicker();
+renderAlgos();
+renderRecent();
+animateCounters();
+</script>
 </body>
 </html>
