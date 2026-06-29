@@ -470,6 +470,35 @@ const BRACKET_FINAL = { a:'🇦🇷 Argentina', aS:'2', b:'🇫🇷 France', bS:
 // ═══════════════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════════════
+let LIVE_PREDS = null; // set by loadPredictionMeta() from predictions_export.json
+
+function jsonToPred(p) {
+  return {
+    id:       p.id,
+    home:     p.home,       away:     p.away,
+    hf:       p.flag_home || '⚽',
+    af:       p.flag_away || '⚽',
+    time:     p.time  || '',
+    venue:    p.venue || '',
+    stage:    p.stage || 'R32',
+    lh:       p.lambda_home  || 0,
+    la:       p.lambda_away  || 0,
+    sh:       p.score_home   || 0,
+    sa:       p.score_away   || 0,
+    pH:       p.prob_home    || 0,
+    pD:       p.prob_draw    || 0,
+    pA:       p.prob_away    || 0,
+    conf:     p.confidence   || 'MEDIUM',
+    betLabel: p.bet_label    || '',
+    edge:     p.edge         || 0,
+    odds:     p.odds,           // null when no bookmaker odds provided
+    kelly:    p.kelly        || 0,
+    note:     p.note         || '',
+    result:   p.result       || null,
+    status:   p.status       || 'upcoming',
+  };
+}
+
 let S = { page:'home', filter:'all', liveTab:'events', userPreds:[] };
 try { const sv = localStorage.getItem('hx_preds_v2'); if(sv) S.userPreds = JSON.parse(sv); } catch(e){}
 
@@ -578,8 +607,10 @@ function predCard(p) {
         </div>
         <div style="font-weight:700;font-size:16px;margin-top:3px;color:${isVal?'#FFC21A':'#11100C'};">${p.betLabel}</div>
         <div style="display:flex;gap:16px;margin-top:6px;font-size:12px;font-weight:600;color:${isVal?'#fff':'#11100C'};">
-          <span>Odds <strong style="font-variant-numeric:tabular-nums;">${p.odds.toFixed(2)}</strong></span>
-          <span>Kelly stake <strong style="font-variant-numeric:tabular-nums;">${p.kelly.toFixed(1)}%</strong></span>
+          ${p.odds != null
+            ? `<span>Odds <strong style="font-variant-numeric:tabular-nums;">${p.odds.toFixed(2)}</strong></span>
+               <span>Kelly stake <strong style="font-variant-numeric:tabular-nums;">${p.kelly.toFixed(1)}%</strong></span>`
+            : `<span style="opacity:.7;font-size:11px;font-style:italic;">Model pick — no bookmaker odds</span>`}
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
@@ -597,7 +628,7 @@ function renderPreds() {
   document.getElementById('filter-bar').innerHTML = FILTERS.map(f =>
     `<button onclick="setFilter('${f.k}')" style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;padding:7px 15px;border:3px solid #11100C;background:${S.filter===f.k?'#FF2B7A':'#fff'};color:${S.filter===f.k?'#fff':'#11100C'};box-shadow:3px 3px 0 #11100C;">${f.l}</button>`
   ).join('');
-  const all = [...S.userPreds, ...BASE_PREDS];
+  const all = [...S.userPreds, ...(LIVE_PREDS || BASE_PREDS)];
   const f = S.filter;
   const list = f==='high'?all.filter(p=>p.conf==='HIGH'):f==='med'?all.filter(p=>p.conf==='MEDIUM'):f==='low'?all.filter(p=>p.conf==='LOW'):f==='value'?all.filter(p=>p.edge>=10):all;
   document.getElementById('pred-grid').innerHTML = list.map(predCard).join('');
@@ -762,7 +793,7 @@ setInterval(()=>{
 //  TICKER — upcoming 3 matches
 // ═══════════════════════════════════════════════════════
 function renderTicker() {
-  const upcoming = BASE_PREDS.filter(p => p.status === 'upcoming').slice(0, 3);
+  const upcoming = (LIVE_PREDS || BASE_PREDS).filter(p => p.status === 'upcoming').slice(0, 3);
   const confBg = { HIGH:'#4FC72A', MEDIUM:'#FFC21A', LOW:'#F0341B' };
   const confFg = { HIGH:'#11100C', MEDIUM:'#11100C', LOW:'#fff' };
   function matchChunk(p) {
@@ -817,8 +848,16 @@ async function loadPredictionMeta() {
 
     const footer = document.getElementById('footer-last-updated');
     if (footer) footer.textContent = `Last updated: ${longDate}`;
+
+    // Wire prediction cards to JSON data
+    const preds = (data.predictions || []).map(jsonToPred);
+    if (preds.length) {
+      LIVE_PREDS = preds;
+      renderTicker();
+      if (S.page === 'predictions') renderPreds();
+    }
   } catch (e) {
-    // JSON unavailable — keep static fallback text already in HTML
+    // JSON unavailable — keep static fallback text and BASE_PREDS
   }
 }
 
