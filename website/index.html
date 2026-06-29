@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEXDRIFT — Football Predictions</title>
+  <meta name="description" content="Daily football match predictions, live scores, tournament brackets & lineups by Hexdrift.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===================== TOP MATCH BANNER ===================== -->
+<div id="match-banner">
+  <div id="banner-inner"><!-- rendered by JS --></div>
+</div>
+
+<!-- ===================== LAYOUT ===================== -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="Hexdrift Logo">
+      <div class="sidebar-logo-text">
+        <span class="sidebar-brand">HEXDRIFT</span>
+        <span class="sidebar-sub">Predictions</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-link active" data-page="home">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </a>
+      <a href="#" class="nav-link" data-page="predictions">
+        <span class="nav-icon">📊</span>
+        <span>Predictions</span>
+      </a>
+      <a href="#" class="nav-link" data-page="charts">
+        <span class="nav-icon">🏆</span>
+        <span>Charts</span>
+      </a>
+    </nav>
+    <div class="sidebar-stats">
+      <div class="sidebar-acc-label">Overall Accuracy</div>
+      <div class="sidebar-acc-pct" id="sidebar-acc">79%</div>
+      <div class="sidebar-acc-bar">
+        <div class="sidebar-acc-fill" id="sidebar-bar"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="content">
+
+    <!-- ===================== HOME PAGE ===================== -->
+    <section id="page-home" class="page active">
+
+      <!-- HERO -->
+      <div class="hero">
+        <span class="hero-bg-text">HEXDRIFT</span>
+        <span class="hero-ball">⚽</span>
+        <span class="hero-ball">⚽</span>
+        <span class="hero-ball">⚽</span>
+        <span class="hero-ball">⚽</span>
+        <span class="hero-ball">⚽</span>
+        <div class="hero-content">
+          <div class="hero-eyebrow">
+            <span class="hero-dot"></span>
+            FIFA World Cup 2026 Live
+          </div>
+          <h1 class="hero-title">
+            <span class="ht-outline">FOOTBALL</span><br>
+            <span class="ht-solid">PREDIC</span><span class="ht-accent">TIONS</span>
+          </h1>
+          <p class="hero-desc">
+            Daily match predictions powered by deep analysis, statistics & football intelligence.
+            Track every call — from Group Stage to the Final.
+          </p>
+          <div class="hero-btns">
+            <a href="#" class="btn-primary" onclick="navigate('predictions');return false">
+              ⚡ View Predictions
+            </a>
+            <a href="#" class="btn-secondary" onclick="navigate('charts');return false">
+              🏆 Tournament Bracket
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATS ROW -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-val" id="stat-accuracy">0%</div>
+          <div class="stat-label">Accuracy Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📋</div>
+          <div class="stat-val" id="stat-total">0</div>
+          <div class="stat-label">Total Predictions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-val" id="stat-streak">0</div>
+          <div class="stat-label">Current Streak</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-val" id="stat-upcoming">0</div>
+          <div class="stat-label">Upcoming / Live</div>
+        </div>
+      </div>
+
+      <!-- SECTIONS -->
+      <div class="home-sections">
+
+        <!-- ABOUT -->
+        <div>
+          <div class="section-header">
+            <h2 class="section-title"><span class="section-title-bar"></span>About HEXDRIFT</h2>
+          </div>
+          <div class="about-grid">
+            <div class="about-card">
+              <div class="about-icon">🧠</div>
+              <div class="about-title">DATA-DRIVEN</div>
+              <div class="about-text">Every prediction is backed by form guides, head-to-head records, injury reports, squad depth analysis, and tactical breakdowns.</div>
+            </div>
+            <div class="about-card">
+              <div class="about-icon">⚡</div>
+              <div class="about-title">LIVE TRACKING</div>
+              <div class="about-text">Follow matches in real-time with live scores, events, lineups, and commentary all in one place through the live widget.</div>
+            </div>
+            <div class="about-card">
+              <div class="about-icon">📈</div>
+              <div class="about-title">FULL HISTORY</div>
+              <div class="about-text">Complete prediction archive showing every match called, confidence rating, the predicted score vs the actual result with accuracy tracking.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCURACY -->
+        <div>
+          <div class="section-header">
+            <h2 class="section-title"><span class="section-title-bar"></span>Prediction Accuracy</h2>
+          </div>
+          <div class="acc-circle-wrap">
+            <svg class="acc-svg" width="140" height="140" viewBox="0 0 140 140">
+              <defs>
+                <linearGradient id="accGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#00e87e"/>
+                  <stop offset="100%" stop-color="#ffd700"/>
+                </linearGradient>
+              </defs>
+              <circle class="bg" cx="70" cy="70" r="54"/>
+              <circle class="fill" id="acc-ring" cx="70" cy="70" r="54" stroke-dasharray="0 339"/>
+              <text id="acc-pct-text" x="70" y="65" font-size="28" fill="white" font-family="'Bebas Neue',sans-serif" dominant-baseline="middle" text-anchor="middle">79%</text>
+              <text x="70" y="88" font-size="10" fill="#536080" font-family="'Space Grotesk',sans-serif" text-anchor="middle">ACCURACY</text>
+            </svg>
+            <div class="acc-details">
+              <div class="acc-details-title">SEASON STATS</div>
+              <div class="acc-stat-row">
+                <span>Completed Predictions</span>
+                <span class="acc-stat-val" id="acc-completed">14</span>
+              </div>
+              <div class="acc-stat-row">
+                <span>Correct Predictions</span>
+                <span class="acc-stat-val" id="acc-correct">11</span>
+              </div>
+              <div class="acc-stat-row">
+                <span>Current Win Streak</span>
+                <span class="acc-stat-val" id="acc-streak">1 🔥</span>
+              </div>
+              <div class="acc-stat-row">
+                <span>Best Confidence Hit</span>
+                <span class="acc-stat-val">92%</span>
+              </div>
+              <div class="acc-stat-row">
+                <span>Avg. Confidence</span>
+                <span class="acc-stat-val">75%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT PREDICTIONS -->
+        <div>
+          <div class="section-header">
+            <h2 class="section-title"><span class="section-title-bar"></span>Recent Predictions</h2>
+            <a href="#" class="section-link" onclick="navigate('predictions');return false">View all →</a>
+          </div>
+          <div class="recent-list" id="recent-list">
+            <!-- rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== PREDICTIONS PAGE ===================== -->
+    <section id="page-predictions" class="page">
+      <div class="pred-header">
+        <h1 class="pred-title">ALL <span>PREDICTIONS</span></h1>
+        <button class="btn-add" onclick="openAddModal()">＋ Add Prediction</button>
+      </div>
+
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all" onclick="setPredFilter('all')">All</button>
+        <button class="filter-btn" data-filter="upcoming" onclick="setPredFilter('upcoming')">Upcoming / Live</button>
+        <button class="filter-btn" data-filter="completed" onclick="setPredFilter('completed')">Completed</button>
+        <button class="filter-btn" data-filter="correct" onclick="setPredFilter('correct')">✓ Correct</button>
+        <button class="filter-btn" data-filter="wrong" onclick="setPredFilter('wrong')">✗ Missed</button>
+      </div>
+
+      <div id="pred-grid"><!-- rendered by JS --></div>
+    </section>
+
+    <!-- ===================== CHARTS PAGE ===================== -->
+    <section id="page-charts" class="page">
+      <div class="charts-header">
+        <h1 class="charts-title">TOURNAMENT <span>CHARTS</span></h1>
+        <div class="chart-tabs">
+          <button class="chart-tab active" data-tab="bracket" onclick="setChartTab('bracket')">🏆 Bracket</button>
+          <button class="chart-tab" data-tab="groups" onclick="setChartTab('groups')">📋 Groups</button>
+        </div>
+      </div>
+
+      <div id="bracket-view"><!-- rendered by JS --></div>
+      <div id="groups-view" style="display:none"><!-- rendered by JS --></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===================== LIVE WIDGET ===================== -->
+<div id="live-widget">
+  <button id="widget-btn" onclick="toggleWidget()">
+    <div class="widget-dot"></div>
+    NEXT
+  </button>
+  <div id="widget-panel">
+    <div class="w-header">
+      <div class="w-score-row">
+        <div id="w-score-h"></div>
+        <div id="w-score-mid"></div>
+        <div id="w-score-a"></div>
+      </div>
+      <div class="w-meta">
+        <span class="w-league">FIFA World Cup 2026 — R32</span>
+        <span id="w-min">Pre-match</span>
+      </div>
+    </div>
+    <div class="w-tabs">
+      <button class="wtab active" data-tab="events" onclick="setWidgetTab('events')">Events</button>
+      <button class="wtab" data-tab="lineups" onclick="setWidgetTab('lineups')">Lineups</button>
+      <button class="wtab" data-tab="commentary" onclick="setWidgetTab('commentary')">Live</button>
+    </div>
+    <div id="w-content"></div>
+  </div>
+</div>
+
+<!-- ===================== ADD PREDICTION MODAL ===================== -->
+<div id="add-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">ADD PREDICTION</span>
+      <button class="modal-close" onclick="closeAddModal()">✕</button>
+    </div>
+    <form class="modal-body" id="add-pred-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Home Team Code (e.g. BRA)</label>
+          <input name="home" class="form-input" placeholder="ARG" maxlength="3" required style="text-transform:uppercase">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Away Team Code (e.g. FRA)</label>
+          <input name="away" class="form-input" placeholder="FRA" maxlength="3" required style="text-transform:uppercase">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Home Team Name (if new)</label>
+          <input name="hname" class="form-input" placeholder="Argentina">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Away Team Name (if new)</label>
+          <input name="aname" class="form-input" placeholder="France">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Home Flag Emoji</label>
+          <input name="hflag" class="form-input" placeholder="🇦🇷">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Away Flag Emoji</label>
+          <input name="aflag" class="form-input" placeholder="🇫🇷">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Predicted Score</label>
+        <div class="score-inputs">
+          <input name="ph" class="form-input" type="number" min="0" max="20" value="1" required>
+          <span class="score-sep">—</span>
+          <input name="pa" class="form-input" type="number" min="0" max="20" value="0" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Match Date</label>
+          <input name="date" class="form-input" type="date" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Match Time</label>
+          <input name="time" class="form-input" type="time" placeholder="18:00">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">League / Tournament</label>
+          <input name="league" class="form-input" placeholder="FIFA World Cup 2026">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Round / Stage</label>
+          <input name="round" class="form-input" placeholder="Round of 16">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Venue</label>
+        <input name="venue" class="form-input" placeholder="MetLife Stadium, New York">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confidence: <span id="conf-display">70</span>%</label>
+        <div class="form-range">
+          <input type="range" name="confidence" min="1" max="100" value="70"
+            oninput="document.getElementById('conf-display').textContent=this.value">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Analysis / Notes</label>
+        <textarea name="analysis" class="form-input" placeholder="Your prediction reasoning..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+        <button type="submit" class="btn-submit">Save Prediction</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="data.js"></script>
+</body>
+</html>
