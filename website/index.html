@@ -297,13 +297,13 @@ const BASE_PREDS = [
     lh:1.82, la:0.91, sh:2, sa:1, pH:58, pD:22, pA:20, conf:'HIGH',
     betLabel:'Japan Match Result', edge:5.1, odds:6.50, kelly:1.9,
     note:'Brazil ELO 1958. Vinícius Jr 4 WC goals. Japan compact 4-4-2 block — model finds value on Japan @ 6.50.',
-    result:null, status:'upcoming' },
+    result:null, status:'done' },
   { id:'ger-par', home:'Germany', away:'Paraguay', hf:'🇩🇪', af:'🇵🇾',
     time:'18:00 ET', venue:'AT&T Stadium, Dallas', stage:'R32 · M67',
     lh:1.74, la:0.78, sh:2, sa:0, pH:63, pD:22, pA:15, conf:'HIGH',
     betLabel:'Germany −1 Asian Handicap', edge:7.3, odds:1.95, kelly:3.2,
     note:'Germany 9 goals in group stage. Undav 3 WC goals. Paraguay compact but no creative outlet.',
-    result:null, status:'upcoming' },
+    result:null, status:'done' },
   { id:'ned-mar', home:'Netherlands', away:'Morocco', hf:'🇳🇱', af:'🇲🇦',
     time:'21:00 ET', venue:'MetLife Stadium, New York', stage:'R32 · M68',
     lh:1.54, la:1.08, sh:2, sa:1, pH:47, pD:27, pA:26, conf:'MEDIUM',
@@ -527,9 +527,9 @@ function confColor(c) { return c==='HIGH'?'#4FC72A':c==='MEDIUM'?'#FFC21A':'#F03
 
 function predCard(p) {
   const isVal = p.edge >= 10;
-  const stBg = p.status==='correct'?'#4FC72A':p.status==='wrong'?'#F0341B':'#1B4FE0';
+  const stBg = p.status==='correct'?'#4FC72A':p.status==='wrong'?'#F0341B':p.status==='done'?'#888':'#1B4FE0';
   const stCol = p.status==='correct'?'#11100C':'#fff';
-  const stLabel = p.status==='correct'?'WIN ✓':p.status==='wrong'?'MISS ✗':'UPCOMING';
+  const stLabel = p.status==='correct'?'WIN ✓':p.status==='wrong'?'MISS ✗':p.status==='done'?'FINAL':'UPCOMING';
   return `
   <div style="position:relative;background:#fff;border:3px solid #11100C;box-shadow:6px 6px 0 #11100C;overflow:hidden;display:flex;flex-direction:column;">
     ${p.mine?`<div style="position:absolute;top:34px;left:-30px;transform:rotate(-45deg);background:#15C5C5;color:#11100C;font-family:'Bangers',cursive;letter-spacing:1px;font-size:12px;padding:3px 34px;border-top:2px solid #11100C;border-bottom:2px solid #11100C;">YOURS</div>`:''}
