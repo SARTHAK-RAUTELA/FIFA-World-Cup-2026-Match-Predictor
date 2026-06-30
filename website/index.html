@@ -799,47 +799,69 @@ setInterval(()=>{
 },1000);
 
 // ═══════════════════════════════════════════════════════
-//  LIVE API FETCH — football-data.org (primary) + API-Football (fallback)
+//  LIVE API FETCH — ESPN (no key) primary, fd + rapid fallback
 // ═══════════════════════════════════════════════════════
 async function fetchLiveMatchAPI() {
-  // ── football-data.org ──
+  // ── ESPN unofficial API — no key required ──
   try {
-    const headers = { 'X-Auth-Token': LIVE_API.fdKey };
-    // Check live + half-time
-    const liveRes = await fetch(
-      'https://api.football-data.org/v4/competitions/WC/matches?status=IN_PLAY,PAUSED',
-      { headers }
+    const now = new Date();
+    const dateStr = now.getFullYear().toString()
+      + String(now.getMonth()+1).padStart(2,'0')
+      + String(now.getDate()).padStart(2,'0');
+    const res = await fetch(
+      `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dateStr}`,
+      { mode:'cors' }
     );
-    if (liveRes.ok) {
-      const d = await liveRes.json();
-      if (d.matches && d.matches.length) return { src:'fd', live:true, m: d.matches[0] };
+    if (res.ok) {
+      const data = await res.json();
+      const events = data.events || [];
+      const live = events.find(e => e.status?.type?.state === 'in');
+      if (live) return { src:'espn', live:true, event: live };
+      const next = events.find(e => e.status?.type?.state === 'pre');
+      if (next) return { src:'espn', live:false, event: next };
     }
-    // Next scheduled
-    const schedRes = await fetch(
-      'https://api.football-data.org/v4/competitions/WC/matches?status=TIMED,SCHEDULED',
-      { headers }
-    );
-    if (schedRes.ok) {
-      const d = await schedRes.json();
-      if (d.matches && d.matches.length) {
-        const sorted = d.matches.slice().sort((a,b) => new Date(a.utcDate)-new Date(b.utcDate));
-        return { src:'fd', live:false, m: sorted[0] };
-      }
-    }
-  } catch(e) { console.warn('football-data.org:', e); }
+  } catch(e) { console.warn('ESPN:', e); }
 
-  // ── API-Football fallback ──
-  try {
-    const headers = { 'x-rapidapi-key': LIVE_API.rapidKey, 'x-rapidapi-host': LIVE_API.rapidHost };
-    const liveRes = await fetch(
-      `https://${LIVE_API.rapidHost}/v3/fixtures?live=all&league=${LIVE_API.rapidLeague}&season=${LIVE_API.season}`,
-      { headers }
-    );
-    if (liveRes.ok) {
-      const d = await liveRes.json();
-      if (d.response && d.response.length) return { src:'rapid', live:true, f: d.response[0] };
-    }
-  } catch(e) { console.warn('API-Football:', e); }
+  // ── football-data.org (only if key saved in settings) ──
+  if (LIVE_API.fdKey) {
+    try {
+      const headers = { 'X-Auth-Token': LIVE_API.fdKey };
+      const liveRes = await fetch(
+        'https://api.football-data.org/v4/competitions/WC/matches?status=IN_PLAY,PAUSED',
+        { headers }
+      );
+      if (liveRes.ok) {
+        const d = await liveRes.json();
+        if (d.matches && d.matches.length) return { src:'fd', live:true, m: d.matches[0] };
+      }
+      const schedRes = await fetch(
+        'https://api.football-data.org/v4/competitions/WC/matches?status=TIMED,SCHEDULED',
+        { headers }
+      );
+      if (schedRes.ok) {
+        const d = await schedRes.json();
+        if (d.matches && d.matches.length) {
+          const sorted = d.matches.slice().sort((a,b) => new Date(a.utcDate)-new Date(b.utcDate));
+          return { src:'fd', live:false, m: sorted[0] };
+        }
+      }
+    } catch(e) { console.warn('football-data.org:', e); }
+  }
+
+  // ── API-Football (only if key saved in settings) ──
+  if (LIVE_API.rapidKey) {
+    try {
+      const headers = { 'x-rapidapi-key': LIVE_API.rapidKey, 'x-rapidapi-host': LIVE_API.rapidHost };
+      const liveRes = await fetch(
+        `https://${LIVE_API.rapidHost}/v3/fixtures?live=all&league=${LIVE_API.rapidLeague}&season=${LIVE_API.season}`,
+        { headers }
+      );
+      if (liveRes.ok) {
+        const d = await liveRes.json();
+        if (d.response && d.response.length) return { src:'rapid', live:true, f: d.response[0] };
+      }
+    } catch(e) { console.warn('API-Football:', e); }
+  }
 
   return null;
 }
@@ -882,6 +904,21 @@ function parseGoalsRapid(events, homeId) {
     }));
 }
 
+// Parse goals from ESPN competition details array
+function parseGoalsESPN(comp, homeTeamId) {
+  return (comp.details || [])
+    .filter(d => d.scoringPlay)
+    .map(d => {
+      const clockStr = d.clock?.displayValue || '';
+      const min = clockStr.split(':')[0] || '?';
+      const name = (d.athletesInvolved || [])[0]?.displayName || '?';
+      const isHome = String(d.team?.id) === String(homeTeamId);
+      const typeText = (d.type?.text || '').toLowerCase();
+      const type = typeText.includes('penalty') ? 'penalty' : typeText.includes('own') ? 'own' : 'goal';
+      return { min, name, isHome, type };
+    });
+}
+
 // ═══════════════════════════════════════════════════════
 //  HERO MATCH PANEL — live match or next upcoming
 // ═══════════════════════════════════════════════════════
@@ -892,7 +929,24 @@ function renderHeroMatch() {
   let isLive=false, homeTeam='', awayTeam='', score='–:–', elapsed='', venue='', stage='', kickoff='', goals=[];
   const api = S.apiMatch;
 
-  if (api && api.src === 'fd') {
+  if (api && api.src === 'espn') {
+    const ev   = api.event;
+    const comp = ev.competitions[0];
+    const homeComp = comp.competitors.find(c => c.homeAway === 'home') || {};
+    const awayComp = comp.competitors.find(c => c.homeAway === 'away') || {};
+    isLive   = api.live;
+    homeTeam = homeComp.team?.displayName || homeComp.team?.name || '';
+    awayTeam = awayComp.team?.displayName || awayComp.team?.name || '';
+    if (isLive) {
+      score   = `${homeComp.score || 0}–${awayComp.score || 0}`;
+      elapsed = ev.status?.type?.shortDetail || ev.status?.displayClock || '';
+    }
+    venue   = comp.venue?.fullName || '';
+    stage   = ev.competitions?.[0]?.notes?.[0]?.headline || '';
+    kickoff = isLive ? '' : new Date(ev.date).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) + ' ET';
+    goals   = parseGoalsESPN(comp, homeComp.team?.id);
+
+  } else if (api && api.src === 'fd') {
     const m = api.m;
     isLive   = api.live;
     homeTeam = m.homeTeam.shortName || m.homeTeam.name;
