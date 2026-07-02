@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-07-02T16:21:43.322526+00:00",
+  "generated_at": "2026-07-02T00:00:00+00:00",
+  "source": "fifa.com official player statistics (manual update)",
   "scorers": [
     {
-      "name": "Kylian Mbappé",
+      "name": "Kylian Mbappe",
       "team": "France",
       "crest": "https://crests.football-data.org/773.svg",
       "flag": "",
@@ -38,7 +39,7 @@
       "xg": null
     },
     {
-      "name": "Ousmane Dembélé",
+      "name": "Ousmane Dembele",
       "team": "France",
       "crest": "https://crests.football-data.org/773.svg",
       "flag": "",
@@ -56,7 +57,7 @@
       "xg": null
     },
     {
-      "name": "Ismaïla Sarr",
+      "name": "Ismaila Sarr",
       "team": "Senegal",
       "crest": "https://crests.football-data.org/senegal.svg",
       "flag": "",
@@ -65,30 +66,30 @@
       "xg": null
     },
     {
-      "name": "Julián Quiñones",
-      "team": "Mexico",
-      "crest": "https://crests.football-data.org/769.svg",
+      "name": "Deniz Undav",
+      "team": "Germany",
+      "crest": "",
+      "flag": "",
+      "goals": 3,
+      "assists": 2,
+      "xg": null
+    },
+    {
+      "name": "Johan Manzambi",
+      "team": "Switzerland",
+      "crest": "",
       "flag": "",
       "goals": 3,
       "assists": 1,
       "xg": null
     },
     {
-      "name": "Folarin Balogun",
-      "team": "United States",
-      "crest": "https://crests.football-data.org/usa.svg",
+      "name": "Julian Quinones",
+      "team": "Mexico",
+      "crest": "https://crests.football-data.org/769.svg",
       "flag": "",
       "goals": 3,
-      "assists": 0,
-      "xg": null
-    },
-    {
-      "name": "Ismael Saibari",
-      "team": "Morocco",
-      "crest": "https://crests.football-data.org/morocco.svg",
-      "flag": "",
-      "goals": 3,
-      "assists": 0,
+      "assists": 1,
       "xg": null
     }
   ]
