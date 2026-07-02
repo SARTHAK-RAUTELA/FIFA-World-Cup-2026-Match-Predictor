@@ -1,7 +1,7 @@
 """
 Non-interactive prediction runner.
 Fetches today's FIFA 2026 fixtures, runs all models, and writes a complete
-prediction card payload to website/predictions_export.json.
+prediction card payload to docs/predictions_export.json.
 """
 import json
 import os
@@ -14,7 +14,7 @@ if sys.platform == "win32":
 
 from prediction.engine import PredictionEngine
 
-WEBSITE_DIR = os.path.join(os.path.dirname(__file__), "website")
+WEBSITE_DIR = os.path.join(os.path.dirname(__file__), "docs")
 OUTPUT_FILE = os.path.join(WEBSITE_DIR, "predictions_export.json")
 
 # ── Teams present at FIFA WC 2026 ────────────────────────────────────────────
