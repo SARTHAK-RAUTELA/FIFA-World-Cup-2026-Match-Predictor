@@ -70,7 +70,7 @@ input,select,textarea{font-family:inherit;}
   <!-- HERO -->
   <div class="hero-grid" style="display:grid;grid-template-columns:1.15fr 0.85fr;gap:26px;align-items:stretch;margin-top:30px;">
     <div style="display:flex;flex-direction:column;justify-content:center;min-width:0;">
-      <div style="display:inline-block;align-self:flex-start;background:#FF2B7A;color:#fff;font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;padding:5px 12px;border:3px solid #11100C;box-shadow:4px 4px 0 #11100C;transform:rotate(-2deg);margin-bottom:16px;">⚡ ROUND OF 32 · JUNE 29</div>
+      <div id="hero-round-badge" style="display:inline-block;align-self:flex-start;background:#FF2B7A;color:#fff;font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;padding:5px 12px;border:3px solid #11100C;box-shadow:4px 4px 0 #11100C;transform:rotate(-2deg);margin-bottom:16px;"></div>
       <h1 style="font-family:'Bangers',cursive;font-weight:400;font-size:clamp(46px,7vw,92px);line-height:.9;letter-spacing:1px;margin:0;text-transform:uppercase;">
         <span style="display:block;color:#1B4FE0;text-shadow:4px 4px 0 #11100C;">Predict the</span>
         <span style="display:block;color:#F0341B;text-shadow:4px 4px 0 #11100C;">Beautiful</span>
@@ -1100,6 +1100,24 @@ function parseApiMatch(api) {
   return { isLive, isDone, homeTeam, awayTeam, score, elapsed, venue, stage, kickoff, goals, subs, lineup, kickoffAt, venueCity, venueCountry };
 }
 
+// Badge above the hero headline — always reflects today's real date (IST) and
+// the current tournament stage, so it never goes stale like a hardcoded label would.
+function renderHeroBadge() {
+  const el = document.getElementById('hero-round-badge');
+  if (!el) return;
+  const all = [...S.userPreds, ...ALL_PREDS];
+  const now = new Date();
+  const nextUp = all
+    .filter(p => p.status === 'upcoming')
+    .map(p => ({ p, dt: parseKickoff(p) }))
+    .filter(x => x.dt && x.dt >= now)
+    .sort((a, b) => a.dt - b.dt)[0];
+  const stageKey = nextUp ? nextUp.p.stageKey : (all[all.length - 1]?.stageKey || 'r32');
+  const stageLabel = stageKey === 'group' ? 'GROUP STAGE' : 'ROUND OF 32';
+  const [y, mo, d] = istDateISO(now).split('-').map(Number);
+  el.textContent = `⚡ ${stageLabel} · ${PRED_MONTHS_LONG[mo - 1].toUpperCase()} ${d}`;
+}
+
 // ═══════════════════════════════════════════════════════
 //  HERO MATCH PANEL — live match or next upcoming
 // ═══════════════════════════════════════════════════════
@@ -1553,6 +1571,7 @@ function renderLiveWidget() {
 //  INIT
 // ═══════════════════════════════════════════════════════
 renderNav();
+renderHeroBadge();
 renderHeroMatch();
 renderTicker();
 renderAlgos();
@@ -1563,6 +1582,7 @@ renderLiveWidget();
 // Live API polling — every 30 seconds
 async function pollLive() {
   S.apiMatch = await fetchLiveMatchAPI();
+  renderHeroBadge();
   renderHeroMatch();
   renderTicker();
   renderLiveWidget();
