@@ -954,17 +954,32 @@ async function maybeLoadFallbackLineup() {
 async function fetchLiveMatchAPI() {
   // ── ESPN unofficial API — no key required ──
   try {
+    // ESPN buckets a match under the US "game day" it kicked off on, which can
+    // differ from the viewer's local calendar date (e.g. a 7pm ET kickoff is
+    // already the next calendar day in IST while still live) — fetching a
+    // yesterday/today/tomorrow window and merging avoids missing a live match
+    // that fell in a different day-bucket than the browser's "today".
+    const toDateStr = d => d.getUTCFullYear().toString()
+      + String(d.getUTCMonth()+1).padStart(2,'0')
+      + String(d.getUTCDate()).padStart(2,'0');
     const now = new Date();
-    const dateStr = now.getFullYear().toString()
-      + String(now.getMonth()+1).padStart(2,'0')
-      + String(now.getDate()).padStart(2,'0');
-    const res = await fetch(
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dateStr}`,
-      { mode:'cors' }
-    );
-    if (res.ok) {
-      const data = await res.json();
-      const events = data.events || [];
+    const dateStrs = [-1, 0, 1].map(offset => {
+      const d = new Date(now);
+      d.setUTCDate(d.getUTCDate() + offset);
+      return toDateStr(d);
+    });
+    const results = await Promise.all(dateStrs.map(dateStr =>
+      fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dateStr}`, { mode:'cors' })
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null)
+    ));
+    const seen = new Set();
+    const events = results
+      .filter(Boolean)
+      .flatMap(data => data.events || [])
+      .filter(e => (e.id && !seen.has(e.id)) ? (seen.add(e.id), true) : false)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+    if (events.length) {
       // Priority 1: live match — check state AND type.name for robustness
       const LIVE_NAMES = ['STATUS_IN_PROGRESS','STATUS_HALFTIME','STATUS_END_PERIOD','STATUS_OVERTIME'];
       const live = events.find(e => {
