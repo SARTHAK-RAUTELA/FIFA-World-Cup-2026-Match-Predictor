@@ -980,6 +980,11 @@ async function fetchLiveMatchAPI() {
       .filter(e => (e.id && !seen.has(e.id)) ? (seen.add(e.id), true) : false)
       .sort((a, b) => new Date(a.date) - new Date(b.date));
     if (events.length) {
+      // All matches finished within the fetched window — surfaced regardless of
+      // which branch below fires, so the Past tab always reflects real results
+      // without needing a manual data edit once a match wraps up.
+      const finished = events.filter(e => e.status?.type?.state === 'post');
+
       // Priority 1: live match — check state AND type.name for robustness
       const LIVE_NAMES = ['STATUS_IN_PROGRESS','STATUS_HALFTIME','STATUS_END_PERIOD','STATUS_OVERTIME'];
       const live = events.find(e => {
@@ -988,18 +993,17 @@ async function fetchLiveMatchAPI() {
       });
       if (live) {
         const summary = await fetchESPNSummary(live.id);
-        return { src:'espn', live:true, done:false, event: live, scoringPlays: summary?.scoringPlays || null, plays: summary?.plays || summary?.keyPlays || [], rosters: summary?.rosters || [] };
+        return { src:'espn', live:true, done:false, event: live, scoringPlays: summary?.scoringPlays || null, plays: summary?.plays || summary?.keyPlays || [], rosters: summary?.rosters || [], allFinished: finished };
       }
       // Priority 2: most recently finished match — show final score + goalscorers
-      const finished = events.filter(e => e.status?.type?.state === 'post');
       if (finished.length) {
         const last = finished[finished.length-1];
         const summary = await fetchESPNSummary(last.id);
-        return { src:'espn', live:false, done:true, event: last, scoringPlays: summary?.scoringPlays || null, plays: summary?.plays || summary?.keyPlays || [], rosters: summary?.rosters || [] };
+        return { src:'espn', live:false, done:true, event: last, scoringPlays: summary?.scoringPlays || null, plays: summary?.plays || summary?.keyPlays || [], rosters: summary?.rosters || [], allFinished: finished };
       }
       // Priority 3: next scheduled match
       const next = events.find(e => e.status?.type?.state === 'pre');
-      if (next) return { src:'espn', live:false, done:false, event: next, scoringPlays: null };
+      if (next) return { src:'espn', live:false, done:false, event: next, scoringPlays: null, allFinished: finished };
     }
   } catch(e) { console.warn('ESPN:', e); }
 
@@ -1419,8 +1423,14 @@ function getWidgetLists() {
     .slice(0, 2)
     .map(x => predToView(x.p));
 
-  const past = [];
-  if (S.apiMatch && S.apiMatch.done) past.push(apiMatchToView(S.apiMatch));
+  // Recently finished matches come straight from the ESPN feed (real final score,
+  // no manual data edit needed) — the static ALL_PREDS `result` field only backfills
+  // older fixtures that have scrolled outside the fetch window.
+  const past = ((S.apiMatch && S.apiMatch.allFinished) || [])
+    .slice()
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 2)
+    .map(ev => apiMatchToView({ src:'espn', live:false, done:true, event: ev, scoringPlays:null, plays:[], rosters:[] }));
   all
     .filter(p => p.result)
     .map(p => ({ p, dt: parseKickoff(p) }))
