@@ -995,15 +995,17 @@ async function fetchLiveMatchAPI() {
         const summary = await fetchESPNSummary(live.id);
         return { src:'espn', live:true, done:false, event: live, scoringPlays: summary?.scoringPlays || null, plays: summary?.plays || summary?.keyPlays || [], rosters: summary?.rosters || [], commentary: summary?.commentary || [], allFinished: finished };
       }
-      // Priority 2: most recently finished match — show final score + goalscorers
+      // Priority 2: next scheduled match — once a match wraps up, the hero should
+      // point forward to what's coming next rather than linger on the final score.
+      const next = events.find(e => e.status?.type?.state === 'pre');
+      if (next) return { src:'espn', live:false, done:false, event: next, scoringPlays: null, allFinished: finished };
+      // Priority 3: most recently finished match — fallback for when nothing else
+      // is scheduled in the fetched window (e.g. between rounds).
       if (finished.length) {
         const last = finished[finished.length-1];
         const summary = await fetchESPNSummary(last.id);
         return { src:'espn', live:false, done:true, event: last, scoringPlays: summary?.scoringPlays || null, plays: summary?.plays || summary?.keyPlays || [], rosters: summary?.rosters || [], commentary: summary?.commentary || [], allFinished: finished };
       }
-      // Priority 3: next scheduled match
-      const next = events.find(e => e.status?.type?.state === 'pre');
-      if (next) return { src:'espn', live:false, done:false, event: next, scoringPlays: null, allFinished: finished };
     }
   } catch(e) { console.warn('ESPN:', e); }
 
