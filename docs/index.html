@@ -993,13 +993,13 @@ async function fetchLiveMatchAPI() {
       });
       if (live) {
         const summary = await fetchESPNSummary(live.id);
-        return { src:'espn', live:true, done:false, event: live, scoringPlays: summary?.scoringPlays || null, plays: summary?.plays || summary?.keyPlays || [], rosters: summary?.rosters || [], allFinished: finished };
+        return { src:'espn', live:true, done:false, event: live, scoringPlays: summary?.scoringPlays || null, plays: summary?.plays || summary?.keyPlays || [], rosters: summary?.rosters || [], commentary: summary?.commentary || [], allFinished: finished };
       }
       // Priority 2: most recently finished match — show final score + goalscorers
       if (finished.length) {
         const last = finished[finished.length-1];
         const summary = await fetchESPNSummary(last.id);
-        return { src:'espn', live:false, done:true, event: last, scoringPlays: summary?.scoringPlays || null, plays: summary?.plays || summary?.keyPlays || [], rosters: summary?.rosters || [], allFinished: finished };
+        return { src:'espn', live:false, done:true, event: last, scoringPlays: summary?.scoringPlays || null, plays: summary?.plays || summary?.keyPlays || [], rosters: summary?.rosters || [], commentary: summary?.commentary || [], allFinished: finished };
       }
       // Priority 3: next scheduled match
       const next = events.find(e => e.status?.type?.state === 'pre');
@@ -1145,7 +1145,7 @@ function parseLineupESPN(rosters, eventId) {
 // Normalizes any live-API shape (ESPN / football-data.org / API-Football) into one
 // plain object so both the hero panel and the floating widget can share the parsing.
 function parseApiMatch(api) {
-  let isLive=false, isDone=false, homeTeam='', awayTeam='', score='–:–', elapsed='', venue='', stage='', kickoff='', goals=[], subs=[], lineup=null, kickoffAt=null, venueCity='', venueCountry='';
+  let isLive=false, isDone=false, homeTeam='', awayTeam='', score='–:–', elapsed='', venue='', stage='', kickoff='', goals=[], subs=[], lineup=null, kickoffAt=null, venueCity='', venueCountry='', commentary=[];
 
   if (api && api.src === 'espn') {
     const ev   = api.event;
@@ -1169,6 +1169,7 @@ function parseApiMatch(api) {
     goals   = parseGoalsESPN(comp, homeComp.team?.id, api.scoringPlays);
     subs    = parseSubsESPN(api.plays, homeComp.team?.id);
     lineup  = parseLineupESPN(api.rosters, ev.id);
+    commentary = api.commentary || [];
 
   } else if (api && api.src === 'fd') {
     const m = api.m;
@@ -1198,7 +1199,7 @@ function parseApiMatch(api) {
     goals    = parseGoalsRapid(f.events, f.teams.home.id);
   }
 
-  return { isLive, isDone, homeTeam, awayTeam, score, elapsed, venue, stage, kickoff, goals, subs, lineup, kickoffAt, venueCity, venueCountry };
+  return { isLive, isDone, homeTeam, awayTeam, score, elapsed, venue, stage, kickoff, goals, subs, lineup, kickoffAt, venueCity, venueCountry, commentary };
 }
 
 // Badge above the hero headline — always reflects today's real date (IST) and
@@ -1383,7 +1384,7 @@ function apiMatchToView(api) {
     venue, city, country,
     kickoffLabel,
     timeLabel: parsed.kickoff || '',
-    goals: parsed.goals, subs: parsed.subs, lineup: parsed.lineup,
+    goals: parsed.goals, subs: parsed.subs, lineup: parsed.lineup, commentary: parsed.commentary,
     hasLiveFeed: true,
     ourPred: findOurPred(parsed.homeTeam, parsed.awayTeam),
   };
@@ -1401,7 +1402,7 @@ function predToView(p) {
     round: p.stage, venue, city, country: countryForCity(city),
     kickoffLabel: `${longDate(ist.dateISO)} · ${ist.time}`,
     timeLabel: ist.time,
-    goals: [], subs: [], lineup: null,
+    goals: [], subs: [], lineup: null, commentary: [],
     hasLiveFeed: false,
     ourPred: p,
   };
@@ -1544,6 +1545,50 @@ function widgetEventsHTML(m) {
     </div>`).join('')}</div>`;
 }
 
+// Maps ESPN's play-type key/label to a small icon for the commentary feed.
+function commentaryIcon(typeKey) {
+  const t = (typeKey || '').toLowerCase();
+  if (t.includes('goal') && !t.includes('kick')) return '⚽';
+  if (t.includes('yellow')) return '🟨';
+  if (t.includes('red')) return '🟥';
+  if (t.includes('sub')) return '🔁';
+  if (t.includes('corner')) return '🚩';
+  if (t.includes('offside')) return '🚩';
+  if (t.includes('foul')) return '⚠️';
+  if (t.includes('save')) return '🧤';
+  if (t.includes('shot')) return '🥅';
+  if (t.includes('var')) return '📺';
+  if (t.includes('kickoff') || t.includes('start')) return '▶️';
+  if (t.includes('half') || t.includes('period') || t.includes('full-time')) return '⏸️';
+  return '💬';
+}
+
+// Minute-by-minute text commentary from ESPN's summary endpoint (same feed
+// sites like SofaScore/ESPN show under a "Commentary" tab) — real play-by-play,
+// distinct from the goals/subs-only EVENTS tab above.
+function widgetCommentaryFeedHTML(m) {
+  if (!m.hasLiveFeed) {
+    return `<div style="text-align:center;opacity:.65;font-size:12.5px;padding:26px 10px;line-height:1.5;">
+      ${m.isDone ? "Match finished — commentary feed is no longer live for this fixture." : 'No live commentary yet. This fills in once ESPN reports the match as in progress.'}
+    </div>`;
+  }
+  const entries = (m.commentary || []).filter(c => c.text).slice().reverse().slice(0, 40);
+  if (!entries.length) return `<div style="text-align:center;opacity:.65;font-size:12.5px;padding:26px 10px;">No commentary yet.</div>`;
+  return `<div style="display:flex;flex-direction:column;gap:14px;">${entries.map(c => {
+    const min = c.time?.displayValue || '';
+    const label = c.play?.type?.text || '';
+    const icon = commentaryIcon(c.play?.type?.type || label);
+    return `
+    <div style="display:flex;gap:10px;align-items:flex-start;">
+      <span style="flex-shrink:0;font-family:'Bangers',cursive;font-size:12px;background:#11100C;color:#FFC21A;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;">${min || '·'}</span>
+      <div style="flex:1;min-width:0;">
+        ${label ? `<div style="font-weight:700;font-size:11.5px;display:flex;align-items:center;gap:5px;margin-bottom:3px;">${icon} ${label}</div>` : ''}
+        <div style="font-size:12.5px;line-height:1.5;">${c.text}</div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
 function widgetStatsHTML(m) {
   const p = m.ourPred;
   if (!p) return `<div style="text-align:center;opacity:.65;font-size:12.5px;padding:26px 10px;">No model stats tracked for this fixture.</div>`;
@@ -1665,9 +1710,10 @@ function renderWidgetPanel() {
   const tabDefs = [
     { k: 'info', label: 'INFO' },
     { k: 'events', label: 'EVENTS' },
+    { k: 'commentary', label: 'COMMENTARY' },
     { k: 'lineup', label: 'LINEUP' },
     { k: 'stats', label: 'STATS' },
-    { k: 'commentary', label: 'NOTES' },
+    { k: 'notes', label: 'NOTES' },
   ];
   document.getElementById('widget-subtabs').innerHTML = tabDefs.map(t =>
     `<button onclick="setWidgetTab('${t.k}')" style="flex:1;font-family:'Bangers',cursive;letter-spacing:1px;font-size:10.5px;padding:9px 2px;border:none;border-right:2px solid #11100C;background:${S.widgetTab === t.k ? '#11100C' : '#F7EFD8'};color:${S.widgetTab === t.k ? '#FFC21A' : '#11100C'};">${t.label}</button>`
@@ -1677,6 +1723,7 @@ function renderWidgetPanel() {
   if (!m) { content.innerHTML = `<div style="text-align:center;opacity:.6;font-size:13px;padding:20px 0;">No match data.</div>`; return; }
   if (S.widgetTab === 'info') content.innerHTML = widgetInfoHTML(m);
   else if (S.widgetTab === 'events') content.innerHTML = widgetEventsHTML(m);
+  else if (S.widgetTab === 'commentary') content.innerHTML = widgetCommentaryFeedHTML(m);
   else if (S.widgetTab === 'lineup') content.innerHTML = widgetLineupHTML(m);
   else if (S.widgetTab === 'stats') content.innerHTML = widgetStatsHTML(m);
   else content.innerHTML = widgetCommentaryHTML(m);
