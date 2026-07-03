@@ -61,10 +61,7 @@ input,select,textarea{font-family:inherit;}
     <div style="background:#11100C;color:#FFC21A;font-family:'Bangers',cursive;font-size:12px;letter-spacing:1px;padding:3px 8px;border:2px solid #11100C;transform:rotate(-4deg);">FIFA '26</div>
     <div style="flex:1;"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;" id="nav-btns"></div>
-    <div id="live-badge" style="display:flex;align-items:center;gap:7px;background:#fff;border:3px solid #11100C;box-shadow:3px 3px 0 #11100C;padding:5px 11px;">
-      <span style="width:11px;height:11px;border-radius:50%;background:#F0341B;display:inline-block;animation:hxblink 1.1s infinite;border:2px solid #11100C;"></span>
-      <span style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;">LIVE</span>
-    </div>
+    <div id="live-badge" onclick="toggleLiveWidget()" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:#fff;border:3px solid #11100C;box-shadow:3px 3px 0 #11100C;padding:5px 11px;"></div>
     <button onclick="openSettings()" style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;padding:5px 11px;border:3px solid #11100C;background:#11100C;color:#FFC21A;box-shadow:3px 3px 0 #11100C;" title="API Keys">⚙</button>
   </div>
 </div>
@@ -1731,8 +1728,28 @@ function renderWidgetPanel() {
   else content.innerHTML = widgetCommentaryHTML(m);
 }
 
+// Navbar CTA — mirrors the floating bubble's live/upcoming state so both entry
+// points into the widget agree on what "right now" means.
+function renderNavLiveBadge() {
+  const el = document.getElementById('live-badge');
+  if (!el) return;
+  const { live, upcoming } = getWidgetLists();
+  if (live.length) {
+    el.style.display = 'flex';
+    el.innerHTML = `<span style="width:11px;height:11px;border-radius:50%;background:#F0341B;display:inline-block;animation:hxblink 1.1s infinite;border:2px solid #11100C;"></span>
+      <span style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;">LIVE</span>`;
+  } else if (upcoming.length) {
+    el.style.display = 'flex';
+    el.innerHTML = `<span style="width:11px;height:11px;border-radius:50%;background:#FFC21A;display:inline-block;border:2px solid #11100C;"></span>
+      <span style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:14px;">UPCOMING</span>`;
+  } else {
+    el.style.display = 'none';
+  }
+}
+
 function renderLiveWidget() {
   renderWidgetBubble();
+  renderNavLiveBadge();
   renderWidgetPanel();
 }
 
