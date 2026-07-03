@@ -120,10 +120,10 @@ input,select,textarea{font-family:inherit;}
         </svg>
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
           <div id="ring-pct" style="font-family:'Bangers',cursive;font-size:46px;line-height:1;color:#4FC72A;font-variant-numeric:tabular-nums;">0%</div>
-          <div style="font-size:11px;letter-spacing:1px;opacity:.7;">14 PREDICTIONS</div>
+          <div id="ring-count" style="font-size:11px;letter-spacing:1px;opacity:.7;"></div>
         </div>
       </div>
-      <div style="font-size:13px;text-align:center;opacity:.8;line-height:1.4;">11 correct · best confidence hit 92% · avg confidence 75%</div>
+      <div id="ring-detail" style="font-size:13px;text-align:center;opacity:.8;line-height:1.4;"></div>
     </div>
     <div style="background:#fff;border:3px solid #11100C;box-shadow:6px 6px 0 #11100C;padding:22px;">
       <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:22px;margin-bottom:4px;">UNDER THE HOOD</div>
@@ -829,9 +829,32 @@ function deletePred(id){
 // ═══════════════════════════════════════════════════════
 //  ANIMATIONS
 // ═══════════════════════════════════════════════════════
+// Derives the season track record straight from ALL_PREDS so this never goes
+// stale again as more fixtures settle — excludes S.userPreds (visitor-made
+// picks in localStorage) since this is the site's own model track record.
+function computeSeasonStats() {
+  const settled = ALL_PREDS.filter(p => p.status === 'correct' || p.status === 'wrong');
+  const correct = settled.filter(p => p.status === 'correct').length;
+  const accuracy = settled.length ? 100 * correct / settled.length : 0;
+  let staked = 0, profit = 0;
+  const confOf = p => Math.max(p.pH || 0, p.pD || 0, p.pA || 0);
+  settled.forEach(p => {
+    const stake = p.kelly || 0;
+    staked += stake;
+    profit += p.status === 'correct' ? stake * (p.odds - 1) : -stake;
+  });
+  const roi = staked ? 100 * profit / staked : 0;
+  const avgConfidence = settled.length ? settled.reduce((s, p) => s + confOf(p), 0) / settled.length : 0;
+  const bestConfidenceHit = settled.filter(p => p.status === 'correct').reduce((m, p) => Math.max(m, confOf(p)), 0);
+  return { made: ALL_PREDS.length, settledCount: settled.length, correct, accuracy, roi, avgConfidence, bestConfidenceHit };
+}
+
 function animateCounters() {
   const circ = 2*Math.PI*70; // 439.82
-  const targets = { ring:79.0, s1:14, s2:11, s3:79.0, s4:18.6 };
+  const { made, settledCount, correct, accuracy, roi, avgConfidence, bestConfidenceHit } = computeSeasonStats();
+  document.getElementById('ring-count').textContent = `${settledCount} PREDICTIONS`;
+  document.getElementById('ring-detail').textContent = `${correct} correct · best confidence hit ${Math.round(bestConfidenceHit)}% · avg confidence ${Math.round(avgConfidence)}%`;
+  const targets = { ring:accuracy, s1:made, s2:correct, s3:accuracy, s4:roi };
   const dur = 1600, start = performance.now();
   function tick(t) {
     const k = Math.min(1,(t-start)/dur);
@@ -841,7 +864,7 @@ function animateCounters() {
     document.getElementById('s1').textContent = Math.round(targets.s1*e);
     document.getElementById('s2').textContent = Math.round(targets.s2*e);
     document.getElementById('s3').textContent = (targets.s3*e).toFixed(1)+'%';
-    document.getElementById('s4').textContent = '+'+(targets.s4*e).toFixed(1)+'%';
+    document.getElementById('s4').textContent = (targets.s4>=0?'+':'')+(targets.s4*e).toFixed(1)+'%';
     if(k<1) requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
