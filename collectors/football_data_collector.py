@@ -52,6 +52,22 @@ class FootballDataCollector(BaseCollector):
             return []
         return self._parse_form(data.get("matches", []))
 
+    def get_matches(self, date_from: str, date_to: str, competition_code: str = "WC") -> List[Dict]:
+        """Raw (unparsed) match dicts for an arbitrary date range — includes score.winner,
+        score.duration, score.extraTime and score.penalties needed for bet grading."""
+        if not self.is_configured:
+            return []
+        cache_key = f"fd_matches_{competition_code}_{date_from}_{date_to}"
+        data = self.cached_get(
+            cache_key,
+            f"competitions/{competition_code}/matches",
+            params={"dateFrom": date_from, "dateTo": date_to},
+            ttl=CACHE_TTL["fixtures"],
+        )
+        if not data:
+            return []
+        return data.get("matches", [])
+
     def get_h2h(self, match_id: int) -> Optional[Dict]:
         if not self.is_configured:
             return None
