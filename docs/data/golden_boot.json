@@ -1,14 +1,23 @@
 {
-  "generated_at": "2026-07-02T00:00:00+00:00",
-  "source": "fifa.com official player statistics (manual update)",
+  "generated_at": "2026-07-06T00:00:00+00:00",
+  "source": "fifa.com official player statistics (manual update through Round of 16)",
   "scorers": [
     {
       "name": "Kylian Mbappe",
       "team": "France",
       "crest": "https://crests.football-data.org/773.svg",
       "flag": "",
-      "goals": 6,
+      "goals": 7,
       "assists": 2,
+      "xg": null
+    },
+    {
+      "name": "Erling Haaland",
+      "team": "Norway",
+      "crest": "https://crests.football-data.org/813.svg",
+      "flag": "",
+      "goals": 7,
+      "assists": 0,
       "xg": null
     },
     {
@@ -17,15 +26,6 @@
       "crest": "https://crests.football-data.org/762.png",
       "flag": "",
       "goals": 6,
-      "assists": 0,
-      "xg": null
-    },
-    {
-      "name": "Erling Haaland",
-      "team": "Norway",
-      "crest": "https://crests.football-data.org/813.svg",
-      "flag": "",
-      "goals": 5,
       "assists": 0,
       "xg": null
     },
@@ -44,7 +44,7 @@
       "crest": "https://crests.football-data.org/773.svg",
       "flag": "",
       "goals": 4,
-      "assists": 2,
+      "assists": 3,
       "xg": null
     },
     {
