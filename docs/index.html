@@ -1391,6 +1391,19 @@ function findOurPred(homeName, awayName) {
   ) || null;
 }
 
+// Round-name fallback derived from the tournament calendar — computed from the
+// real current date so it can never go stale like a hardcoded label.
+function currentStageLabel(d) {
+  const iso = istDateISO(d || new Date());
+  if (iso <= '2026-06-27') return 'Group Stage';
+  if (iso <= '2026-07-03') return 'Round of 32';
+  if (iso <= '2026-07-07') return 'Round of 16';
+  if (iso <= '2026-07-12') return 'Quarter-finals';
+  if (iso <= '2026-07-16') return 'Semi-finals';
+  if (iso <= '2026-07-18') return 'Third place';
+  return 'Final';
+}
+
 // Real live/finished match from the ESPN/football-data/API-Football integration.
 function apiMatchToView(api) {
   const parsed = parseApiMatch(api);
@@ -1400,6 +1413,7 @@ function apiMatchToView(api) {
   const statusLabel = parsed.isLive ? `LIVE${parsed.elapsed ? ' · ' + parsed.elapsed : ''}`
     : parsed.isDone ? `FULL-TIME${parsed.elapsed ? ' · ' + parsed.elapsed : ''}`
     : 'PRE-MATCH';
+  const ourPred = findOurPred(parsed.homeTeam, parsed.awayTeam);
   const kickoffLabel = parsed.kickoffAt
     ? `${longDate(istDateISO(parsed.kickoffAt))} · ${istTime(parsed.kickoffAt)}`
     : (parsed.kickoff || '—');
@@ -1407,13 +1421,13 @@ function apiMatchToView(api) {
     home: parsed.homeTeam, away: parsed.awayTeam,
     score: (parsed.isLive || parsed.isDone) ? parsed.score : '–:–',
     statusLabel, isLive: parsed.isLive, isDone: parsed.isDone,
-    round: parsed.stage || 'Round of 32',
+    round: parsed.stage || (ourPred && ourPred.stage) || currentStageLabel(parsed.kickoffAt),
     venue, city, country,
     kickoffLabel,
     timeLabel: parsed.kickoff || '',
     goals: parsed.goals, subs: parsed.subs, lineup: parsed.lineup, commentary: parsed.commentary,
     hasLiveFeed: true,
-    ourPred: findOurPred(parsed.homeTeam, parsed.awayTeam),
+    ourPred,
   };
 }
 
@@ -1437,6 +1451,19 @@ function predToView(p) {
 
 // Returns up to 2 candidate matches per pill (live is 0 or 1 — there's only
 // ever one real live feed at a time).
+// Lazily fetched ESPN summaries for recently-finished matches, so the PAST pill
+// shows real commentary/events/lineups just like the live match does. `null`
+// marks an in-flight fetch so we never fire duplicates.
+const PAST_SUMMARY_CACHE = {};
+function ensurePastSummary(eventId) {
+  if (!eventId || PAST_SUMMARY_CACHE[eventId] !== undefined) return;
+  PAST_SUMMARY_CACHE[eventId] = null;
+  fetchESPNSummary(eventId).then(s => {
+    PAST_SUMMARY_CACHE[eventId] = s || {};
+    renderLiveWidget();
+  });
+}
+
 function getWidgetLists() {
   const now = new Date();
   const all = [...S.userPreds, ...ALL_PREDS];
@@ -1458,7 +1485,15 @@ function getWidgetLists() {
     .slice()
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 2)
-    .map(ev => apiMatchToView({ src:'espn', live:false, done:true, event: ev, scoringPlays:null, plays:[], rosters:[] }));
+    .map(ev => {
+      ensurePastSummary(ev.id);
+      const s = PAST_SUMMARY_CACHE[ev.id] || null;
+      return apiMatchToView({ src:'espn', live:false, done:true, event: ev,
+        scoringPlays: s?.scoringPlays || null,
+        plays: s?.plays || s?.keyPlays || [],
+        rosters: s?.rosters || [],
+        commentary: s?.commentary || [] });
+    });
   all
     .filter(p => p.result)
     .map(p => ({ p, dt: parseKickoff(p) }))
