@@ -11,12 +11,12 @@
 
 **A goal-rate prediction engine for FIFA World Cup 2026.** Poisson scorelines, Dixon-Coles correction (ρ=−0.15), and an ELO pool of 72 teams — every value bet sized by fractional Kelly. **No vibes. Just λ.**
 
-[![Live Site](https://img.shields.io/badge/▶_LIVE_SITE-FFC21A?style=for-the-badge&labelColor=11100C)](https://sarthak-rautela.github.io/prediction-Testing/)
+[![Live Site](https://img.shields.io/badge/▶_LIVE_SITE-FFC21A?style=for-the-badge&labelColor=11100C)](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)
 [![Results grading](https://img.shields.io/github/actions/workflow/status/SARTHAK-RAUTELA/prediction-Testing/update-match-results.yml?style=for-the-badge&label=results%20grading&labelColor=11100C&color=4FC72A)](https://github.com/SARTHAK-RAUTELA/prediction-Testing/actions/workflows/update-match-results.yml)
 [![Golden Boot](https://img.shields.io/github/actions/workflow/status/SARTHAK-RAUTELA/prediction-Testing/update-golden-boot.yml?style=for-the-badge&label=golden%20boot&labelColor=11100C&color=1B4FE0)](https://github.com/SARTHAK-RAUTELA/prediction-Testing/actions/workflows/update-golden-boot.yml)
 [![Python](https://img.shields.io/badge/python-3.11+-11100C?style=for-the-badge&logo=python&logoColor=FFC21A)](https://www.python.org/)
 
-**🔗 [sarthak-rautela.github.io/prediction-Testing](https://sarthak-rautela.github.io/prediction-Testing/)**
+**🔗 [sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)**
 
 <br/>
 
@@ -109,7 +109,7 @@ This repo is a full pipeline for predicting FIFA World Cup 2026 match outcomes w
 
 It ships in three forms:
 
-1. **[HEXDRIFT](https://sarthak-rautela.github.io/prediction-Testing/)** — a public, self-grading static website hosted on GitHub Pages (`docs/`)
+1. **[HEXDRIFT](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)** — a public, self-grading static website hosted on GitHub Pages (`docs/`)
 2. **A Streamlit web dashboard** (`app.py`) — the full interactive model with live match tracking, for local use
 3. **A Python CLI** (`main.py` / `launcher.py`) — terminal output with Rich-formatted prediction panels
 
@@ -139,7 +139,7 @@ It also flags **value bets** by comparing model probability against bookmaker od
 
 ## The Live Website (HEXDRIFT)
 
-`docs/index.html` is a single self-contained static page (all CSS/JS inline, no build step) deployed via GitHub Pages at **https://sarthak-rautela.github.io/prediction-Testing/**.
+`docs/index.html` is a single self-contained static page (all CSS/JS inline, no build step) deployed via GitHub Pages at **https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/**.
 
 | Page | What it shows |
 |------|---------------|
@@ -170,7 +170,7 @@ Because grading happens automatically, the **accuracy %**, **correct hits**, and
 
 ### 1. The live website — no setup
 
-Just open **[sarthak-rautela.github.io/prediction-Testing](https://sarthak-rautela.github.io/prediction-Testing/)**. It's a static page reading pre-computed picks — nothing to install.
+Just open **[sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)**. It's a static page reading pre-computed picks — nothing to install.
 
 ### 2. Streamlit web dashboard — full interactive model, local
 
