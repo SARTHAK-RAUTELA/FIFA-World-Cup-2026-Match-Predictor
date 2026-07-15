@@ -326,7 +326,8 @@ prediction-Testing/
 │
 ├── .github/workflows/            # update-match-results.yml, update-golden-boot.yml
 ├── requirements.txt
-├── .env                          # API keys (not committed)
+├── .gitignore                    # excludes .env, .venv/, __pycache__/
+├── .env                          # API keys (gitignored — never commit this)
 └── .env.example                  # Key names + registration links
 ```
 
@@ -351,6 +352,8 @@ python -m venv .venv
 pip install -r requirements.txt
 copy .env.example .env        # then fill in your keys
 ```
+
+> **⚠️ Security note:** `.env` was accidentally committed to this repo's git history in an earlier commit (`47dd0386`), exposing the API keys that were configured at the time (football-data.org, RapidAPI, NewsAPI, GNews, TheSportsDB, AllSportsAPI). `.env` has now been removed from tracking and added to `.gitignore`, but **the old key values are still visible in git history** (and on GitHub, since this repo is public) even after this fix — untracking doesn't erase history. **Rotate every one of those keys now** at their respective dashboards; treat the values in past commits as compromised.
 
 ### API Keys
 
