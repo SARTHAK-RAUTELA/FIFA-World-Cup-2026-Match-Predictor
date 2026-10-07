@@ -4,16 +4,15 @@
 
 <br/>
 
-![tag](https://img.shields.io/badge/⚡_LIVE_·_SELF--GRADING_·_FIFA_'26-FF2B7A?style=for-the-badge&labelColor=FF2B7A)
+![tag](https://img.shields.io/badge/🏁_FINISHED_·_FULLY_GRADED_·_FIFA_'26-FF2B7A?style=for-the-badge&labelColor=FF2B7A)
 
 # HEXDRIFT
 ### FIFA World Cup 2026 Match Predictor
 
 **A goal-rate prediction engine for FIFA World Cup 2026.** Poisson scorelines, Dixon-Coles correction (ρ=−0.15), and an ELO pool of 72 teams — every value bet sized by fractional Kelly. **No vibes. Just λ.**
 
-[![Live Site](https://img.shields.io/badge/▶_LIVE_SITE-FFC21A?style=for-the-badge&labelColor=11100C)](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)
-[![Results grading](https://img.shields.io/github/actions/workflow/status/SARTHAK-RAUTELA/prediction-Testing/update-match-results.yml?style=for-the-badge&label=results%20grading&labelColor=11100C&color=4FC72A)](https://github.com/SARTHAK-RAUTELA/prediction-Testing/actions/workflows/update-match-results.yml)
-[![Golden Boot](https://img.shields.io/github/actions/workflow/status/SARTHAK-RAUTELA/prediction-Testing/update-golden-boot.yml?style=for-the-badge&label=golden%20boot&labelColor=11100C&color=1B4FE0)](https://github.com/SARTHAK-RAUTELA/prediction-Testing/actions/workflows/update-golden-boot.yml)
+[![Site](https://img.shields.io/badge/▶_VIEW_SITE-FFC21A?style=for-the-badge&labelColor=11100C)](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)
+[![Status](https://img.shields.io/badge/status-finished-4FC72A?style=for-the-badge&labelColor=11100C)](#project-status--finished)
 [![Python](https://img.shields.io/badge/python-3.11+-11100C?style=for-the-badge&logo=python&logoColor=FFC21A)](https://www.python.org/)
 
 **🔗 [sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)**
@@ -26,15 +25,33 @@
 <td><img src="https://img.shields.io/badge/72-TEAMS_TRACKED-1B4FE0?style=for-the-badge&labelColor=1B4FE0" alt="72 teams tracked"/></td>
 <td><img src="https://img.shields.io/badge/13-MARKETS_PRICED-4FC72A?style=for-the-badge&labelColor=4FC72A" alt="13 markets priced"/></td>
 <td><img src="https://img.shields.io/badge/93%25-CONFIDENCE_GATE-FFC21A?style=for-the-badge&labelColor=FFC21A" alt="93 percent confidence gate"/></td>
-<td><img src="https://img.shields.io/badge/15_MIN-AUTO--GRADED-FF2B7A?style=for-the-badge&labelColor=FF2B7A" alt="graded every 15 minutes"/></td>
+<td><img src="https://img.shields.io/badge/68%25-FINAL_ACCURACY-FF2B7A?style=for-the-badge&labelColor=FF2B7A" alt="68 percent final accuracy"/></td>
 </tr>
 </table>
 
-<img src="docs/screenshots/home.png" alt="HEXDRIFT home page — live stat strip showing 95 predictions made, 64 correct hits, 70.3% accuracy, +43.2% season ROI" width="880"/>
+<img src="docs/screenshots/home.png" alt="HEXDRIFT home page — stat strip captured mid-tournament showing 95 predictions made, 64 correct hits, 70.3% accuracy, +43.2% season ROI" width="880"/>
 
-<sub>The live site tracks its own record in public — accuracy and ROI update automatically as matches finish (see <a href="#automation--self-updating-site">Automation</a> below).</sub>
+<sub>Screenshot taken mid-tournament. The final record is below.</sub>
 
 </div>
+
+<br/>
+
+## Project Status — Finished
+
+**The FIFA World Cup 2026 is over, and so is this project.** 🇪🇸 **Spain are world champions**, beating Argentina 1–0 after extra time in the Final at MetLife Stadium on 19 July 2026.
+
+Every prediction has been graded against the real result. The model's final record:
+
+| Predictions | Correct | Accuracy | Season ROI |
+|:-:|:-:|:-:|:-:|
+| **103** | **70** | **68.0%** | **+38.1%** |
+
+<sub>ROI uses the site's own formula: profit ÷ total Kelly stake across all 103 settled picks.</sub>
+
+- **The site stays up** as a read-only archive of every pick and result.
+- **Automatic data fetching is paused.** The two GitHub Actions workflows no longer run on a schedule (see [Automation](#automation--paused)).
+- **The code still runs locally.** The Streamlit dashboard and CLI work if you supply your own API keys, but there are no more World Cup 2026 fixtures to predict.
 
 <br/>
 
@@ -81,8 +98,9 @@
 ## Table of Contents
 
 - [Overview](#overview)
-- [The Live Website (HEXDRIFT)](#the-live-website-hexdrift)
-- [Automation — Self-Updating Site](#automation--self-updating-site)
+- [Project Status — Finished](#project-status--finished)
+- [The Website (HEXDRIFT)](#the-website-hexdrift)
+- [Automation — Paused](#automation--paused)
 - [Three Ways to Use This Project](#three-ways-to-use-this-project)
 - [How It Works](#how-it-works)
   - [Data Collection Layer](#data-collection-layer)
@@ -109,7 +127,7 @@ This repo is a full pipeline for predicting FIFA World Cup 2026 match outcomes w
 
 It ships in three forms:
 
-1. **[HEXDRIFT](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)** — a public, self-grading static website hosted on GitHub Pages (`docs/`)
+1. **[HEXDRIFT](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)** — a public static website hosted on GitHub Pages (`docs/`), self-grading during the tournament and now an archive
 2. **A Streamlit web dashboard** (`app.py`) — the full interactive model with live match tracking, for local use
 3. **A Python CLI** (`main.py` / `launcher.py`) — terminal output with Rich-formatted prediction panels
 
@@ -137,7 +155,7 @@ It also flags **value bets** by comparing model probability against bookmaker od
 
 ---
 
-## The Live Website (HEXDRIFT)
+## The Website (HEXDRIFT)
 
 `docs/index.html` is a single self-contained static page (all CSS/JS inline, no build step) deployed via GitHub Pages at **https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/**.
 
@@ -149,28 +167,30 @@ It also flags **value bets** by comparing model probability against bookmaker od
 | **Live widget** | A floating tracker that follows in-progress matches (score, minute, live odds movement) |
 | **Settings (⚙)** | Client-side entry for personal API keys, if you want to point the page at your own data sources |
 
-The predictions themselves live directly in `docs/index.html` as a `const ALL_PREDS = [...]` array, and the Golden Boot leaderboard lives in `docs/data/golden_boot.json`. Both are rewritten automatically — see below.
+The predictions themselves live directly in `docs/index.html` as a `const ALL_PREDS = [...]` array, and the Golden Boot leaderboard lives in `docs/data/golden_boot.json`. During the tournament both were rewritten automatically — see below. Now that the tournament is over, they hold the final graded results.
 
 ---
 
-## Automation — Self-Updating Site
+## Automation — Paused
 
-Two GitHub Actions workflows keep the live site current with **no manual intervention**:
+> **Paused since the tournament ended.** The `schedule:` triggers in both workflows are commented out, so nothing fetches data automatically. Each workflow can still be started by hand from the repo's **Actions** tab ("Run workflow"). To resume the schedule, uncomment the `schedule:` and `cron` lines in each file.
 
-| Workflow | Schedule | What it does |
+During the tournament, two GitHub Actions workflows kept the site current with **no manual intervention**:
+
+| Workflow | Schedule (while active) | What it does |
 |----------|----------|--------------|
 | [`update-match-results.yml`](.github/workflows/update-match-results.yml) | ![15 min](https://img.shields.io/badge/every-15_min-4FC72A?style=flat-square&labelColor=11100C) | Runs [`scripts/update_match_results.py`](scripts/update_match_results.py): finds `"upcoming"` picks in `docs/index.html`, checks football-data.org for a finished score on that fixture, fills in the real result, and grades the pick correct/wrong/push. Commits and pushes straight to `main` if anything changed. |
 | [`update-golden-boot.yml`](.github/workflows/update-golden-boot.yml) | ![6 hr](https://img.shields.io/badge/every-6_hr-1B4FE0?style=flat-square&labelColor=11100C) | Runs [`scripts/update_golden_boot.py`](scripts/update_golden_boot.py): refreshes the top-scorer leaderboard into `docs/data/golden_boot.json`. Commits and pushes if changed. |
 
-Because grading happens automatically, the **accuracy %**, **correct hits**, and **season ROI** numbers on the live site are a real, continuously-updated track record — not a static claim. Both jobs authenticate to football-data.org with `FOOTBALL_DATA_API_KEY` stored as a GitHub Actions secret, and commit as `github-actions[bot]`.
+Because grading happened automatically, the **accuracy %**, **correct hits**, and **season ROI** numbers on the site are a real track record built up match by match — not a static claim. Both jobs authenticate to football-data.org with `FOOTBALL_DATA_API_KEY` stored as a GitHub Actions secret, and commit as `github-actions[bot]`.
 
 ---
 
 ## Three Ways to Use This Project
 
-### 1. The live website — no setup
+### 1. The website — no setup
 
-Just open **[sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)**. It's a static page reading pre-computed picks — nothing to install.
+Just open **[sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor](https://sarthak-rautela.github.io/FIFA-World-Cup-2026-Match-Predictor/)**. It's a static page reading pre-computed picks — nothing to install. It now serves as an archive of the full tournament.
 
 ### 2. Streamlit web dashboard — full interactive model, local
 
@@ -365,7 +385,7 @@ copy .env.example .env        # then fill in your keys
 | `GNEWS_API_KEY` | [gnews.io](https://gnews.io/) | 100 req/day |
 | `SPORTS_DB_API_KEY` | TheSportsDB | Use `3` for free tier |
 
-ESPN and Open-Meteo need no key. The live site's own automation only needs `FOOTBALL_DATA_API_KEY`, set as a repo secret.
+ESPN and Open-Meteo need no key. The site's own automation (now paused) only needs `FOOTBALL_DATA_API_KEY`, set as a repo secret.
 
 ---
 
@@ -393,7 +413,7 @@ Pick a fixture or "Today's Matches" mode, set the tournament stage and bankroll 
 
 ### Static site
 
-Nothing to run — it's already live and self-updating (see [Automation](#automation--self-updating-site)). To regenerate its data payload locally: `python export_predictions.py`.
+Nothing to run — it's already published, and its automatic updates are paused (see [Automation](#automation--paused)). To regenerate its data payload locally: `python export_predictions.py`.
 
 ---
 
