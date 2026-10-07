@@ -1,8 +1,9 @@
 name: Update Golden Boot data
 
 on:
-  schedule:
-    - cron: '0 */6 * * *'
+  # Paused after the tournament ended — uncomment to resume automatic runs.
+  # schedule:
+  #   - cron: '0 */6 * * *'
   workflow_dispatch: {}
 
 permissions:

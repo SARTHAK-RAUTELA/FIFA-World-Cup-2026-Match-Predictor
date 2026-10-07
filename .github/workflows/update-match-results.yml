@@ -1,8 +1,9 @@
 name: Update match results
 
 on:
-  schedule:
-    - cron: '*/15 * * * *'
+  # Paused after the tournament ended — uncomment to resume automatic runs.
+  # schedule:
+  #   - cron: '*/15 * * * *'
   workflow_dispatch: {}
 
 permissions:
